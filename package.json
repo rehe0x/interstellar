@@ -1,0 +1,34 @@
+{
+  "name": "rehe-koa2",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node bin/run",
+    "dev": "cross-env NODE_ENV=development ./node_modules/.bin/nodemon bin/run",
+    "prd": "pm2 start bin/run",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "debug": "^4.3.1",
+    "ejs": "~3.1.6",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.13.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-convert": "^2.0.0",
+    "koa-json": "^2.0.2",
+    "koa-logger": "^3.2.1",
+    "koa-onerror": "^4.1.0",
+    "koa-router": "^10.0.0",
+    "koa-static": "^5.0.0",
+    "koa-views": "^7.0.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "eslint": "^7.29.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "nodemon": "^2.0.7"
+  }
+}
