@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const config = require('../../config')
 // eslint-disable-next-line no-unused-vars
 const { BusinessError, HttpError } = require('../model/error')
+const userControl = require('../rehe/controller/user')
 
 router.prefix('/users')
 
@@ -22,5 +23,8 @@ router.get('/test/:id', async (ctx, next) => {
   // ctx.success(ctx.params.id)
   throw new BusinessError(123, 'test')
 })
+
+router.get('/user/test', userControl.test)
+router.get('/user/add', userControl.add)
 
 module.exports = router
