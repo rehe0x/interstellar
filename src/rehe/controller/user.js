@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const userService = require('../service/user')
 
 class UserController {
-  async login (ctx, next) {
+  static async login (ctx, next) {
     const param = ctx.request.body
     const user = await userService.findOne({ username: param.username })
     if (!user) {
@@ -23,27 +23,27 @@ class UserController {
     ctx.success(user)
   }
 
-  async add (ctx, next) {
+  static async add (ctx, next) {
     const rest = await userService.add(ctx.request.body)
     ctx.success(rest)
   }
 
-  async find (ctx, next) {
+  static async find (ctx, next) {
     const rest = await userService.find()
     ctx.success(rest)
   }
 
-  async findPage (ctx, next) {
+  static async findPage (ctx, next) {
     const param = ctx.request.body
     const rest = await userService.findPage(param)
     ctx.success(rest)
   }
 
-  async findPageQuery (ctx, next) {
+  static async findPageQuery (ctx, next) {
     const param = ctx.request.body
     const rest = await userService.findPageQuery(param)
     ctx.success(rest)
   }
 }
 
-module.exports = new UserController()
+module.exports = UserController

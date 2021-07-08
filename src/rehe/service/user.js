@@ -1,23 +1,23 @@
 const userDao = require('../dao/user')
 class UserService {
-  async add (user) {
+  static async add (user) {
     const rest = await userDao.create(user)
     return rest
   }
 
-  async find (item = {}) {
+  static async find (item = {}) {
     const rest = await userDao.findAll(item)
     return rest
   }
 
-  async findOne (item = {}) {
+  static async findOne (item = {}) {
     const rest = await userDao.findOne({
       where: item
     })
     return rest
   }
 
-  async findPage (item = {}) {
+  static async findPage (item = {}) {
     const whereClause = {}
     if (item.username) whereClause.username = item.username
     if (item.password) whereClause.password = item.password
@@ -29,10 +29,10 @@ class UserService {
     return rest
   }
 
-  async findPageQuery (item = {}) {
+  static async findPageQuery (item = {}) {
     const rest = userDao.findPage()
     return rest
   }
 }
 
-module.exports = new UserService()
+module.exports = UserService
