@@ -1,6 +1,7 @@
 {
-  "name": "rehe-koa2",
+  "name": "interstellar",
   "version": "0.1.0",
+  "author": "rehe1995",
   "private": true,
   "scripts": {
     "start": "cross-env NODE_ENV=production node bin/run",
