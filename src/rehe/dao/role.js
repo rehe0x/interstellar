@@ -1,44 +1,24 @@
 const { sequelize, DataTypes, Model } = require('../../lib/sequelize')
 
-class user extends Model {}
-user.init({
+class role extends Model {}
+role.init({
   id: {
     autoIncrement: true,
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true
   },
-  username: {
-    type: DataTypes.STRING(255),
-    allowNull: false
-  },
-  password: {
-    type: DataTypes.STRING(255),
-    allowNull: false
-  },
-  nickname: {
+  code: {
     type: DataTypes.STRING(255),
     allowNull: true
   },
-  email: {
+  name: {
     type: DataTypes.STRING(255),
-    allowNull: true
-  },
-  phone: {
-    type: DataTypes.STRING(255),
-    allowNull: true
-  },
-  avatarPath: {
-    type: DataTypes.STRING(255),
-    allowNull: true
-  },
-  enabled: {
-    type: DataTypes.BOOLEAN,
     allowNull: true
   }
 }, {
   sequelize,
-  tableName: 'user',
+  tableName: 'role',
   timestamps: false,
   indexes: [
     {
@@ -52,4 +32,4 @@ user.init({
   ]
 })
 
-module.exports = user
+module.exports = role

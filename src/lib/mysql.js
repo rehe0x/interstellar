@@ -10,25 +10,8 @@ const mysqlConfig = {
   database: config.mysql_config.database,
   timezone: '08:00'
 }
-
-const mysqlPool = mysql.createPool(mysqlConfig)
-console.log('初始化======')
-const query = (sql, val) => {
-  return new Promise((resolve, reject) => {
-    mysqlPool.getConnection(function (err, connection) {
-      if (err) reject(err)
-      else {
-        connection.query(sql, val, (err, rows) => {
-          if (err) reject(err)
-          else resolve(rows)
-          connection.release()
-        })
-      }
-    })
-  })
-}
-
-const _sql = {
+const pools = {}
+const CONSTANT = {
   /** **********************数据库操作相关************************
    * 数据库操作相关 DDL
    *************************************************************/
@@ -42,7 +25,6 @@ const _sql = {
   SELECT_DATABASE: 'SELECT DATABASE()',
   // (5) 使用数据库
   USE_DB: (dbName) => `USE ${dbName};`,
-
   /** **********************数据表操作相关************************
    * 数据表操作相关 DDL
    *************************************************************/
@@ -79,5 +61,31 @@ const _sql = {
   UPDATE_DATA: (tableName, id, colum, value) =>
     `UPDATE ${tableName} SET ${colum} = ${value} WHERE id = ${id};`
 }
+class MySQL {
+  constructor () {
+    if (!Object.prototype.hasOwnProperty.call(pools, mysqlConfig.host)) {
+      pools[mysqlConfig.host] = mysql.createPool(mysqlConfig)
+      console.log('init mysql===', pools)
+    }
+    console.log('===')
+    this.pool = pools[mysqlConfig.host]
+    this.CONSTANT = CONSTANT
+  }
 
-module.exports = { query, _sql }
+  doSql (sql, val) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection(function (err, connection) {
+        if (err) reject(err)
+        else {
+          connection.query(sql, val, (err, rows) => {
+            if (err) reject(err)
+            else resolve(rows)
+            connection.release()
+          })
+        }
+      })
+    })
+  }
+}
+
+module.exports = new MySQL()

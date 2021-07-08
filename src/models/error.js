@@ -1,7 +1,7 @@
 class BusinessError extends Error {
-  constructor (code, msg) {
+  constructor (msg) {
     super(msg)
-    this.code = code
+    this.code = 99
     this.msg = msg
     this.name = 'BusinessError'
   }

@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-const { BusinessError, HttpError } = require('../model/error')
+const { BusinessError, HttpError } = require('../models/error')
 
 module.exports = async (ctx, next) => {
   return next().catch((err) => {

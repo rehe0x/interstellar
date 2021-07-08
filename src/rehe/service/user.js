@@ -1,11 +1,21 @@
 const userDao = require('../dao/user')
+class UserService {
+  async add (user) {
+    const rest = await userDao.create(user)
+    return rest
+  }
 
-exports.test = async () => {
-  const rest = await userDao.test()
-  return rest
+  async find (user = {}) {
+    const rest = await userDao.findAll(user)
+    return rest
+  }
+
+  async findByItem (user = {}) {
+    const rest = await userDao.findAll({
+      where: user
+    })
+    return rest
+  }
 }
 
-exports.add = async () => {
-  const rest = await userDao.add()
-  return rest
-}
+module.exports = new UserService()
