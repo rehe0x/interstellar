@@ -7,11 +7,10 @@ const userService = require('../service/user')
 class UserController {
   async login (ctx, next) {
     const param = ctx.request.body
-    let user = await userService.findByItem({ username: param.username })
-    if (!user[0]) {
+    const user = await userService.findOne({ username: param.username })
+    if (!user) {
       throw new BusinessError('用户名不存在～')
     }
-    user = user[0]
     if (user.password !== String(param.password)) {
       throw new BusinessError('密码错误～')
     }
@@ -31,6 +30,18 @@ class UserController {
 
   async find (ctx, next) {
     const rest = await userService.find()
+    ctx.success(rest)
+  }
+
+  async findPage (ctx, next) {
+    const param = ctx.request.body
+    const rest = await userService.findPage(param)
+    ctx.success(rest)
+  }
+
+  async findPageQuery (ctx, next) {
+    const param = ctx.request.body
+    const rest = await userService.findPageQuery(param)
     ctx.success(rest)
   }
 }

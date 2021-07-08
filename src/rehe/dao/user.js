@@ -1,6 +1,11 @@
 const { sequelize, DataTypes, Model } = require('../../lib/sequelize')
 
-class user extends Model {}
+class user extends Model {
+  static async findPage () {
+    const rest = await sequelize.query('select * from user')
+    return rest
+  }
+}
 user.init({
   id: {
     autoIncrement: true,

@@ -21,5 +21,7 @@ const v = {
 router.get('/login', userControl.login)
 router.post('/add', validation(v.add), userControl.add)
 router.get('/find', userControl.find)
+router.get('/findPage', userControl.findPage)
+router.get('/findPageQuery', userControl.findPageQuery)
 
 module.exports = router
