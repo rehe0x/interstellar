@@ -8,7 +8,7 @@ const options = {
   host: config.mysql_config.host,
   port: config.mysql_config.port,
   dialect: 'mysql',
-  directory: 'test_models', // 指定输出 models 文件的目录
+  directory: 'test', // 指定输出 models 文件的目录
   additional: {
     timestamps: false
   },

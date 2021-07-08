@@ -10,11 +10,11 @@ user.init({
     },
     username: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false
     },
     password: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false
     },
     nickname: {
       type: DataTypes.STRING(255),
