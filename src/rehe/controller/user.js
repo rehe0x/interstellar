@@ -1,5 +1,5 @@
 const config = require('../../../config')
-const { BusinessError } = require('../../models/error')
+const { BusinessError } = require('../../lib/error')
 
 const jwt = require('jsonwebtoken')
 const userService = require('../service/user')
