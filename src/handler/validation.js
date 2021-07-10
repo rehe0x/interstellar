@@ -1,5 +1,4 @@
 const joi = require('joi')
-
 module.exports = (option = {}) => {
   const allowedMethods = async (ctx, next) => {
     const p = { ...ctx.request.query, ...ctx.request.body }
