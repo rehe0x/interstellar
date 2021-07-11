@@ -1,6 +1,6 @@
-const SequelizeAuto = require('./sequelize-auto/auto')
+import { SequelizeAuto } from './sequelize-auto/index.js'
 
-const config = require('../../config')
+import { config } from '../../config/index.js'
 
 const args = process.argv.splice(2)
 

@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken')
-const config = require('../../config')
+import { config } from '../../config/index.js'
+import jwt from 'jsonwebtoken'
 
-module.exports = (option = {}) => {
+export const auth = (option = {}) => {
   const auth = async function verify (ctx, next) {
     const token = ctx.header.authorization
     const data = await jwt.verify(token, config.SECRET)

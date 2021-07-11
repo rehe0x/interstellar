@@ -1,5 +1,5 @@
-const Router = require('koa-router')
-const users = require('./users')
+import Router from 'koa-router'
+import { userRouter } from './users.js'
 
 const indexRouter = new Router()
 const apiRouter = new Router()
@@ -11,7 +11,7 @@ indexRouter.get('/', async (ctx, next) => {
 })
 
 apiRouter.prefix('/api')
-apiRouter.use(users.routes(), users.allowedMethods())
-indexRouter.use(apiRouter.routes(), users.allowedMethods())
+apiRouter.use(userRouter.routes(), userRouter.allowedMethods())
+indexRouter.use(apiRouter.routes(), apiRouter.allowedMethods())
 
-module.exports = indexRouter
+export { indexRouter }

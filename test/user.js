@@ -1,4 +1,4 @@
-const { sequelize, DataTypes, Model } = require('../../lib/sequelize')
+import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class user extends Model {}
 user.init({
@@ -52,4 +52,4 @@ user.init({
     ]
   });
 
-module.exports = user
+export { user }

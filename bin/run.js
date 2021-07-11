@@ -4,10 +4,11 @@
  * Module dependencies.
  */
 
-const app = require('../src/app')
-const debug = require('debug')('demo:server')
-const http = require('http')
-const config = require('../config')
+import { app } from '../src/app.js'
+import { createServer } from 'http'
+import { config } from '../config/index.js'
+import Debug from 'debug'
+const debug = new Debug('demo:server')
 
 /**
  * Get port from environment and store in Express.
@@ -20,13 +21,13 @@ const port = normalizePort(config.port || '3000')
  * Create HTTP server.
  */
 
-const server = http.createServer(app.callback())
+const server = createServer(app.callback())
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 console.log(`当前运行环境 | ${config.env} | ${config.port}`)
-server.listen(port)
+server.listen(config.port)
 server.on('error', onError)
 server.on('listening', onListening)
 

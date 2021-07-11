@@ -1,13 +1,12 @@
-const config = require('../../../config')
-const { BusinessError } = require('../../lib/error')
-
-const jwt = require('jsonwebtoken')
-const userService = require('../service/user')
+import jwt from 'jsonwebtoken'
+import { config } from '../../../config/index.js'
+import { BusinessError } from '../../lib/error.js'
+import { UserService } from '../service/user.js'
 
 class UserController {
   static async login (ctx, next) {
     const param = ctx.request.body
-    const user = await userService.findOne({ username: param.username })
+    const user = await UserService.findOne({ username: param.username })
     if (!user) {
       throw new BusinessError('用户名不存在～')
     }
@@ -24,26 +23,28 @@ class UserController {
   }
 
   static async add (ctx, next) {
-    const rest = await userService.add(ctx.request.body)
+    const rest = await UserService.add(ctx.request.body)
     ctx.success(rest)
   }
 
   static async find (ctx, next) {
-    const rest = await userService.find()
+    const rest = await UserService.find()
     ctx.success(rest)
   }
 
   static async findPage (ctx, next) {
     const param = ctx.request.body
-    const rest = await userService.findPage(param)
+    const rest = await UserService.findPage(param)
     ctx.success(rest)
   }
 
   static async findPageQuery (ctx, next) {
     const param = ctx.request.body
-    const rest = await userService.findPageQuery(param)
+    const rest = await UserService.findPageQuery(param)
     ctx.success(rest)
   }
 }
 
-module.exports = UserController
+export {
+  UserController
+}

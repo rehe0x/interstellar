@@ -1,5 +1,5 @@
-const dev = require('./dev')
-const pord = require('./pord')
+import { dev } from './dev.js'
+import { pord } from './pord.js'
 
 const getConfig = () => {
   switch (process.env.NODE_ENV) {
@@ -9,4 +9,4 @@ const getConfig = () => {
   }
 }
 
-module.exports = getConfig()
+export const config = getConfig()

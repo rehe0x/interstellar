@@ -1,4 +1,4 @@
-module.exports = {
+export const pord = {
   env: 'pord',
   port: 3000,
   mysql_config: {

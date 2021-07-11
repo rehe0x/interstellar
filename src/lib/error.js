@@ -16,7 +16,7 @@ class HttpError extends Error {
   }
 }
 
-module.exports = {
+export {
   BusinessError,
   HttpError
 }

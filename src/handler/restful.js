@@ -1,4 +1,4 @@
-module.exports = (option = {}) => {
+export const restful = (option = {}) => {
   const allowedMethods = async (ctx, next) => {
     ctx.success = function (data) {
       // ctx.type = option.type || 'json'

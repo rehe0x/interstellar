@@ -1,9 +1,10 @@
-const router = require('koa-router')()
-const joi = require('joi')
-const validation = require('../handler/validation')
+import joi from 'joi'
+import { validation } from '../handler/validation.js'
+import { UserController } from '../rehe/controller/user.js'
+import Router from 'koa-router'
 
-const userControl = require('../rehe/controller/user')
-router.prefix('/user')
+const userRouter = new Router()
+userRouter.prefix('/user')
 
 const v = {
   add: {
@@ -18,10 +19,10 @@ const v = {
   }
 }
 
-router.get('/login', userControl.login)
-router.post('/add', validation(v.add), userControl.add)
-router.get('/find', userControl.find)
-router.get('/findPage', userControl.findPage)
-router.get('/findPageQuery', userControl.findPageQuery)
+userRouter.get('/login', UserController.login)
+userRouter.post('/add', validation(v.add), UserController.add)
+userRouter.get('/find', UserController.find)
+userRouter.get('/findPage', UserController.findPage)
+userRouter.get('/findPageQuery', UserController.findPageQuery)
 
-module.exports = router
+export { userRouter }

@@ -1,11 +1,4 @@
-const auth = require('./auth')
-const restful = require('./restful')
-const error = require('./error')
-const mylogger = require('./logger')
-
-module.exports = {
-  auth,
-  restful,
-  error,
-  mylogger
-}
+export { auth } from './auth.js'
+export { restful } from './restful.js'
+export { error } from './error.js'
+export { logger as mylogger } from './logger.js'

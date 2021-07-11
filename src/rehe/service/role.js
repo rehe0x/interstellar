@@ -1,4 +1,4 @@
-const roleDao = require('../dao/role')
+import { role as roleDao } from '../dao/role.js'
 class RoleService {
   static async find () {
     const rest = await roleDao.findAll()
@@ -14,4 +14,4 @@ class RoleService {
   }
 }
 
-module.exports = RoleService
+export { RoleService }

@@ -1,13 +1,15 @@
-const Koa = require('koa')
+import path from 'path'
+import Koa from 'koa'
+import moment from 'moment'
+import views from 'koa-views'
+import _static from 'koa-static'
+import json from 'koa-json'
+import onerror from 'koa-onerror'
+import bodyparser from 'koa-bodyparser'
+import logger from 'koa-logger'
+import { indexRouter } from './routes/index.js'
+import { auth, restful, error, mylogger } from './handler/index.js'
 const app = new Koa()
-const moment = require('moment')
-const views = require('koa-views')
-const json = require('koa-json')
-const onerror = require('koa-onerror')
-const bodyparser = require('koa-bodyparser')
-const logger = require('koa-logger')
-const indexRoutes = require('./routes')
-const { auth, restful, error, mylogger } = require('./handler')
 
 // 统一返回
 app.use(restful())
@@ -29,8 +31,8 @@ const _logger = logger((str, args) => {
 })
 app.use(mylogger).use(_logger)
 
-app.use(require('koa-static')(require('path').join(__dirname, '/views/public')))
-app.use(views(require('path').join(__dirname, '/views'), {
+app.use(_static(path.join(path.resolve(), '/src/views/public')))
+app.use(views(path.join(path.resolve(), '/src/views'), {
   extension: 'ejs'
 }))
 
@@ -43,11 +45,11 @@ app.use(views(require('path').join(__dirname, '/views'), {
 // ]))
 
 // routes
-app.use(indexRoutes.routes(), indexRoutes.allowedMethods())
+app.use(indexRouter.routes(), indexRouter.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
   console.error('server error', err, ctx)
 })
 
-module.exports = app
+export { app }

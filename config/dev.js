@@ -1,4 +1,4 @@
-module.exports = {
+export const dev = {
   env: 'dev',
   port: 3000,
   mysql_config: {

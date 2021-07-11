@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
-const config = require('../../config')
-const mysql = require('mysql')
+import { config } from '../../config.js'
+import mysql from 'mysql'
 
 const mysqlConfig = {
   host: config.mysql_config.host,

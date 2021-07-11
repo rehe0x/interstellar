@@ -1,4 +1,4 @@
-const userDao = require('../dao/user')
+import { user as userDao } from '../dao/user.js'
 class UserService {
   static async add (user) {
     const rest = await userDao.create(user)
@@ -35,4 +35,4 @@ class UserService {
   }
 }
 
-module.exports = UserService
+export { UserService }

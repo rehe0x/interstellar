@@ -1,6 +1,7 @@
 
-const { Sequelize, DataTypes, Model } = require('sequelize')
-const config = require('../../config')
+import { config } from '../../config/index.js'
+import _Sequelize from 'sequelize'
+const { Sequelize, DataTypes, Model } = _Sequelize
 
 const options = {
   dialect: 'mysql', // 数据库类型
@@ -32,7 +33,7 @@ sequelize.authenticate().then(() => {
   console.log('连接失败')
 })
 
-module.exports = {
+export {
   sequelize,
   DataTypes,
   Model
