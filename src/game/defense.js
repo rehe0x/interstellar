@@ -8,7 +8,7 @@ module.exports = {
     轰炸机 对这种船舰的快速射击：20`,
     image: '',
     requeriments: {
-      hangar: 1
+      building_hangar: 1,
     },
     pricelist: {
       metal: 2000,
@@ -35,7 +35,9 @@ module.exports = {
                   死星 对这种船舰的快速射击: 200`,
     image: '',
     requeriments: {
-      hangar: 1
+      building_hangar: 2,
+      research_energy_tech: 1,
+      research_laser_tech: 3
     },
     pricelist: {
       metal: 2000,
@@ -61,7 +63,9 @@ module.exports = {
                   死星 对这种船舰的快速射击: 200`,
     image: '',
     requeriments: {
-      hangar: 1
+      building_hangar: 4,
+      research_energy_tech: 3,
+      research_laser_tech: 6
     },
     pricelist: {
       metal: 2000,
@@ -87,7 +91,10 @@ module.exports = {
                   你可以造的第一管大炮。对抗巡洋舰和重型战斗机很有效，如果要对付战舰和毁灭者你应该使用离子炮。 对付炮灰部队几乎是无用的。当你有炮灰支持的时候才使用磁能炮`,
     image: '',
     requeriments: {
-      hangar: 1
+      building_hangar: 6, 
+      research_energy_tech: 6,
+      research_military_tech: 3,
+      research_defence_tech: 1
     },
     pricelist: {
       metal: 2000,
@@ -114,7 +121,8 @@ module.exports = {
                   通常大部分的玩家都会忽略这项设施，因为它的火力不够强。但是它的护盾是它的最大优势。对于轻型战斗机、重型战斗机的攻击几乎是免疫，可以吸收许多伤害，让你的其它更大管的炮有更多时间对付敌人`,
     image: '',
     requeriments: {
-      hangar: 1
+      building_hangar: 6,
+      research_ionic_tech: 4
     },
     pricelist: {
       metal: 2000,
@@ -140,7 +148,8 @@ module.exports = {
                   是的，这就是天杀的大肥枪。对付所有大船都很有用。巡洋舰？一发就可以炸成碎片。战列舰？一发让它就蒸发成怡人的气体。毁灭者？ 好吧，它可以活过一发因为毁灭者看起来令人愉快。当你要对抗大船的时候就使用离子炮，对付小船可以说是没用的。如果离子炮没有躲在一些导弹或是轻雷后面，那只要几台轻型战斗机就可以搞定他`,
     image: '',
     requeriments: {
-      hangar: 1
+      building_hangar: 8,
+      research_buster_tech: 7
     },
     pricelist: {
       metal: 2000,
@@ -165,7 +174,8 @@ module.exports = {
                   在后期人们还能将造大型的防护罩，它更加的强大。每种防护罩，在星球上只能各设置一个。在战斗结束后,被摧毁的防御设施有70%的机会被修好`,
     image: '',
     requeriments: {
-      hangar: 1
+      building_hangar: 1,
+      research_defence_tech: 2
     },
     pricelist: {
       metal: 2000,
@@ -190,7 +200,8 @@ module.exports = {
                   在战斗结束后,被摧毁的防御设施有70%的机会被修好`,
     image: '',
     requeriments: {
-      hangar: 1
+      building_hangar: 6,
+      research_defence_tech: 6
     },
     pricelist: {
       metal: 2000,
@@ -215,7 +226,7 @@ module.exports = {
     用来拦截敌人的星际导弹，自动会发射，它会是唯一防御星际导弹的东西，以1:1击落星际导弹`,
     image: '',
     requeriments: {
-      hangar: 1
+      building_silo: 2
     },
     pricelist: {
       metal: 2000,
@@ -242,7 +253,7 @@ module.exports = {
                   时间：对同一太阳系发射需要30秒，之后每跨一个太阳系，飞行时间增加60秒不能发射飞弹到射程之外。星际导弹可以催毁目标星球的炮台，而不会有70%的修复`,
     image: '',
     requeriments: {
-      hangar: 1
+      building_silo: 4
     },
     pricelist: {
       metal: 2000,

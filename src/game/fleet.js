@@ -5,7 +5,10 @@ module.exports = {
     about: '当脉冲引擎研发到5级时,小型运输舰将会换装此型引擎,并增加速度',
     description: '小型运输舰的大小和战斗机差不多,但是它们没有高效率的引擎和军用装备,而是把空间挪出来做为货仓. 小型运输舰可以装载5000单位的资源.大型运输舰的搭载量是它的五倍,装甲,防护盾和引擎也都有提升. 由于火力薄弱,运输舰需要其它的船舰护航',
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 2,
+      research_combustion_tech: 2
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -37,7 +40,10 @@ module.exports = {
                   死星 对这种船舰的快速射击: 250 
                   战斗巡洋舰 对这种船舰的快速射击：3'`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 4,
+      research_combustion_tech: 6
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -69,7 +75,10 @@ module.exports = {
                   快速射击对 太阳能卫星：5
                   巡洋舰 对这种船舰的快速射击：6`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 1,
+      research_combustion_tech: 1
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -102,7 +111,11 @@ module.exports = {
                   死星 对这种船舰的快速射击: 100 
                   战斗巡洋舰 对这种船舰的快速射击：4`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 1,
+      research_shield_tech: 2,
+      research_impulse_motor_tech: 2
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -137,7 +150,11 @@ module.exports = {
                   战斗巡洋舰 对这种船舰的快速射击：4
                   这是你第一台可以称为真正的武力的船，他对飞弹发射器跟轻型战斗机的高抵抗性，很适合用来辗级数比你低的人，后期也可以用他对抗轻型战斗机海。 你能建造的第一个”大”船。因为有快速射击的能力，非常适合拿来消灭炮灰部队，例如轻型战斗机和导弹。拥有最高的基本速度。在后期的游戏中可以拿来对抗敌人的炮灰。不擅长对付毁灭者和战列`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 5,
+      research_impulse_motor_tech: 4,
+      research_ionic_tech: 2
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -161,9 +178,9 @@ module.exports = {
     }
   },
   fleet_battle_ship: {
-    name: '战舰',
+    name: '战列舰',
     about: '当脉冲引擎研发到5级时,小型运输舰将会换装此型引擎,并增加速度',
-    description: `战舰是舰队的脊梁。它的重型防护，高速，超大的装载空间使得这种船舰被公认为是最优秀的船舰。巨大的货物仓也使得战列舰适于进行掠夺任务。
+    description: `战列舰是舰队的脊梁。它的重型防护，高速，超大的装载空间使得这种船舰被公认为是最优秀的船舰。巨大的货物仓也使得战列舰适于进行掠夺任务。
                   快速射击对 间谍卫星: 5
                   快速射击对 太阳能卫星: 5
                   死星 对这种船舰的快速射击: 30 
@@ -171,7 +188,10 @@ module.exports = {
                   真正的攻击火力，他的防护，装载量与攻击力，是武装舰队不可或缺的，而且他不用重氢就能量产，常跟轻型战斗机一起搭档。 
                   Ogame中最常用到的船舰。快速、便宜（就他的战斗能力来说）、威力强大。对抗炮灰的时候没有快速射击能力是它的唯一缺点。所以需要建立一支混编的舰队，以战列舰为战斗基础。当你攻击大目标的时候，最佳的使用方法是放在炮灰后面。不需要重氢就能建造，掠夺战法的完美选择`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 7,
+      research_hyperspace_motor_tech: 4
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -202,7 +222,10 @@ module.exports = {
                   快速射击对 太阳能卫星: 5
                   死星 对这种船舰的快速射击: 250`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 4,
+      research_impulse_motor_tech: 3
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -233,7 +256,11 @@ module.exports = {
                   快速射击对 太阳能卫星: 5
                   死星 对这种船舰的快速射击: 250`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 4,
+      research_combustion_tech: 6,
+      research_defence_tech: 2
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -281,7 +308,11 @@ module.exports = {
                   Z>=7 获得目标技术情报 
                   防御间谍比率是说，你间谍人或被人间谍时，卫星被打下的机率，该机率跟目标的驻守舰队数量成正比，跟派出的间谍卫星数成正比，以及你跟对方的间谍技术差成正比，详细的公式还没有发现。 `,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 3,
+      research_combustion_tech: 4,
+      research_spy_tech: 2
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -318,7 +349,11 @@ module.exports = {
                   终极制压用攻城兵器，对大部分炮台都有相当高的射速，但是其短航程，低速度及相当高的燃料费，令人诟病，所以目的偏向是制压玩家的防御用，而不是抢人。即使能换装引擎，航程还是受到相当限制。 
                   用来消灭防御的大家伙，是这玩意设计时的主要概念。但是并不真的是这样。不是说它没办法消灭防御建筑，而是因为它太慢，消耗太多重氢在飞行和建造上，也不适合用在掠夺战术，只有在压制玩家的时候才有用。你需要一大票的导弹舰才能消灭一整群的防御建筑，如果使用和那些防御总合造价相同的战列来攻击会比较划算。导弹舰也只对小型的防御有效（因为有快速射击），中子炮，导弹发射器，轻雷重雷。对抗高斯炮和离子炮的时候没有快速射击`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 8,
+      research_impulse_motor_tech: 6,
+      research_buster_tech: 5
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -358,7 +393,9 @@ module.exports = {
                   毁灭者 对这种船舰的快速射击：5
                   战斗巡洋舰 对这种船舰的快速射击：5`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 1,
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -406,7 +443,12 @@ module.exports = {
                   正如星战里的死星一样，终极毁灭兵器，可是他可不会被一台战机用原力锁定投弹就灭了，其超高的防护与攻击力还有对抗各种船舰与炮台的优越性能，堪称OGAME之王，不过速度慢到爆，而且造价奇高就是。 终极的船舰！ 但是在最新版中被削弱很多。 
                   原文笔者不会在此时建造它们。死星只有在至少集结10台以上的时候才会强大。当躲在炮灰后面的时候能发挥最大威力。对抗每样东西都有快速射击能力，除了离子炮`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 12,
+      research_hyperspace_motor_tech: 7,
+      research_hyperspace_tech: 6,
+      research_graviton_tech: 1
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -443,7 +485,12 @@ module.exports = {
                   毁灭者 对这种船舰的快速射击: 2 
                   死星 对这种船舰的快速射击: 15 `,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 8,
+      research_hyperspace_motor_tech: 5,
+      research_hyperspace_tech: 5,
+      research_laser_tech: 12
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,
@@ -477,7 +524,11 @@ module.exports = {
                   死星 对这种船舰的快速射击: 5 
                   唯一能与死星抗衡的船只，也是除死星外能抵抗等离子炮那一击必杀的船，对轻雷的高射速也很可怕，不过航程跟航速似乎也不甚理想`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_hangar: 9,
+      research_hyperspace_motor_tech: 6,
+      research_hyperspace_tech: 5
+    },
     pricelist: {
       metal: 2000,
       crystal: 2000,

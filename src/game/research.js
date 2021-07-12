@@ -1,6 +1,6 @@
 module.exports = {
   research_spy_tech: {
-    name: '侦探技术',
+    name: '空间探测技术',
     about: '',
     description: `星球探测技术主要是研究资料感应器和智慧型装置与知识，以供探测资料并防止外来的探测器进行探测。这项技术的等级越高，就能从其他帝国的行星获得更多资料。探测器探测资料的多寡，主要取决于自己和对手的探测技术的差距。自己的技术等级越高，就能获得更多资料且被发现的机率也越低。发送的探测器越多，就能回传更多讯息－但此举也大大提高了被发现的机率。提升空间探测技术也可以得知关于接近自己星球的舰队资料
     － 等级2可以看到舰队总数；
@@ -10,7 +10,7 @@ module.exports = {
     `,
     image: '',
     requeriments: {
-      laboratory: 3
+      building_laboratory: 3
     },
     pricelist: {
       metal: 2000,
@@ -26,7 +26,7 @@ module.exports = {
     description: '计算机技术研究用来提高计算机的计算能力。研究出更高性能更有效的控制系统。每一等级的提升都增强了运算能力和资料的平行处理能力。计算机技术的提升能指挥更多的舰队。每次出发的舰队越多，能攻击的也就越多，带回的资源也越多，当然这项技术也被商人利用，因为他能让更多的商业舰队出发',
     image: '',
     requeriments: {
-      laboratory: 3
+      building_laboratory: 1
     },
     pricelist: {
       metal: 2000,
@@ -43,7 +43,7 @@ module.exports = {
     Ogame 的技术都是提升基础值，也就是一级的时候为 10%，二级的时候为基础值增加20%。`,
     image: '',
     requeriments: {
-      laboratory: 3
+      building_laboratory: 4
     },
     pricelist: {
       metal: 2000,
@@ -60,7 +60,8 @@ module.exports = {
     Ogame 的技术都是提升基础值，也就是一级的时候为 10%，二级的时候为基础值增加20%`,
     image: '',
     requeriments: {
-      laboratory: 3
+      research_energy_tech: 3,
+      building_laboratory: 6
     },
     pricelist: {
       metal: 2000,
@@ -77,7 +78,7 @@ module.exports = {
                   Ogame 的技术都是提升基础值，也就是一级的时候为 10%，二级的时候为基础值增加20%。`,
     image: '',
     requeriments: {
-      laboratory: 3
+      building_laboratory: 2
     },
     pricelist: {
       metal: 2000,
@@ -93,7 +94,7 @@ module.exports = {
     description: '能量技术致力于发展能量系统和能量储存技术的开发和研究：当技术等级提升得越高，你的能源系统便越有效率。从能量技术上获得的知识将成为研究其它特定技术的基础。',
     image: '',
     requeriments: {
-      laboratory: 3
+      building_laboratory: 1
     },
     pricelist: {
       metal: 2000,
@@ -110,7 +111,9 @@ module.exports = {
                   超空间推动的前置作业，一样点基础数值就行了`,
     image: '',
     requeriments: {
-      laboratory: 3
+      research_energy_tech: 5,
+      research_defence_tech: 5,
+      building_laboratory: 7
     },
     pricelist: {
       metal: 2000,
@@ -127,7 +130,8 @@ module.exports = {
                   每提升一个等级可以在基础值上增加10%的速度：小型和大型运输舰，轻型战舰，回收舰和探测器`,
     image: '',
     requeriments: {
-      laboratory: 3
+      research_energy_tech: 1,
+      building_laboratory: 1
     },
     pricelist: {
       metal: 2000,
@@ -145,7 +149,8 @@ module.exports = {
                 关系到你的巡洋、重型战斗机、殖民飞船跟导弹舰的速度，每升一级加基本速度的20%，最少点到3(殖民飞船底限)，不过点到的话5，可以让你的小型运输机换引擎(非法改装!?) 速度飙超快，很诱人的一件事`,
     image: '',
     requeriments: {
-      laboratory: 3
+      research_energy_tech: 1,
+      building_laboratory: 2
     },
     pricelist: {
       metal: 2000,
@@ -162,7 +167,8 @@ module.exports = {
     关系到你战列、毁灭者、战斗巡洋舰跟死星的速度，每升一级加基本速度的30%，最少点到4，不过点到8可以让你的导弹舰换引擎，速度一样会有所提升`,
     image: '',
     requeriments: {
-      laboratory: 3
+      research_hyperspace_tech: 3,
+      building_laboratory: 7
     },
     pricelist: {
       metal: 2000,
@@ -179,7 +185,8 @@ module.exports = {
                 需求：研究实验室（等级1）能量技术（等级2）`,
     image: '',
     requeriments: {
-      laboratory: 3
+      building_laboratory: 1,
+      research_energy_tech: 2
     },
     pricelist: {
       metal: 2000,
@@ -196,7 +203,9 @@ module.exports = {
                 中子技术完全不会影响你的攻击火力，所以不要以为点高会变强，点他的目的，只有巡洋跟导弹舰的前置作业吧，也是够用就好`,
     image: '',
     requeriments: {
-      laboratory: 3
+      building_laboratory: 4,
+      research_laser_tech: 5,
+      research_energy_tech: 4
     },
     pricelist: {
       metal: 2000,
@@ -213,7 +222,10 @@ module.exports = {
                 等离子技术完全不会影响你的攻击火力，所以不要以为点高会变强，用来盖离子炮跟导弹舰的技术，相当诱人而且昂贵，够用就好`,
     image: '',
     requeriments: {
-      laboratory: 3
+      building_laboratory: 5,
+      research_energy_tech: 8,
+      research_laser_tech: 10,
+      research_ionic_tech: 5
     },
     pricelist: {
       metal: 2000,
@@ -235,7 +247,9 @@ module.exports = {
                 但是，如果你进行研究的那行星研究所等级不到你要研究科技的要求，就不能研究。 举个例子，如超空间推动要7级研究所才能研究。而你己经有了这个科技一级，而你也有二个行星的研究所等级是6、5，相加是11，超过7级。但你还是不能研究超空间推动。 而当你把6级的升级成7级之后，你就可以研究超空间推动，但是还是以7级研究所等级来研究。 你必需把另一个行星的研究所也升级到7级，这样就会以7+7 = 14级来进行研究。`,
     image: '',
     requeriments: {
-      laboratory: 3
+      building_laboratory: 10,
+      research_computer_tech: 8,
+      research_hyperspace_tech: 8
     },
     pricelist: {
       metal: 2000,
@@ -248,11 +262,14 @@ module.exports = {
   research_expedition_tech: {
     name: '远征科技',
     about: '',
-    description: `该技术的货物中含有各种技术扫描，使不同大小的船只须设有研究模块。这些包含了一个数据库和一个小型流动实验室。其中包括研究舱在紧急情况下为了不危及安全的船只，
-                  研究模块是配备自己的能源座和发电机能源领域`,
+    description: `远征技术1级，可以发一个远征舰队；远征技术4级，可以发2个远征舰队；远征技术9级，可以发3个远征舰队；远征技术16级，可以发4个远征舰队；
+                  远征科技每提升2级该科技，可提供一个额外的行星殖民可能性，初期除母星外可不受远征科技的影响，无限制额外殖民8颗殖民星，殖民第9颗殖民星需将远征科技等级提升至9*2=18级。`,
     image: '',
     requeriments: {
-      laboratory: 3
+      building_laboratory: 3,
+      research_computer_tech: 4,
+      research_impulse_motor_tech: 3
+      
     },
     pricelist: {
       metal: 2000,
@@ -270,7 +287,7 @@ module.exports = {
                 引力研究的标准配置：最高温度大于120的一号星球、研究实验室(等级 12)、太阳能卫星 6000 枚。研究实验室(等级 12)需要 409,600金属、819,200晶体、409,600重氢。太阳能卫星 6000 枚需要 12,000,000晶体、3,000,000重氢。当达到资源需求的时候，点下去瞬间研究完成`,
     image: '',
     requeriments: {
-      laboratory: 3
+      building_laboratory: 12,
     },
     pricelist: {
       metal: 2000,

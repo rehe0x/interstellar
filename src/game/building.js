@@ -1,4 +1,4 @@
-module.exports = {
+export const building = {
   building_metal_mine: {
     name: '金属矿',
     about: '金属矿提供了帝国所需的基本资源，而且可用来建造建筑物和飞船',
@@ -79,7 +79,10 @@ module.exports = {
                   核电厂的能量生产是这样计算的：
                   30 * [核电厂等级] * (1,05 + [能量科技等级] * 0,01) ^ [核电厂等级]`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_deuterium_sintetizer: 5,
+      research_energy_tech: 3
+    },
     pricelist: {
       metal: 60,
       crystal: 15,
@@ -115,7 +118,10 @@ module.exports = {
     about: '',
     description: '纳米机器人事实上是一些平均大小为纳米等级的微型机器人。这些小机器人经由程序设定及网络化以分工合作的方式来完成建筑工作，他们能带来非凡的效率。纳米机器人进行的是分子等级的工作，在生产飞船时有着无穷的妙处。将他们留在飞船的构造中，只要有足够的能量和资源，他们就可以用来进行损害控管和修复工作。',
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_robot_factory: 10,
+      research_computer_tech: 10
+    },
     pricelist: {
       metal: 60,
       crystal: 15,
@@ -133,7 +139,9 @@ module.exports = {
     about: '',
     description: '造船厂可以建造所有的太空船和星球防御设施。当造船厂规模扩大，它就能生产用途范围更广、速度更快的飞船。如果星球上有纳米机器人工厂，生产飞船的时间将大幅度减少。',
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_robot_factory: 2
+    },
     pricelist: {
       metal: 60,
       crystal: 15,
@@ -224,7 +232,10 @@ module.exports = {
     description: `过去在开发星系里的行星时，经常遇到可用空间不足的问题。传统的建筑学和工程学无法满足更多空间的需求。一小群高能物理学家和纳米技术人员最终找到了解决办法：地形改造，使用大量的能量甚至能创造出一整块大陆。在这个建筑物里生产著特别设计的奈米机器人，以确保创造出的陆块的可用性和品质。
                   注意：当你建造了地形改造器后，它便不能被拆除。`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_nano_factory: 1,
+      research_energy_tech: 12
+    },
     pricelist: {
       metal: 60,
       crystal: 15,
@@ -281,7 +292,9 @@ module.exports = {
     description: `高解析度的感应阵列被用来扫瞄巨量的频谱。高性能电脑组合空间波动的微小变化，能感应到在遥远星系的舰队的运动情况。由于系统相当复杂，每次扫瞄都需要大量(5000)重氢以提供所需能量。
                   扫描距离=等级*等级-1`,
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_mondbasis: 1
+    },
     pricelist: {
       metal: 60,
       crystal: 15,
@@ -299,7 +312,10 @@ module.exports = {
     about: '',
     description: '空间传送点是巨大的传输工具，能够使庞大的舰队瞬间穿越星系。空间传送点因为运用了最尖端的科技，不需要任何能量即可完成工作。',
     image: '',
-    requeriments: {},
+    requeriments: {
+      building_mondbasis: 1,
+      research_hyperspace_tech: 7
+    },
     pricelist: {
       metal: 60,
       crystal: 15,
