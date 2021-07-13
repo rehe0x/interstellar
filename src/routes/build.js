@@ -1,10 +1,10 @@
 import joi from 'joi'
 import { validation } from '../handler/validation.js'
-import { UserController } from '../rehe/controller/user.js'
+import { BuildController } from '../rehe/controller/build.js'
 import Router from 'koa-router'
 
 const routers = new Router()
-routers.prefix('/user')
+routers.prefix('/build')
 
 const v = {
   add: {
@@ -19,10 +19,6 @@ const v = {
   }
 }
 
-routers.get('/login', UserController.login)
-routers.post('/add', validation(v.add), UserController.add)
-routers.get('/find', UserController.find)
-routers.get('/findPage', UserController.findPage)
-routers.get('/findPageQuery', UserController.findPageQuery)
-
+routers.get('/getBuilding', BuildController.getBuilding)
+routers.get('/getResearch', BuildController.getResearch)
 export { routers }

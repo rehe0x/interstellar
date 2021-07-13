@@ -1,4 +1,6 @@
-module.exports = {
+import { deepFreeze } from "../../lib/utils.js";
+
+const researchs = {
   research_spy_tech: {
     name: '空间探测技术',
     about: '',
@@ -13,7 +15,7 @@ module.exports = {
       building_laboratory: 3
     },
     pricelist: {
-      metal: 2000,
+      metal: 200,
       crystal: 1000,
       deuterium: 200,
       energy: 0,
@@ -29,9 +31,9 @@ module.exports = {
       building_laboratory: 1
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      metal: 0,
+      crystal: 400,
+      deuterium: 600,
       energy: 0,
       factor: 2
     }
@@ -46,9 +48,9 @@ module.exports = {
       building_laboratory: 4
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      metal: 800,
+      crystal: 200,
+      deuterium: 0,
       energy: 0,
       factor: 2
     }
@@ -64,9 +66,9 @@ module.exports = {
       building_laboratory: 6
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      metal: 200,
+      crystal: 600,
+      deuterium: 0,
       energy: 0,
       factor: 2
     }
@@ -81,9 +83,9 @@ module.exports = {
       building_laboratory: 2
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      metal: 1000,
+      crystal: 0,
+      deuterium: 0,
       energy: 0,
       factor: 2
     }
@@ -97,9 +99,9 @@ module.exports = {
       building_laboratory: 1
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      metal: 0,
+      crystal: 800,
+      deuterium: 400,
       energy: 0,
       factor: 2
     }
@@ -116,9 +118,9 @@ module.exports = {
       building_laboratory: 7
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      metal: 0,
+      crystal: 4000,
+      deuterium: 2000,
       energy: 0,
       factor: 2
     }
@@ -134,9 +136,9 @@ module.exports = {
       building_laboratory: 1
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      metal: 400,
+      crystal: 0,
+      deuterium: 600,
       energy: 0,
       factor: 2
     }
@@ -154,8 +156,8 @@ module.exports = {
     },
     pricelist: {
       metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      crystal: 4000,
+      deuterium: 6000,
       energy: 0,
       factor: 2
     }
@@ -171,9 +173,9 @@ module.exports = {
       building_laboratory: 7
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      metal: 10000,
+      crystal: 20000,
+      deuterium: 6000,
       energy: 0,
       factor: 2
     }
@@ -189,9 +191,9 @@ module.exports = {
       research_energy_tech: 2
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      metal: 200,
+      crystal: 100,
+      deuterium: 0,
       energy: 0,
       factor: 2
     }
@@ -208,9 +210,9 @@ module.exports = {
       research_energy_tech: 4
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      metal: 1000,
+      crystal: 300,
+      deuterium: 100,
       energy: 0,
       factor: 2
     }
@@ -229,8 +231,8 @@ module.exports = {
     },
     pricelist: {
       metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      crystal: 4000,
+      deuterium: 1000,
       energy: 0,
       factor: 2
     }
@@ -252,9 +254,9 @@ module.exports = {
       research_hyperspace_tech: 8
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      metal: 240000,
+      crystal: 400000,
+      deuterium: 160000,
       energy: 0,
       factor: 2
     }
@@ -272,9 +274,9 @@ module.exports = {
       
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
+      metal: 4000,
+      crystal: 8000,
+      deuterium: 4000,
       energy: 0,
       factor: 2
     }
@@ -290,11 +292,16 @@ module.exports = {
       building_laboratory: 12,
     },
     pricelist: {
-      metal: 2000,
-      crystal: 1000,
-      deuterium: 200,
-      energy: 0,
-      factor: 2
+      metal: 0,
+      crystal: 0,
+      deuterium: 0,
+      energy: 300000,
+      factor: 3
     }
   }
+}
+
+const research = deepFreeze(researchs);
+export {
+  research
 }

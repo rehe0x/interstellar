@@ -1,4 +1,24 @@
-module.exports = {
+
+import { deepFreeze } from "../../lib/utils.js";
+
+const _sd = {
+  fleet_metal_mine: 1,
+  fleet_big_ship_cargo: 1,
+  fleet_light_hunter: 1,
+  fleet_heavy_hunter: 1,
+  fleet_crusher: 1,
+  fleet_battle_ship: 1,
+  fleet_colonizer: 1,
+  fleet_recycler: 1,
+  fleet_spy_sonde: 1,
+  fleet_bomber_ship: 1,
+  fleet_solar_satelit: 0,
+  fleet_destructor: 1,
+  fleet_dearth_star: 1,
+  fleet_battleship: 1
+}
+
+const defenses = {
   defense_misil_launcher: {
     name: '火箭发射装置',
     about: '',
@@ -17,13 +37,13 @@ module.exports = {
       energy: 0,
       factor: 1
     },
-    attribute: {
+    combatcaps: {
       shield: 20,
-      attack: 10
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+      attack: 80,
+      sd: {
+        ..._sd,
+        fleet_spy_sonde: 5
+      }
     }
   },
   defense_small_laser: {
@@ -40,19 +60,19 @@ module.exports = {
       research_laser_tech: 3
     },
     pricelist: {
-      metal: 2000,
-      crystal: 0,
+      metal: 1500,
+      crystal: 500,
       deuterium: 0,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      shield: 20,
-      attack: 10
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      shield: 25,
+      attack: 100,
+      sd: {
+        ..._sd,
+        fleet_spy_sonde: 5
+      }
     }
   },
   defense_big_laser: {
@@ -68,23 +88,23 @@ module.exports = {
       research_laser_tech: 6
     },
     pricelist: {
-      metal: 2000,
-      crystal: 0,
+      metal: 6000,
+      crystal: 2000,
       deuterium: 0,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      shield: 20,
-      attack: 10
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      shield: 100,
+      attack: 250,
+      sd: {
+        ..._sd,
+        fleet_spy_sonde: 5
+      }
     }
   },
   defense_gauss_canyon: {
-    name: '磁能炮',
+    name: '高斯炮',
     about: '',
     description: `和先进的核聚变技术，新型能量来源，超空间技术和进步的合金治炼技术相比，投射武器简直就是快报废的老古董。但也因为能量技术的进步，让它找回自己在新世纪中的定位：它的原理早在20和21世纪就被熟知：粒子加速。磁能炮就是一座大型的粒子加速器，成吨重的炮弹被巨大的电磁场加速，这些炮弹的出膛速度是如此之高，它燃尽了周遭空气中的尘埃，后座力撼动大地。它的破坏力足以击穿任何现代的装甲，防护盾被击穿也不是少数例子。有时甚至能把目标直接打个对穿。
                   死星 对这种船舰的快速射击: 50
@@ -97,19 +117,19 @@ module.exports = {
       research_defence_tech: 1
     },
     pricelist: {
-      metal: 2000,
-      crystal: 0,
-      deuterium: 0,
+      metal: 20000,
+      crystal: 15000,
+      deuterium: 2000,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      shield: 20,
-      attack: 10
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      shield: 200,
+      attack: 1100,
+      sd: {
+        ..._sd,
+        fleet_spy_sonde: 5
+      }
     }
   },
   defense_ionic_canyon: {
@@ -126,22 +146,22 @@ module.exports = {
     },
     pricelist: {
       metal: 2000,
-      crystal: 0,
+      crystal: 6000,
       deuterium: 0,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      shield: 20,
-      attack: 10
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      shield: 500,
+      attack: 150,
+      sd: {
+        ..._sd,
+        fleet_spy_sonde: 5
+      }
     }
   },
   defense_buster_canyon: {
-    name: '等离子塔',
+    name: '等离子炮',
     about: '',
     description: `激光技术目前已经趋向完美，离子技术也将到达它的终点站，这些现存的武器系统似乎再也没有改进的余地。但是人们想到了一个主意：也就是把两种系统合而为一。激光被用来把重氢加热到百万度的高温，再利用研发离子技术所获得的电磁场知识，来包裹这团可怕的等离子团。这青蓝色的等离子球在飞往目标的途中看起来是如此的赏心悦目，但是在太空船上的船员看来，这看来温和的等离子团代表的是毁灭与死亡。等离子武器被看作是最可怕的武器，当然这项技术的代价也是高昂的。
                   相对于死星的终极防御兵器，不过需要大量的轻雷掩护。
@@ -152,19 +172,19 @@ module.exports = {
       research_buster_tech: 7
     },
     pricelist: {
-      metal: 2000,
-      crystal: 0,
-      deuterium: 0,
+      metal: 50000,
+      crystal: 50000,
+      deuterium: 30000,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      shield: 20,
-      attack: 10
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      shield: 300,
+      attack: 3000,
+      sd: {
+        ..._sd,
+        fleet_spy_sonde: 5
+      }
     }
   },
   defense_small_protection_shield: {
@@ -178,19 +198,19 @@ module.exports = {
       research_defence_tech: 2
     },
     pricelist: {
-      metal: 2000,
-      crystal: 0,
+      metal: 10000,
+      crystal: 10000,
       deuterium: 0,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      shield: 20,
-      attack: 10
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      shield: 2000,
+      attack: 1,
+      sd: {
+        ..._sd,
+        fleet_spy_sonde: 5
+      }
     }
   },
   defense_big_protection_shield: {
@@ -204,19 +224,19 @@ module.exports = {
       research_defence_tech: 6
     },
     pricelist: {
-      metal: 2000,
-      crystal: 0,
+      metal: 50000,
+      crystal: 50000,
       deuterium: 0,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      shield: 20,
-      attack: 10
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      shield: 2000,
+      attack: 1,
+      sd: {
+        ..._sd,
+        fleet_spy_sonde: 5
+      }
     }
   },
   defense_interceptor_misil: {
@@ -229,19 +249,16 @@ module.exports = {
       building_silo: 2
     },
     pricelist: {
-      metal: 2000,
-      crystal: 0,
+      metal: 8000,
+      crystal: 2000,
       deuterium: 0,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      shield: 20,
-      attack: 10
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      shield: 1,
+      attack: 1,
+      sd: {}
     }
   },
   defense_interplanetary_misil: {
@@ -256,19 +273,21 @@ module.exports = {
       building_silo: 4
     },
     pricelist: {
-      metal: 2000,
-      crystal: 0,
-      deuterium: 0,
+      metal: 12500,
+      crystal: 2500,
+      deuterium: 10000,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      shield: 20,
-      attack: 10
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      shield: 1,
+      attack: 12000,
+      sd: {}
     }
   }
+}
+
+const defense = deepFreeze(defenses);
+export {
+  defense
 }

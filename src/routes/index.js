@@ -1,8 +1,10 @@
 import Router from 'koa-router'
-import { userRouter } from './users.js'
+import { routers as userRouter } from './users.js'
+import { routers as buildRouter } from './build.js'
 
 const indexRouter = new Router()
 const apiRouter = new Router()
+apiRouter.prefix('/api')
 
 indexRouter.get('/', async (ctx, next) => {
   await ctx.render('index', {
@@ -10,8 +12,15 @@ indexRouter.get('/', async (ctx, next) => {
   })
 })
 
-apiRouter.prefix('/api')
-apiRouter.use(userRouter.routes(), userRouter.allowedMethods())
-indexRouter.use(apiRouter.routes(), apiRouter.allowedMethods())
+indexRouter.get('/build', async (ctx, next) => {
+  ctx.body = {
 
+  }
+})
+// 注册路由 》 api
+apiRouter.use(userRouter.routes(), userRouter.allowedMethods())
+apiRouter.use(buildRouter.routes(), buildRouter.allowedMethods())
+
+// api > 主路由
+indexRouter.use(apiRouter.routes(), apiRouter.allowedMethods())
 export { indexRouter }

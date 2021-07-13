@@ -1,4 +1,6 @@
-export const building = {
+import { deepFreeze } from "../../lib/utils.js";
+
+const buildings = {
   building_metal_mine: {
     name: '金属矿',
     about: '金属矿提供了帝国所需的基本资源，而且可用来建造建筑物和飞船',
@@ -10,7 +12,7 @@ export const building = {
       crystal: 15,
       deuterium: 0,
       energy: 0,
-      factor: 3 / 2
+      factor: 1.5
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -24,14 +26,14 @@ export const building = {
     image: '',
     requeriments: {},
     pricelist: {
-      metal: 60,
-      crystal: 15,
+      metal: 48,
+      crystal: 24,
       deuterium: 0,
       energy: 0,
-      factor: 3 / 2
+      factor: 1.6
     },
     formulas: {
-      yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
+      yield: (BuildLevel, BuildLevelFactor) => (20 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
       energy: (BuildLevel, BuildLevelFactor) => (10 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor)
     }
   },
@@ -42,15 +44,15 @@ export const building = {
     image: '',
     requeriments: {},
     pricelist: {
-      metal: 60,
-      crystal: 15,
+      metal: 225,
+      crystal: 75,
       deuterium: 0,
       energy: 0,
-      factor: 3 / 2
+      factor: 1.5
     },
     formulas: {
-      yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
-      energy: (BuildLevel, BuildLevelFactor) => (10 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor)
+      yield: (BuildLevel, BuildLevelFactor, BuildTemp) => ((10 * BuildLevel * (1.1 ** BuildLevel)) * (-0.002 * BuildTemp + 1.28)) * (0.1 * BuildLevelFactor),
+      energy: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor)
     }
   },
   building_solar_plant: {
@@ -60,15 +62,14 @@ export const building = {
     image: '',
     requeriments: {},
     pricelist: {
-      metal: 60,
-      crystal: 15,
+      metal: 75,
+      crystal: 30,
       deuterium: 0,
       energy: 0,
-      factor: 3 / 2
+      factor: 1.5
     },
     formulas: {
-      yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
-      energy: (BuildLevel, BuildLevelFactor) => (10 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor)
+      energy: (BuildLevel, BuildLevelFactor) => (20 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor)
     }
   },
   building_fusion_plant: {
@@ -84,15 +85,15 @@ export const building = {
       research_energy_tech: 3
     },
     pricelist: {
-      metal: 60,
-      crystal: 15,
-      deuterium: 0,
+      metal: 900,
+      crystal: 360,
+      deuterium: 180,
       energy: 0,
-      factor: 3 / 2
+      factor: 1.8
     },
     formulas: {
-      yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
-      energy: (BuildLevel, BuildLevelFactor) => (10 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor)
+      yield: (BuildLevel, BuildLevelFactor) => -(10 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
+      energy: (BuildLevel, BuildLevelFactor) => (50 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor)
     }
   },
   building_robot_factory: {
@@ -102,11 +103,11 @@ export const building = {
     image: '',
     requeriments: {},
     pricelist: {
-      metal: 60,
-      crystal: 15,
-      deuterium: 0,
+      metal: 400,
+      crystal: 120,
+      deuterium: 200,
       energy: 0,
-      factor: 3 / 2
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -123,11 +124,11 @@ export const building = {
       research_computer_tech: 10
     },
     pricelist: {
-      metal: 60,
-      crystal: 15,
-      deuterium: 0,
+      metal: 1000000,
+      crystal: 500000,
+      deuterium: 100000,
       energy: 0,
-      factor: 3 / 2
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -143,11 +144,11 @@ export const building = {
       building_robot_factory: 2
     },
     pricelist: {
-      metal: 60,
-      crystal: 15,
-      deuterium: 0,
+      metal: 400,
+      crystal: 200,
+      deuterium: 100,
       energy: 0,
-      factor: 3 / 2
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -161,11 +162,11 @@ export const building = {
     image: '',
     requeriments: {},
     pricelist: {
-      metal: 60,
-      crystal: 15,
+      metal: 2000,
+      crystal: 0,
       deuterium: 0,
       energy: 0,
-      factor: 3 / 2
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -179,11 +180,11 @@ export const building = {
     image: '',
     requeriments: {},
     pricelist: {
-      metal: 60,
-      crystal: 15,
+      metal: 2000,
+      crystal: 1000,
       deuterium: 0,
       energy: 0,
-      factor: 3 / 2
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -197,11 +198,11 @@ export const building = {
     image: '',
     requeriments: {},
     pricelist: {
-      metal: 60,
-      crystal: 15,
+      metal: 2000,
+      crystal: 2000,
       deuterium: 0,
       energy: 0,
-      factor: 3 / 2
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -215,11 +216,11 @@ export const building = {
     image: '',
     requeriments: {},
     pricelist: {
-      metal: 60,
-      crystal: 15,
-      deuterium: 0,
+      metal: 200,
+      crystal: 400,
+      deuterium: 200,
       energy: 0,
-      factor: 3 / 2
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -237,11 +238,11 @@ export const building = {
       research_energy_tech: 12
     },
     pricelist: {
-      metal: 60,
-      crystal: 15,
-      deuterium: 0,
-      energy: 0,
-      factor: 3 / 2
+      metal: 0,
+      crystal: 50000,
+      deuterium: 100000,
+      energy: 1000,
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -255,11 +256,11 @@ export const building = {
     image: '',
     requeriments: {},
     pricelist: {
-      metal: 60,
-      crystal: 15,
+      metal: 20000,
+      crystal: 40000,
       deuterium: 0,
       energy: 0,
-      factor: 3 / 2
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -275,11 +276,11 @@ export const building = {
     image: '',
     requeriments: {},
     pricelist: {
-      metal: 60,
-      crystal: 15,
-      deuterium: 0,
+      metal: 20000,
+      crystal: 40000,
+      deuterium: 20000,
       energy: 0,
-      factor: 3 / 2
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -296,11 +297,11 @@ export const building = {
       building_mondbasis: 1
     },
     pricelist: {
-      metal: 60,
-      crystal: 15,
-      deuterium: 0,
+      metal: 20000,
+      crystal: 40000,
+      deuterium: 20000,
       energy: 0,
-      factor: 3 / 2
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -317,11 +318,11 @@ export const building = {
       research_hyperspace_tech: 7
     },
     pricelist: {
-      metal: 60,
-      crystal: 15,
-      deuterium: 0,
+      metal: 2000000,
+      crystal: 4000000,
+      deuterium: 2000000,
       energy: 0,
-      factor: 3 / 2
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
@@ -335,15 +336,20 @@ export const building = {
     image: '',
     requeriments: {},
     pricelist: {
-      metal: 60,
-      crystal: 15,
-      deuterium: 0,
+      metal: 20000,
+      crystal: 20000,
+      deuterium: 1000,
       energy: 0,
-      factor: 3 / 2
+      factor: 2
     },
     formulas: {
       yield: (BuildLevel, BuildLevelFactor) => (30 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor),
       energy: (BuildLevel, BuildLevelFactor) => (10 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor)
     }
   }
+}
+
+const building = deepFreeze(buildings);
+export {
+  building
 }

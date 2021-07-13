@@ -1,5 +1,31 @@
+import { deepFreeze } from "../../lib/utils.js";
 
-module.exports = {
+const _sd = {
+  fleet_metal_mine: 1,
+  fleet_big_ship_cargo: 1,
+  fleet_light_hunter: 1,
+  fleet_heavy_hunter: 1,
+  fleet_crusher: 1,
+  fleet_battle_ship: 1,
+  fleet_colonizer: 1,
+  fleet_recycler: 1,
+  fleet_spy_sonde: 1,
+  fleet_bomber_ship: 1,
+  fleet_solar_satelit: 1,
+  fleet_destructor: 1,
+  fleet_dearth_star: 1,
+  fleet_battleship: 1,
+  defense_misil_launcher: 1,
+  defense_small_laser: 1,
+  defense_big_laser: 1,
+  defense_gauss_canyon: 1,
+  defense_ionic_canyon: 1,
+  defense_buster_canyon: 1,
+  defense_small_protection_shield: 1,
+  defense_big_protection_shield: 1
+}
+
+const fleets = {
   fleet_metal_mine: {
     name: '小型运输舰',
     about: '当脉冲引擎研发到5级时,小型运输舰将会换装此型引擎,并增加速度',
@@ -16,19 +42,19 @@ module.exports = {
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
-      shield: 10,
-      attack: 5,
+    combatcaps: {
       consumption: 20,
       consumption2: 40,
       speed: 5000,
       speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+      capacity: 5000,
+      shield: 10,
+      attack: 5,
+      sd: {
+        ..._sd,
+        fleet_solar_satelit: 5,
+        fleet_spy_sonde: 5
+      }
     }
   },
   fleet_big_ship_cargo: {
@@ -45,25 +71,25 @@ module.exports = {
       research_combustion_tech: 6
     },
     pricelist: {
-      metal: 2000,
-      crystal: 2000,
+      metal: 6000,
+      crystal: 6000,
       deuterium: 0,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
-      shield: 10,
+    combatcaps: {
+      consumption: 50,
+      consumption2: 50,
+      speed: 7500,
+      speed2: 7500,
+      capacity: 25000,
+      shield: 25,
       attack: 5,
-      consumption: 20,
-      consumption2: 40,
-      speed: 5000,
-      speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+      sd: {
+        ..._sd,
+        fleet_solar_satelit: 5,
+        fleet_spy_sonde: 5
+      }
     }
   },
   fleet_light_hunter: {
@@ -80,25 +106,25 @@ module.exports = {
       research_combustion_tech: 1
     },
     pricelist: {
-      metal: 2000,
-      crystal: 2000,
+      metal: 3000,
+      crystal: 1000,
       deuterium: 0,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
-      shield: 10,
-      attack: 5,
+    combatcaps: {
       consumption: 20,
-      consumption2: 40,
-      speed: 5000,
-      speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+      consumption2: 20,
+      speed: 12500,
+      speed2: 12500,
+      capacity: 50,
+      shield: 10,
+      attack: 50,
+      sd: {
+        ..._sd,
+        fleet_solar_satelit: 5,
+        fleet_spy_sonde: 5
+      }
     }
   },
   fleet_heavy_hunter: {
@@ -117,25 +143,26 @@ module.exports = {
       research_impulse_motor_tech: 2
     },
     pricelist: {
-      metal: 2000,
-      crystal: 2000,
+      metal: 6000,
+      crystal: 4000,
       deuterium: 0,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
-      shield: 10,
-      attack: 5,
-      consumption: 20,
-      consumption2: 40,
-      speed: 5000,
-      speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      consumption: 75,
+      consumption2: 75,
+      speed: 10000,
+      speed2: 15000,
+      capacity: 100,
+      shield: 25,
+      attack: 150,
+      sd: {
+        ..._sd,
+        fleet_solar_satelit: 5,
+        fleet_spy_sonde: 5,
+        fleet_metal_mine: 3
+      }
     }
   },
   fleet_crusher: {
@@ -156,25 +183,27 @@ module.exports = {
       research_ionic_tech: 2
     },
     pricelist: {
-      metal: 2000,
-      crystal: 2000,
-      deuterium: 0,
+      metal: 20000,
+      crystal: 7000,
+      deuterium: 2000,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
-      shield: 10,
-      attack: 5,
-      consumption: 20,
-      consumption2: 40,
-      speed: 5000,
-      speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      consumption: 300,
+      consumption2: 300,
+      speed: 15000,
+      speed2: 15000,
+      capacity: 800,
+      shield: 50,
+      attack: 400,
+      sd: {
+        ..._sd,
+        fleet_solar_satelit: 5,
+        fleet_spy_sonde: 5,
+        fleet_light_hunter: 6,
+        defense_misil_launcher: 10
+      }
     }
   },
   fleet_battle_ship: {
@@ -193,25 +222,25 @@ module.exports = {
       research_hyperspace_motor_tech: 4
     },
     pricelist: {
-      metal: 2000,
-      crystal: 2000,
+      metal: 45000,
+      crystal: 15000,
       deuterium: 0,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
-      shield: 10,
-      attack: 5,
-      consumption: 20,
-      consumption2: 40,
-      speed: 5000,
+    combatcaps: {
+      consumption: 500,
+      consumption2: 500,
+      speed: 10000,
       speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+      capacity: 1500,
+      shield: 200,
+      attack: 1000,
+      sd: {
+        ..._sd,
+        fleet_solar_satelit: 5,
+        fleet_spy_sonde: 5
+      }
     }
   },
   fleet_colonizer: {
@@ -227,25 +256,25 @@ module.exports = {
       research_impulse_motor_tech: 3
     },
     pricelist: {
-      metal: 2000,
-      crystal: 2000,
-      deuterium: 0,
+      metal: 10000,
+      crystal: 20000,
+      deuterium: 10000,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
-      shield: 10,
-      attack: 5,
-      consumption: 20,
-      consumption2: 40,
-      speed: 5000,
-      speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      consumption: 1000,
+      consumption2: 1000,
+      speed: 2500,
+      speed2: 2500,
+      capacity: 7500,
+      shield: 100,
+      attack: 50,
+      sd: {
+        ..._sd,
+        fleet_solar_satelit: 5,
+        fleet_spy_sonde: 5
+      }
     }
   },
   fleet_recycler: {
@@ -262,25 +291,25 @@ module.exports = {
       research_defence_tech: 2
     },
     pricelist: {
-      metal: 2000,
-      crystal: 2000,
-      deuterium: 0,
+      metal: 10000,
+      crystal: 6000,
+      deuterium: 2000,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
+    combatcaps: {
+      consumption: 300,
+      consumption2: 300,
+      speed: 2000,
+      speed2: 2000,
+      capacity: 20000,
       shield: 10,
-      attack: 5,
-      consumption: 20,
-      consumption2: 40,
-      speed: 5000,
-      speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+      attack: 1,
+      sd: {
+        ..._sd,
+        fleet_solar_satelit: 5,
+        fleet_spy_sonde: 5
+      }
     }
   },
   fleet_spy_sonde: {
@@ -314,25 +343,44 @@ module.exports = {
       research_spy_tech: 2
     },
     pricelist: {
-      metal: 2000,
-      crystal: 2000,
+      metal: 0,
+      crystal: 1000,
       deuterium: 0,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
+    combatcaps: {
+      consumption: 0,
+      consumption2: 0,
+      speed: 100000000,
+      speed2: 100000000,
+      capacity: 5,
       shield: 10,
       attack: 5,
-      consumption: 20,
-      consumption2: 40,
-      speed: 5000,
-      speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+      sd: {
+        fleet_metal_mine: 0,
+        fleet_big_ship_cargo: 0,
+        fleet_light_hunter: 0,
+        fleet_heavy_hunter: 0,
+        fleet_crusher: 0,
+        fleet_battle_ship: 0,
+        fleet_colonizer: 0,
+        fleet_recycler: 0,
+        fleet_spy_sonde: 0,
+        fleet_bomber_ship: 0,
+        fleet_solar_satelit: 0,
+        fleet_destructor: 0,
+        fleet_dearth_star: 0,
+        fleet_battleship: 0,
+        defense_misil_launcher: 0,
+        defense_small_laser: 0,
+        defense_big_laser: 0,
+        defense_gauss_canyon: 0,
+        defense_ionic_canyon: 0,
+        defense_buster_canyon: 0,
+        defense_small_protection_shield: 0,
+        defense_big_protection_shield: 0
+      }
     }
   },
   fleet_bomber_ship: {
@@ -355,25 +403,29 @@ module.exports = {
       research_buster_tech: 5
     },
     pricelist: {
-      metal: 2000,
-      crystal: 2000,
-      deuterium: 0,
+      metal: 50000,
+      crystal: 25000,
+      deuterium: 15000,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
-      shield: 10,
-      attack: 5,
-      consumption: 20,
-      consumption2: 40,
-      speed: 5000,
-      speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      consumption: 1000,
+      consumption2: 1000,
+      speed: 4000,
+      speed2: 5000,
+      capacity: 500,
+      shield: 500,
+      attack: 1000,
+      sd: {
+        ..._sd,
+        fleet_solar_satelit: 5,
+        fleet_spy_sonde: 5,
+        defense_misil_launcher: 20,
+        defense_small_laser: 20,
+        defense_big_laser: 10,
+        defense_ionic_canyon: 10
+      }
     }
   },
   fleet_solar_satelit: {
@@ -397,25 +449,67 @@ module.exports = {
       building_hangar: 1,
     },
     pricelist: {
-      metal: 2000,
+      metal: 0,
       crystal: 2000,
-      deuterium: 0,
+      deuterium: 500,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
+    combatcaps: {
+      consumption: 0,
+      consumption2: 0,
+      speed: 0,
+      speed2: 0,
+      capacity: 0,
       shield: 10,
-      attack: 5,
-      consumption: 20,
-      consumption2: 40,
-      speed: 5000,
-      speed2: 10000,
-      capacity: 5000
+      attack: 1,
+      sd: {
+        ..._sd,
+        fleet_solar_satelit: 0
+      }
     },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    formulas: {
+      energy: (BuildLevel, BuildLevelFactor, BuildTemp) => ((BuildTemp / 4) + 20) * BuildLevel * (0.1 * BuildLevelFactor)
+    }
+  },
+  fleet_destructor: {
+    name: '毁灭者',
+    about: '当脉冲引擎研发到5级时,小型运输舰将会换装此型引擎,并增加速度',
+    description: `毁灭者是战斗船舰中的王者。由离子-等离子及高斯加农炮构筑而成的多重武器方阵搭载在能快速反应的炮台上，使它击中战机的机率高达99%。因为毁灭者巨大的体积限制了活动能力，使得它跟战斗舰艇比较起来更像是移动式的堡垒。由于火力惊人，它所消耗的重氢也同样巨大...对轻型雷射炮有快速射击(10)。
+                  快速射击对 间谍卫星: 5
+                  快速射击对 太阳能卫星: 5
+                  快速射击对 轻型激光炮: 10
+                  快速射击对 战斗巡洋舰: 2
+                  死星 对这种船舰的快速射击: 5 
+                  唯一能与死星抗衡的船只，也是除死星外能抵抗等离子炮那一击必杀的船，对轻雷的高射速也很可怕，不过航程跟航速似乎也不甚理想`,
+    image: '',
+    requeriments: {
+      building_hangar: 9,
+      research_hyperspace_motor_tech: 6,
+      research_hyperspace_tech: 5
+    },
+    pricelist: {
+      metal: 60000,
+      crystal: 50000,
+      deuterium: 15000,
+      energy: 0,
+      factor: 1
+    },
+    combatcaps: {
+      consumption: 1000,
+      consumption2: 1000,
+      speed: 5000,
+      speed2: 5000,
+      capacity: 2000,
+      shield: 500,
+      attack: 2000,
+      sd: {
+        ..._sd,
+        fleet_solar_satelit: 5,
+        fleet_spy_sonde: 5,
+        defense_small_laser: 10,
+        fleet_battleship: 2
+      }
     }
   },
   fleet_dearth_star: {
@@ -450,25 +544,44 @@ module.exports = {
       research_graviton_tech: 1
     },
     pricelist: {
-      metal: 2000,
-      crystal: 2000,
-      deuterium: 0,
+      metal: 5000000,
+      crystal: 4000000,
+      deuterium: 1000000,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
-      shield: 10,
-      attack: 5,
-      consumption: 20,
-      consumption2: 40,
-      speed: 5000,
-      speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+    combatcaps: {
+      consumption: 1,
+      consumption2: 1,
+      speed: 100,
+      speed2: 100,
+      capacity: 1000000,
+      shield: 50000,
+      attack: 200000,
+      sd: {
+        fleet_metal_mine: 250,
+        fleet_big_ship_cargo: 250,
+        fleet_light_hunter: 200,
+        fleet_heavy_hunter: 100,
+        fleet_crusher: 33,
+        fleet_battle_ship: 30,
+        fleet_colonizer: 250,
+        fleet_recycler: 250,
+        fleet_spy_sonde: 1250,
+        fleet_bomber_ship: 25,
+        fleet_solar_satelit: 1250,
+        fleet_destructor: 5,
+        fleet_dearth_star: 1,
+        fleet_battleship: 15,
+        defense_misil_launcher: 200,
+        defense_small_laser: 200,
+        defense_big_laser: 100,
+        defense_gauss_canyon: 50,
+        defense_ionic_canyon: 100,
+        defense_buster_canyon: 1,
+        defense_small_protection_shield: 1,
+        defense_big_protection_shield: 1
+      }
     }
   },
   fleet_battleship: {
@@ -492,63 +605,35 @@ module.exports = {
       research_laser_tech: 12
     },
     pricelist: {
-      metal: 2000,
-      crystal: 2000,
-      deuterium: 0,
+      metal: 30000,
+      crystal: 40000,
+      deuterium: 15000,
       energy: 0,
       factor: 1
     },
-    attribute: {
-      integrity: 4000,
-      shield: 10,
-      attack: 5,
-      consumption: 20,
-      consumption2: 40,
-      speed: 5000,
+    combatcaps: {
+      consumption: 250,
+      consumption2: 250,
+      speed: 10000,
       speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
-    }
-  },
-  fleet_destructor: {
-    name: '毁灭者',
-    about: '当脉冲引擎研发到5级时,小型运输舰将会换装此型引擎,并增加速度',
-    description: `毁灭者是战斗船舰中的王者。由离子-等离子及高斯加农炮构筑而成的多重武器方阵搭载在能快速反应的炮台上，使它击中战机的机率高达99%。因为毁灭者巨大的体积限制了活动能力，使得它跟战斗舰艇比较起来更像是移动式的堡垒。由于火力惊人，它所消耗的重氢也同样巨大...对轻型雷射炮有快速射击(10)。
-                  快速射击对 间谍卫星: 5
-                  快速射击对 太阳能卫星: 5
-                  快速射击对 轻型激光炮: 10
-                  快速射击对 战斗巡洋舰: 2
-                  死星 对这种船舰的快速射击: 5 
-                  唯一能与死星抗衡的船只，也是除死星外能抵抗等离子炮那一击必杀的船，对轻雷的高射速也很可怕，不过航程跟航速似乎也不甚理想`,
-    image: '',
-    requeriments: {
-      building_hangar: 9,
-      research_hyperspace_motor_tech: 6,
-      research_hyperspace_tech: 5
-    },
-    pricelist: {
-      metal: 2000,
-      crystal: 2000,
-      deuterium: 0,
-      energy: 0,
-      factor: 1
-    },
-    attribute: {
-      integrity: 4000,
-      shield: 10,
-      attack: 5,
-      consumption: 20,
-      consumption2: 40,
-      speed: 5000,
-      speed2: 10000,
-      capacity: 5000
-    },
-    sd: {
-      spy_sonde: 5,
-      solar_satelit: 5
+      capacity: 750,
+      shield: 400,
+      attack: 7000,
+      sd: {
+        ..._sd,
+        fleet_spy_sonde: 5,
+        fleet_solar_satelit: 5,
+        fleet_metal_mine: 3,
+        fleet_big_ship_cargo: 3,
+        fleet_heavy_hunter: 4,
+        fleet_crusher: 4,
+        fleet_battle_ship: 7
+      }
     }
   }
+}
+
+const fleet = deepFreeze(fleets);
+export {
+  fleet
 }
