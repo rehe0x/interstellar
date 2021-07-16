@@ -1,4 +1,4 @@
-import { deepFreeze } from "../../lib/utils.js";
+import { deepFreeze } from '../../lib/utils.js'
 
 const buildings = {
   building_metal_mine: {
@@ -349,7 +349,7 @@ const buildings = {
   }
 }
 
-const building = deepFreeze(buildings);
+const building = deepFreeze(buildings)
 export {
   building
 }

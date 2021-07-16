@@ -18,3 +18,5 @@ export const remainingTime = (seconds) => {
     return `${$moment.days()}d ${$moment.hours()}h ${$moment.minutes()}m ${$moment.seconds()}s`
   }
 }
+
+export const wait = (seconds) => new Promise((resolve, reject) => { setTimeout(() => { resolve('ok')}, s)})

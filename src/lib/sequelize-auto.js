@@ -12,6 +12,8 @@ const options = {
   additional: {
     timestamps: false
   },
+  caseModel: 'c',
+  caseFile: 'C',
   noWrite: false,
   lang: 'es6',
   noInitModels: true,
