@@ -1,4 +1,4 @@
-import { pushSlot } from "./array.js";
+ import { pushSlot } from "./array.js";
 const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
 function t(){
   setTimeout(t, genRandom(100, 1000));

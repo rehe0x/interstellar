@@ -53,10 +53,10 @@ var currentInterval = interval
 var count = 0
 const buildTimer = async () => {
   count++
-  var offset = new Date().getTime() - (startTime + count * interval); // 代码执行所消耗的时间
-  
   currentIndex < maxIndex ? currentIndex++ : currentIndex = 1
   slotHandle(currentIndex)
+
+  var offset = new Date().getTime() - (startTime + count * interval); // 代码执行所消耗的时间
   currentInterval = interval - offset // 得到下一次循环所消耗的时间
   setTimeout(buildTimer, currentInterval);
 }
