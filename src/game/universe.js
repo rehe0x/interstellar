@@ -11,7 +11,7 @@ const universe = {
   }
 }
 
-universe = deepFreeze(universe)
+deepFreeze(universe)
 export {
   universe
 }
