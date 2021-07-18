@@ -2,7 +2,7 @@
 import loadsh from 'lodash'
 import moment from 'moment'
 import { remainingTime } from '../../lib/utils.js'
-import { formulas } from '../../game/formulas.js'
+import { formulas } from '../../game/formula.js'
 import { buildingData, researchData, defenseData, fleetData } from '../../game/build/index.js'
 
 class BuildService {
