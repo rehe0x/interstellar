@@ -1,6 +1,7 @@
 
 import { config } from '../../config/index.js'
 import _Sequelize from 'sequelize'
+import cls from "cls-hooked";
 const { Sequelize, DataTypes, Model } = _Sequelize
 
 const options = {
@@ -23,6 +24,8 @@ const options = {
   query: { raw: true },
   timezone: '+08:00'
 }
+const transaction = cls.createNamespace('transaction');
+Sequelize.useCLS(transaction);
 const sequelize = new Sequelize(config.mysql_config.database, config.mysql_config.user,
   config.mysql_config.password, options)
 
@@ -36,5 +39,6 @@ sequelize.authenticate().then(() => {
 export {
   sequelize,
   DataTypes,
-  Model
+  Model,
+  transaction
 }

@@ -16,6 +16,8 @@ export const setting = {
   BUILD_METAL: 500, // 金属矿
   BUILD_CRISTAL: 500, // 晶体矿
   BUILD_DEUTERIUM: 500 // 重氢
+
+  //速度设置
 }
 
 const game_configs = {

@@ -1,17 +1,17 @@
-import { user as userDao } from '../dao/user.js'
+import { UserDao } from '../dao/user.js'
 class UserService {
   static async add (user) {
-    const rest = await userDao.create(user)
+    const rest = await UserDao.create(user)
     return rest
   }
 
   static async find (item = {}) {
-    const rest = await userDao.findAll(item)
+    const rest = await UserDao.findAll(item)
     return rest
   }
 
   static async findOne (item = {}) {
-    const rest = await userDao.findOne({
+    const rest = await UserDao.findOne({
       where: item
     })
     return rest
@@ -21,7 +21,7 @@ class UserService {
     const whereClause = {}
     if (item.username) whereClause.username = item.username
     if (item.password) whereClause.password = item.password
-    const rest = await userDao.findAndCountAll({
+    const rest = await UserDao.findAndCountAll({
       where: whereClause,
       limit: item.pageSzie,
       offset: item.pageSzie * (item.pageNum - 1)
@@ -30,7 +30,7 @@ class UserService {
   }
 
   static async findPageQuery (item = {}) {
-    const rest = userDao.findPage()
+    const rest = UserDao.findPage()
     return rest
   }
 }

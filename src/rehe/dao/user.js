@@ -1,12 +1,12 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
-class user extends Model {
+class UserDao extends Model {
   static async findPage () {
     const rest = await sequelize.query('select * from user')
     return rest
   }
 }
-user.init({
+UserDao.init({
   id: {
     autoIncrement: true,
     type: DataTypes.INTEGER,
@@ -57,4 +57,4 @@ user.init({
   ]
 })
 
-export { user }
+export { UserDao }

@@ -1,14 +1,30 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
-class BuildQueue extends Model {
+class BuildQueueDao extends Model {
   static async findOneByOrder (whereClause) {
     return await this.findOne({
       where: whereClause,
       order: [['level', 'DESC']]
     })
   }
+  static async findOneByOrderTime (whereClause) {
+    return await this.findOne({
+      where: whereClause,
+      order: [['createTime', 'ASC']]
+    })
+  }
+  static async insertLog(title, text, time){
+    const rest = await sequelize.query('INSERT INTO game_build_log (title, text, createTime)VALUES(:title, :text, :time)',{
+      replacements:{
+        title,
+        text,
+        time
+      }
+    })
+    return rest
+  }
 }
-BuildQueue.init({
+BuildQueueDao.init({
   id: {
     autoIncrement: true,
     type: DataTypes.INTEGER,
@@ -82,6 +98,10 @@ BuildQueue.init({
     type: DataTypes.DATE,
     allowNull: true
   },
+  updateTime: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
   createTime: {
     type: DataTypes.DATE,
     allowNull: false
@@ -112,4 +132,4 @@ BuildQueue.init({
   ]
 })
 
-export { BuildQueue }
+export { BuildQueueDao }

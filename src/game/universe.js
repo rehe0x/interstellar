@@ -1,6 +1,6 @@
 import { deepFreeze } from "../lib/utils.js";
 
-export const universes = {
+const universe = {
   1: {
     name: '第一宇宙',
     resource_speed: 5, // 资源倍数
@@ -11,7 +11,7 @@ export const universes = {
   }
 }
 
-const universe = deepFreeze(universes)
+universe = deepFreeze(universe)
 export {
   universe
 }
