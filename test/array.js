@@ -1,4 +1,4 @@
-import { building } from "../src/game/build/building.js";
+import { building } from "../src/game/build/building.map.js";
 import { remainingTime } from "../src/lib/utils.js";
 
 const slot = []

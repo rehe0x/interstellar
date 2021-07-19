@@ -1,13 +1,13 @@
 /* eslint-disable camelcase */
-import { config } from '../../config.js'
+import { Config } from '../../config.js'
 import mysql from 'mysql'
 
 const mysqlConfig = {
-  host: config.mysql_config.host,
-  port: config.mysql_config.port,
-  user: config.mysql_config.user,
-  password: config.mysql_config.password,
-  database: config.mysql_config.database,
+  host: Config.mysqlConfig.host,
+  port: Config.mysqlConfig.port,
+  user: Config.mysqlConfig.user,
+  password: Config.mysqlConfig.password,
+  database: Config.mysqlConfig.database,
   timezone: '08:00'
 }
 const pools = {}
@@ -32,15 +32,15 @@ const CONSTANT = {
   SHOW_ALL_TABLE: 'SHOW TABLES',
   // (2) 添加数据表
   CREATE_TABLE: (tableName) =>
-    `CREATE TABLE IF NOT EXISTS ${tableName} (id int NOT NULL primary key AUTO_INCREMENT comment 'primary key',created_time TIMESTAMP COMMENT 'created time',updated_time TIMESTAMP COMMENT 'updated time')`,
+    `CREATE TABLE IF NOT EXISTS ${tableName} (id int NOT NULL primary key AUTO_INCREMENT comment 'primary key',createdTime TIMESTAMP COMMENT 'created time',updatedTime TIMESTAMP COMMENT 'updated time')`,
   // (3) 删除表
   DROP_TABLE: (tableName) => `DROP TABLE IF EXISTS ${tableName};`,
   // (4) 添加字段
-  ADD_COLUM: (tableName, column_name, column_type) =>
-    `ALTER TABLE ${tableName} ADD ${column_name} ${column_type};`,
+  ADD_COLUM: (tableName, columnName, columnType) =>
+    `ALTER TABLE ${tableName} ADD ${columnName} ${columnType};`,
   // (5) 删除字段
-  DROP_COLUM: (tableName, column_name) =>
-    `ALTER TABLE ${tableName} DROP ${column_name};`,
+  DROP_COLUM: (tableName, columnName) =>
+    `ALTER TABLE ${tableName} DROP ${columnName};`,
   /** **********************数据操作相关************************
    * 数据操作相关 DML
    *************************************************************/

@@ -1,10 +1,10 @@
-import { config } from '../../config/index.js'
+import { Config } from '../../config/index.js'
 import jwt from 'jsonwebtoken'
 
 export const auth = (option = {}) => {
   const auth = async function verify (ctx, next) {
     const token = ctx.header.authorization
-    const data = await jwt.verify(token, config.SECRET)
+    const data = await jwt.verify(token, Config.SECRET)
     if (data) {
       // ctx.status = 200 //这里非常重要，只有设置了status，koa-router才识别请求正确继续进入路由
       await next()

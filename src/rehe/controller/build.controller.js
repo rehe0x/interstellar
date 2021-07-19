@@ -1,7 +1,5 @@
-import { BusinessError } from '../../lib/error.js'
-import { BuildService } from '../service/build.js'
-import { BuildQueueService } from '../service/buildQueue.js'
-
+import { BuildService } from '../service/build.service.js'
+import { BuildQueueService } from '../service/build_queue.service.js'
 
 class BuildController {
   static async getBuilding (ctx, next) {
@@ -15,7 +13,7 @@ class BuildController {
   }
 
   static async addBuildingQueue (ctx, next) {
-    const rest = await BuildQueueService.addBuildingQueue(1, 1, 'building_metal_mine')
+    const rest = await BuildQueueService.addBuildingQueue(1, 1, 'buildingMetalMine')
     ctx.success(rest)
   }
 }

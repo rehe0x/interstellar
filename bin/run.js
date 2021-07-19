@@ -6,7 +6,7 @@
 
 import { app } from '../src/app.js'
 import { createServer } from 'http'
-import { config } from '../config/index.js'
+import { Config } from '../config/index.js'
 import Debug from 'debug'
 const debug = new Debug('demo:server')
 
@@ -14,7 +14,7 @@ const debug = new Debug('demo:server')
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(config.port || '3000')
+const port = normalizePort(Config.port || '3000')
 // app.set('port', port);
 
 /**
@@ -26,8 +26,8 @@ const server = createServer(app.callback())
 /**
  * Listen on provided port, on all network interfaces.
  */
-console.log(`当前运行环境 | ${config.env} | ${config.port}`)
-server.listen(config.port)
+console.log(`当前运行环境 | ${Config.env} | ${Config.port}`)
+server.listen(Config.port)
 server.on('error', onError)
 server.on('listening', onListening)
 

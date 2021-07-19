@@ -13,34 +13,36 @@ gamePlanet.init({
       allowNull: false,
       defaultValue: 1
     },
-    building_metal_mine: {
+    buildingMetalMine: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
       comment: "金属矿等级"
     },
-    building_robot_factory: {
+    buildingRobotFactory: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
     },
-    building_nano_factory: {
+    buildingNanoFactory: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
     },
-    rpg_constructeur: {
+    rpgConstructeur: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
     },
     metal: {
       type: DataTypes.BIGINT,
-      allowNull: false
+      allowNull: false,
+      defaultValue: 0
     },
     crystal: {
       type: DataTypes.BIGINT,
-      allowNull: false
+      allowNull: false,
+      defaultValue: 0
     },
     deuterium: {
       type: DataTypes.BIGINT,

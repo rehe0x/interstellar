@@ -1,4 +1,4 @@
-import { UserDao } from '../dao/user.js'
+import { UserDao } from '../dao/user.dao.js'
 class UserService {
   static async add (user) {
     const rest = await UserDao.create(user)

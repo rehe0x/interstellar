@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import joi from 'joi'
 import { validation } from '../handler/validation.js'
-import { BuildController } from '../rehe/controller/build.js'
+import { BuildController } from '../rehe/controller/build.controller.js'
 import Router from 'koa-router'
 
 const routers = new Router()
@@ -23,4 +24,4 @@ routers.get('/getBuilding', BuildController.getBuilding)
 routers.get('/getResearch', BuildController.getResearch)
 routers.get('/addBuildingQueue', BuildController.addBuildingQueue)
 
-export { routers }
+export { routers as buildRouter }

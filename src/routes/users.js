@@ -1,6 +1,6 @@
 import joi from 'joi'
 import { validation } from '../handler/validation.js'
-import { UserController } from '../rehe/controller/user.js'
+import { UserController } from '../rehe/controller/user.controller.js'
 import Router from 'koa-router'
 
 const routers = new Router()
@@ -25,4 +25,4 @@ routers.get('/find', UserController.find)
 routers.get('/findPage', UserController.findPage)
 routers.get('/findPageQuery', UserController.findPageQuery)
 
-export { routers }
+export { routers as userRouter }

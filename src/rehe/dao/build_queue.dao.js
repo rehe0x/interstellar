@@ -7,15 +7,17 @@ class BuildQueueDao extends Model {
       order: [['level', 'DESC']]
     })
   }
+
   static async findOneByOrderTime (whereClause) {
     return await this.findOne({
       where: whereClause,
       order: [['createTime', 'ASC']]
     })
   }
-  static async insertLog(title, text, time){
-    const rest = await sequelize.query('INSERT INTO game_build_log (title, text, createTime)VALUES(:title, :text, :time)',{
-      replacements:{
+
+  static async insertLog (title, text, time) {
+    const rest = await sequelize.query('INSERT INTO game_build_log (title, text, createTime)VALUES(:title, :text, :time)', {
+      replacements: {
         title,
         text,
         time

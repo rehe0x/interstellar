@@ -1,11 +1,11 @@
-import { building } from "./building.js";
-import { research } from "./research.js";
-import { defense } from "./defense.js";
-import { fleet } from "./fleet.js";
+import { BuildingMap } from './building.map.js'
+import { ResearchMap } from './research.map.js'
+import { DefenseMap } from './defense.map.js'
+import { FleetMap } from './fleet.map.js'
 
 export {
-  building as buildingData,
-  research as researchData,
-  defense as defenseData,
-  fleet as fleetData
+  BuildingMap,
+  ResearchMap,
+  DefenseMap,
+  FleetMap
 }

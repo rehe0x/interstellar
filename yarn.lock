@@ -1589,7 +1589,7 @@ clone-response@^1.0.2:
 
 cls-hooked@^4.2.2:
   version "4.2.2"
-  resolved "https://registry.nlark.com/cls-hooked/download/cls-hooked-4.2.2.tgz#ad2e9a4092680cdaffeb2d3551da0e225eae1908"
+  resolved "https://registry.npm.taobao.org/cls-hooked/download/cls-hooked-4.2.2.tgz#ad2e9a4092680cdaffeb2d3551da0e225eae1908"
   integrity sha1-rS6aQJJoDNr/6y01UdoOIl6uGQg=
   dependencies:
     async-hook-jl "^1.7.6"

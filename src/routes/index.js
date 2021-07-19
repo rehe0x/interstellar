@@ -1,6 +1,6 @@
 import Router from 'koa-router'
-import { routers as userRouter } from './users.js'
-import { routers as buildRouter } from './build.js'
+import { userRouter } from './users.js'
+import { buildRouter } from './build.js'
 
 const indexRouter = new Router()
 const apiRouter = new Router()

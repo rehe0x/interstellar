@@ -13,7 +13,7 @@
     "dev:babel": "cross-env NODE_ENV=development ./node_modules/.bin/babel src --out-dir dist && yarn run start:www",
     "prd": "pm2 start bin/run",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "model": "cross-env NODE_ENV=development && node src/lib/sequelize-auto.js"
+    "model": "cross-env NODE_ENV=development && node src/lib/sequelize_auto.js"
   },
   "dependencies": {
     "cls-hooked": "^4.2.2",

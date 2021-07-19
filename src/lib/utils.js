@@ -1,8 +1,8 @@
-import moment from "moment";
+import moment from 'moment'
 
 export const deepFreeze = (obj) => {
   for (const key in obj) {
-    let v = obj[key]
+    const v = obj[key]
     if (v && typeof v === 'object') {
       deepFreeze(v)
     }
@@ -11,12 +11,12 @@ export const deepFreeze = (obj) => {
 }
 
 export const remainingTime = (seconds) => {
-  const $moment = moment.duration(seconds, 'seconds');
-  if ($moment.days() == 0) {
-    return `${$moment.hours()}h ${$moment.minutes()}m ${$moment.seconds()}s`
+  const mo = moment.duration(seconds, 'seconds')
+  if (mo.days() === 0) {
+    return `${mo.hours()}h ${mo.minutes()}m ${mo.seconds()}s`
   } else {
-    return `${$moment.days()}d ${$moment.hours()}h ${$moment.minutes()}m ${$moment.seconds()}s`
+    return `${mo.days()}d ${mo.hours()}h ${mo.minutes()}m ${mo.seconds()}s`
   }
 }
 
-export const wait = (seconds) => new Promise((resolve, reject) => { setTimeout(() => { resolve('ok')}, s)})
+export const wait = (seconds) => new Promise((resolve, reject) => { setTimeout(() => { resolve('ok') }, seconds) })

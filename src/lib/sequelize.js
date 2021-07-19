@@ -1,13 +1,13 @@
 
-import { config } from '../../config/index.js'
-import _Sequelize from 'sequelize'
-import cls from "cls-hooked";
-const { Sequelize, DataTypes, Model } = _Sequelize
+import { Config } from '../../config/index.js'
+import Sequelizes from 'sequelize'
+import cls from 'cls-hooked'
+const { Sequelize, DataTypes, Model } = Sequelizes
 
 const options = {
   dialect: 'mysql', // 数据库类型
-  host: config.mysql_config.host, // 主机地址
-  port: config.mysql_config.port,
+  host: Config.mysqlConfig.host, // 主机地址
+  port: Config.mysqlConfig.port,
   pool: { // 连接池设置
     max: 5, // 最大连接数
     idle: 30000,
@@ -24,10 +24,10 @@ const options = {
   query: { raw: true },
   timezone: '+08:00'
 }
-const transaction = cls.createNamespace('transaction');
-Sequelize.useCLS(transaction);
-const sequelize = new Sequelize(config.mysql_config.database, config.mysql_config.user,
-  config.mysql_config.password, options)
+const transaction = cls.createNamespace('transaction')
+Sequelize.useCLS(transaction)
+const sequelize = new Sequelize(Config.mysqlConfig.database, Config.mysqlConfig.user,
+  Config.mysqlConfig.password, options)
 
 sequelize.authenticate().then(() => {
   console.log('数据库已连接！')

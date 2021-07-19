@@ -1,7 +1,7 @@
-import jwt from 'jsonwebtoken'
-import { config } from '../../../config/index.js'
+import Jwt from 'jsonwebtoken'
+import { Config } from '../../../config/index.js'
 import { BusinessError } from '../../lib/error.js'
-import { UserService } from '../service/user.js'
+import { UserService } from '../service/user.service.js'
 
 class UserController {
   static async login (ctx, next) {
@@ -13,9 +13,9 @@ class UserController {
     if (user.password !== String(param.password)) {
       throw new BusinessError('密码错误～')
     }
-    const token = jwt.sign(
+    const token = Jwt.sign(
       { name: user.username, password: user.password }, // 加密userToken
-      config.SECRET,
+      Config.SECRET,
       { expiresIn: '1h' }
     )
     user.token = token

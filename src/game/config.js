@@ -1,6 +1,6 @@
-import { deepFreeze } from "../lib/utils.js";
+import { deepFreeze } from '../lib/utils.js'
 
-export const setting = {
+const GameConfig = {
   // 定义已知世界 !
   MAX_GALAXY_IN_WORLD: 9,
   MAX_SYSTEM_IN_GALAXY: 499,
@@ -15,16 +15,12 @@ export const setting = {
   BASE_STORAGE_SIZE: 1000000000, // 仓库上限
   BUILD_METAL: 500, // 金属矿
   BUILD_CRISTAL: 500, // 晶体矿
-  BUILD_DEUTERIUM: 500 // 重氢
-
-  //速度设置
+  BUILD_DEUTERIUM: 500, // 重氢
+  // 速度设置
+  GAME_SPEED: 2500
 }
 
-const game_configs = {
-  game_speed: 2500
-}
-
-const game_config = deepFreeze(game_configs)
+deepFreeze(GameConfig)
 export {
-  game_config
+  GameConfig
 }
