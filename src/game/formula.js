@@ -22,7 +22,7 @@ class Formula {
   }
 
   static researchTime (obj, planet, lablevel) {
-    let time = (obj.metal + obj.crystal) / GameConfig.GAME_SPEED * ((lablevel + 1) * 2)
+    let time = (obj.metal + obj.crystal) / GameConfig.GAME_SPEED / ((lablevel + 1) * 2)
     time = Math.floor(time * 60 * 60 * (1 - (planet.rpgConstructeur * 0.1)) / UniverseMap[planet.universe].buildSpeed)
     return time
   }

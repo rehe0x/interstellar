@@ -1,7 +1,7 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class BuildQueueDao extends Model {
-  static async findOneByOrder (whereClause) {
+  static async findOneByOrderLevel (whereClause) {
     return await this.findOne({
       where: whereClause,
       order: [['level', 'DESC']]
@@ -17,11 +17,7 @@ class BuildQueueDao extends Model {
 
   static async insertLog (title, text, time) {
     const rest = await sequelize.query('INSERT INTO game_build_log (title, text, createTime)VALUES(:title, :text, :time)', {
-      replacements: {
-        title,
-        text,
-        time
-      }
+      replacements: { title, text, time }
     })
     return rest
   }

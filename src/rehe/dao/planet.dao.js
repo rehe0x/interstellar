@@ -1,8 +1,8 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class PlanetDao extends Model {
-  static async updateLevel (task) {
-    const rest = await sequelize.query(`update game_planet set ${task.buildCode} = ${task.buildCode}+1 where id = ${task.planetId}`)
+  static async updateLevel (code, planetId) {
+    const rest = await sequelize.query(`update game_planet set ${code} = ${code}+1 where id = ${planetId}`)
     return rest
   }
 }
@@ -12,6 +12,10 @@ PlanetDao.init({
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   },
   universe: {
     type: DataTypes.INTEGER,
@@ -46,6 +50,10 @@ PlanetDao.init({
     type: DataTypes.BIGINT,
     allowNull: false,
     defaultValue: 0
+  },
+  researchSpyTech: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   }
 }, {
   sequelize,

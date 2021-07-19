@@ -16,6 +16,11 @@ class BuildController {
     const rest = await BuildQueueService.addBuildingQueue(1, 1, 'buildingMetalMine')
     ctx.success(rest)
   }
+
+  static async addResearchQueue (ctx, next) {
+    const rest = await BuildQueueService.addResearchQueue(1, 1, 'researchSpyTech')
+    ctx.success(rest)
+  }
 }
 
 export { BuildController }

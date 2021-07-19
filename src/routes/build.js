@@ -23,5 +23,6 @@ const v = {
 routers.get('/getBuilding', BuildController.getBuilding)
 routers.get('/getResearch', BuildController.getResearch)
 routers.get('/addBuildingQueue', BuildController.addBuildingQueue)
+routers.get('/addResearchQueue', BuildController.addResearchQueue)
 
 export { routers as buildRouter }

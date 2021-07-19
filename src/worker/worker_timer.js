@@ -33,9 +33,10 @@ const buildTimer = async () => {
 setTimeout(buildTimer, interval)
 
 const pushSlot = async (task) => {
-  let index = (task.seconds % maxIndex) + currentIndex
+  console.log('加入定时任务', task)
+  let index = (task.taskInfo.seconds % maxIndex) + currentIndex
   index = index > maxIndex ? index - maxIndex : index
-  task.cycle_num = Math.floor(task.seconds / maxIndex)
+  task.cycle_num = Math.floor(task.taskInfo.seconds / maxIndex)
   if (slot[index]) {
     slot[index].push(task)
   } else {
@@ -43,13 +44,13 @@ const pushSlot = async (task) => {
   }
 }
 
+// 主线程加入定时任务
 parentPort.on('message', data => {
   pushSlot(data)
 })
-
 assert(workerData.port instanceof MessagePort)
 parentPort.postMessage('定时线程启动成功！')
-
+// 任务执行线程加入定时任务
 workerData.port.on('message', data => {
   pushSlot(data)
 })

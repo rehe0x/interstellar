@@ -19,7 +19,7 @@ workerTimer.on('message', (data) => {
   console.log(data)
 })
 workerTask.on('message', (data) => {
-  console.log(data, new Date())
+  console.log(data)
 })
 
 export { workerTimer }
