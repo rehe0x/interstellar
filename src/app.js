@@ -1,6 +1,6 @@
 import path from 'path'
 import Koa from 'koa'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import views from 'koa-views'
 import _static from 'koa-static'
 import json from 'koa-json'
@@ -27,7 +27,7 @@ app.use(json())
 
 // 使用日志中间件
 const _logger = logger((str, args) => {
-  console.log(moment().format('YYYY-MM-DD HH:mm:ss') + str)
+  console.log(dayjs().format() + str)
 })
 app.use(mylogger).use(_logger)
 

@@ -5,6 +5,12 @@ class PlanetDao extends Model {
     const rest = await sequelize.query(`update game_planet set ${code} = ${code}+1 where id = ${planetId}`)
     return rest
   }
+
+  static async updatePlanet (field, whereClause) {
+    return await this.update(field, {
+      where: whereClause
+    })
+  }
 }
 PlanetDao.init({
   id: {

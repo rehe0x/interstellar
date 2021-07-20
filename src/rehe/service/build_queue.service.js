@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { BusinessError } from '../../lib/error.js'
 import { sequelize } from '../../lib/sequelize.js'
 import { BuildTypeEnum, QueueStatusEnum } from '../../enum/base.enum.js'
@@ -23,7 +24,6 @@ class BuildQueueService {
 
     // 查询星球队列信息 等级降序查询 取第一个
     const buildQueueOne = await BuildQueueDao.findOneByOrderLevel({ planetId, buildCode })
-
     let level = !buildQueueOne ? planet[buildCode] : buildQueueOne.level
     let status = QueueStatusEnum.PENDING
     let startTime = null
@@ -42,12 +42,11 @@ class BuildQueueService {
         throw new BusinessError('资源不足' + planet)
       }
       // 扣减资源
-      PlanetDao.update({ metal: planet.metal - metal, crystal: planet.crystal - crystal, deuterium: planet.deuterium - deuterium }, {
-        where: { id: planetId }
-      })
+      PlanetDao.updatePlanet({ metal: planet.metal - metal, crystal: planet.crystal - crystal, deuterium: planet.deuterium - deuterium }, { id: planetId })
       status = QueueStatusEnum.RUNNING
-      startTime = new Date()
-      endTime = new Date((startTime.getTime() + seconds * 1000))
+      const day = dayjs()
+      startTime = day.valueOf()
+      endTime = day.add(seconds, 'seconds').valueOf()
     }
 
     // 计算能量 && 封装入库数据
@@ -68,8 +67,8 @@ class BuildQueueService {
       seconds,
       startTime,
       endTime,
-      updateTime: new Date(),
-      createTime: new Date()
+      updateTime: dayjs().valueOf(),
+      createTime: dayjs().valueOf()
     }
     // 加入数据库
     const rest = await BuildQueueDao.create(buildingQueueData)
@@ -92,13 +91,11 @@ class BuildQueueService {
         throw new BusinessError('星球不存在')
       }
       // 查询星球队列信息 等级降序查询 取一个
-      const buildQueueOne = await BuildQueueDao.findOne({ planetId, buildType: BuildTypeEnum.RESEARCH })
-
+      const buildQueueOne = await BuildQueueDao.findOneByItem({ planetId, buildType: BuildTypeEnum.RESEARCH })
       // 如果没有队列
       if (!buildQueueOne) {
         let level = planet[buildCode]
         // 查询造价
-        console.log(planet)
         const price = Formula.price(research, level)
         const metal = price.metal
         const crystal = price.crystal
@@ -111,15 +108,15 @@ class BuildQueueService {
         }
         const seconds = Formula.researchTime({ metal, crystal }, planet, lablevel)
         const status = QueueStatusEnum.RUNNING
-        const startTime = new Date()
-        const endTime = new Date((startTime.getTime() + seconds * 1000))
+
+        const day = dayjs()
+        const startTime = day.valueOf()
+        const endTime = day.add(seconds, 'seconds').valueOf()
         if (metal > planet.metal || crystal > planet.crystal || deuterium > planet.deuterium) {
           throw new BusinessError('资源不足' + planet)
         }
         // 扣减资源
-        PlanetDao.update({ metal: planet.metal - metal, crystal: planet.crystal - crystal, deuterium: planet.deuterium - deuterium }, {
-          where: { id: planetId }
-        })
+        PlanetDao.updatePlanet({ metal: planet.metal - metal, crystal: planet.crystal - crystal, deuterium: planet.deuterium - deuterium }, { id: planetId })
 
         // 封装入库数据
         level += 1
@@ -139,8 +136,8 @@ class BuildQueueService {
           seconds,
           startTime,
           endTime,
-          updateTime: new Date(),
-          createTime: new Date()
+          updateTime: dayjs().valueOf(),
+          createTime: dayjs().valueOf()
         }
         // 加入数据库
         const rest = await BuildQueueDao.create(buildingQueueData)

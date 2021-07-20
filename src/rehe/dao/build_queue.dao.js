@@ -1,6 +1,10 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class BuildQueueDao extends Model {
+  static async findOneByItem (whereClause) {
+    return await this.findOne({ where: whereClause })
+  }
+
   static async findOneByOrderLevel (whereClause) {
     return await this.findOne({
       where: whereClause,
@@ -11,11 +15,28 @@ class BuildQueueDao extends Model {
   static async findOneByOrderTime (whereClause) {
     return await this.findOne({
       where: whereClause,
-      order: [['createTime', 'ASC']]
+      order: [['id', 'ASC']]
     })
   }
 
+  static async findAllByBuildType (buildType) {
+    return await this.findAll({
+      where: { buildType }
+    })
+  }
+
+  static async updateBuildQueue (field, whereClause) {
+    return await this.update(field, {
+      where: whereClause
+    })
+  }
+
+  static async delete (whereClause) {
+    return await this.destroy({ where: whereClause })
+  }
+
   static async insertLog (title, text, time) {
+    console.log(time)
     const rest = await sequelize.query('INSERT INTO game_build_log (title, text, createTime)VALUES(:title, :text, :time)', {
       replacements: { title, text, time }
     })
@@ -89,19 +110,19 @@ BuildQueueDao.init({
     allowNull: true
   },
   startTime: {
-    type: DataTypes.DATE,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true
   },
   endTime: {
-    type: DataTypes.DATE,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true
   },
   updateTime: {
-    type: DataTypes.DATE,
-    allowNull: false
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: true
   },
   createTime: {
-    type: DataTypes.DATE,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false
   }
 }, {

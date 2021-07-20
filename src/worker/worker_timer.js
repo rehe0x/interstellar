@@ -1,10 +1,11 @@
 import assert from 'assert'
+import dayjs from 'dayjs'
 import { parentPort, workerData, MessagePort } from 'worker_threads'
 
 const slot = [] // 环形队列
 const maxIndex = 3600 // 环形队列最大指针
 let currentIndex = 0 // 环形队列指针
-const startTime = new Date().getTime() // 起始时间
+const startTime = dayjs().valueOf() // 起始时间
 const interval = 1000 // 轮询间隔时间
 let count = 0 // 计数器
 
@@ -27,7 +28,7 @@ const buildTimer = async () => {
   count++
   currentIndex < maxIndex ? currentIndex++ : currentIndex = 1
   slotHandle(currentIndex)
-  const offset = new Date().getTime() - (startTime + count * interval) // 代码执行所消耗的时间
+  const offset = dayjs().valueOf() - (startTime + count * interval) // 代码执行所消耗的时间
   setTimeout(buildTimer, interval - offset)
 }
 setTimeout(buildTimer, interval)

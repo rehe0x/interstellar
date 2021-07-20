@@ -1,4 +1,6 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration.js'
+dayjs.extend(duration)
 
 export const deepFreeze = (obj) => {
   for (const key in obj) {
@@ -11,7 +13,7 @@ export const deepFreeze = (obj) => {
 }
 
 export const remainingTime = (seconds) => {
-  const mo = moment.duration(seconds, 'seconds')
+  const mo = dayjs.duration(seconds, 'seconds')
   if (mo.days() === 0) {
     return `${mo.hours()}h ${mo.minutes()}m ${mo.seconds()}s`
   } else {
@@ -20,3 +22,9 @@ export const remainingTime = (seconds) => {
 }
 
 export const wait = (seconds) => new Promise((resolve, reject) => { setTimeout(() => { resolve('ok') }, seconds) })
+
+// export class TimeUtil(){
+//   static getNowTime(){
+//     return 
+//   }
+// }
