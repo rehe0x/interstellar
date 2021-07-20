@@ -25,6 +25,15 @@ class BuildQueueDao extends Model {
     })
   }
 
+  static async findAllGroupByPlanet (buildType) {
+    const rest = await sequelize.query(` select mm.* from game_build_queue mm, (
+      select min(gbq.id) gid from game_build_queue gbq where gbq.buildType = '${buildType}' group by gbq.planetId) gg
+      where mm.id = gg.gid`, {
+      model: BuildQueueDao
+    })
+    return rest
+  }
+
   static async updateBuildQueue (field, whereClause) {
     return await this.update(field, {
       where: whereClause

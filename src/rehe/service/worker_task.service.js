@@ -14,7 +14,7 @@ class WorkerTaskService {
     // 先执行研究单队列
     const researchArr = await BuildQueueDao.findAllByBuildType(BuildTypeEnum.RESEARCH)
     researchArr.forEach(item => {
-      console.log('init', item)
+      console.log('researchArr', item)
       const nowTime = dayjs().valueOf()
       const endTime = item.endTime
       if (endTime <= nowTime) {
@@ -24,6 +24,46 @@ class WorkerTaskService {
         item.seconds = Math.floor((endTime - nowTime) / 1000)
       }
       this.workerData.port.postMessage({ taskType: BuildTypeEnum.RESEARCH, taskInfo: item })
+    })
+
+    // 建筑队列
+    const buildingArr = await BuildQueueDao.findAllGroupByPlanet(BuildTypeEnum.BUILDING)
+    buildingArr.forEach(async (item) => {
+      console.log('buildingArr', item)
+      const nowTime = dayjs().valueOf()
+      const endTime = item.endTime
+      if (endTime <= nowTime) {
+        // 马上执行
+        item.seconds = 1
+      } else {
+        item.seconds = Math.floor((endTime - nowTime) / 1000)
+      }
+      if (item.status !== QueueStatusEnum.RUNNING) {
+        // 查询星球信息
+        const planet = await PlanetDao.findByPk(item.planetId)
+        if (!planet) {
+          throw new BusinessError('星球不存在')
+        }
+        if (item.metal > planet.metal || item.crystal > planet.crystal || item.deuterium > planet.deuterium) {
+          // 资源不足删除所有队列
+          BuildQueueDao.delete({ planetId: item.planetId, status: QueueStatusEnum.PENDING })
+          return
+        }
+        // 扣减资源
+        await PlanetDao.updatePlanet({ metal: planet.metal - item.metal, crystal: planet.crystal - item.crystal, deuterium: planet.deuterium - item.deuterium }, { id: item.planetId })
+
+        // 修改为执行队列
+        const rest = await BuildQueueDao.updateBuildQueue({
+          status: QueueStatusEnum.RUNNING,
+          startTime: dayjs().valueOf(),
+          endTime: dayjs().add(item.seconds, 'seconds').valueOf(),
+          updateTime: dayjs().valueOf()
+        }, { id: item.id })
+        if (rest[0] === 1) {
+          return BuildQueueDao.findByPk(item.id)
+        }
+      }
+      this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: item })
     })
   }
 
@@ -47,7 +87,6 @@ class WorkerTaskService {
       BuildQueueDao.delete({ id: taskInfo.id })
       // 加入后续任务 && 验证星球资源, 修改状态&时间
       const buildQueueOne = await BuildQueueDao.findOneByOrderTime({ planetId: taskInfo.planetId, buildType: BuildTypeEnum.BUILDING })
-      console.log(buildQueueOne)
       if (buildQueueOne) {
         // 查询星球信息
         const planet = await PlanetDao.findByPk(taskInfo.planetId)
