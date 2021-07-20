@@ -26,6 +26,17 @@ class Formula {
     time = Math.floor(time * 60 * 60 * (1 - (planet.rpgConstructeur * 0.1)) / UniverseMap[planet.universe].buildSpeed)
     return time
   }
+
+  static isRequeriment (obj, planet) {
+    let b = true
+    for (const key in obj.requeriments) {
+      if (!planet[key] || (obj.requeriments[key] > planet[key])) {
+        b = false
+        break
+      }
+    }
+    return b
+  }
 }
 
 export {

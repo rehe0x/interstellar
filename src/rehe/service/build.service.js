@@ -23,6 +23,7 @@ class BuildService {
       obj.deuterium = price.deuterium
       obj.buildTime = Formula.buildTime(obj, planet)
       obj.buildTimeShow = remainingTime(obj.buildTime)
+      obj.requeriment = Formula.isRequeriment(obj, planet)
       delete obj.requeriments
       delete obj.pricelist
     }
@@ -50,6 +51,7 @@ class BuildService {
       obj.crystal = Formula.price(obj, level).crystal
       obj.deuterium = Formula.price(obj, level).deuterium
       obj.buildTime = Formula.researchTime(obj, planet, lablevel)
+      obj.requeriment = Formula.isRequeriment(obj, planet)
       delete obj.requeriments
       delete obj.pricelist
     }

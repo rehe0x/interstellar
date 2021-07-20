@@ -60,6 +60,10 @@ PlanetDao.init({
   researchSpyTech: {
     type: DataTypes.INTEGER,
     allowNull: true
+  },
+  buildingLaboratory: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   }
 }, {
   sequelize,

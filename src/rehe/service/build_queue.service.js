@@ -21,7 +21,9 @@ class BuildQueueService {
     if (!planet || planet.userId !== userId) {
       throw new BusinessError('星球不存在')
     }
-
+    if (!Formula.isRequeriment(building, planet)) {
+      throw new BusinessError('前置条件不满足')
+    }
     // 查询星球队列信息 等级降序查询 取第一个
     const buildQueueOne = await BuildQueueDao.findOneByOrderLevel({ planetId, buildCode })
     let level = !buildQueueOne ? planet[buildCode] : buildQueueOne.level
@@ -89,6 +91,9 @@ class BuildQueueService {
       const planet = await PlanetDao.findByPk(planetId)
       if (!planet || planet.userId !== userId) {
         throw new BusinessError('星球不存在')
+      }
+      if (!Formula.isRequeriment(research, planet)) {
+        throw new BusinessError('前置条件不满足')
       }
       // 查询星球队列信息 等级降序查询 取一个
       const buildQueueOne = await BuildQueueDao.findOneByItem({ planetId, buildType: BuildTypeEnum.RESEARCH })
