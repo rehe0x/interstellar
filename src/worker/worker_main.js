@@ -1,5 +1,6 @@
 import path from 'path'
 import { Worker, MessageChannel } from 'worker_threads'
+
 const { port1, port2 } = new MessageChannel()
 
 const workerTimer = new Worker(path.join(path.resolve(), '/src/worker/worker_timer.js'), {

@@ -32,14 +32,6 @@ class WorkerTaskService {
     const buildingArr = await BuildQueueDao.findAllGroupByPlanet(BuildTypeEnum.BUILDING)
     buildingArr.forEach(async (item) => {
       console.log('buildingArr', item)
-      const nowTime = dayjs().valueOf()
-      const endTime = item.endTime
-      if (endTime <= nowTime) {
-        // 马上执行
-        item.seconds = 1
-      } else {
-        item.seconds = Math.floor((endTime - nowTime) / 1000)
-      }
       if (item.status !== QueueStatusEnum.RUNNING) {
         // 查询星球信息
         const planet = await PlanetDao.findByPk(item.planetId)
@@ -62,17 +54,27 @@ class WorkerTaskService {
           updateTime: dayjs().valueOf()
         }, { id: item.id })
         if (rest[0] === 1) {
+          this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: item })
           return BuildQueueDao.findByPk(item.id)
         }
+      } else {
+        const nowTime = dayjs().valueOf()
+        const endTime = item.endTime
+        if (endTime <= nowTime) {
+          // 马上执行
+          item.seconds = 1
+        } else {
+          item.seconds = Math.floor((endTime - nowTime) / 1000)
+        }
+        this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: item })
       }
-      this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: item })
     })
   }
 
   async finishQueueTask (task) {
     if (task.taskType === BuildTypeEnum.BUILDING) {
       this.finishBuildingQueueTask(task.taskInfo).then(rest => {
-        rest && this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: rest })
+        rest && rest.seconds && this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: rest })
       })
     } else if (task.taskType === BuildTypeEnum.RESEARCH) {
       this.finishResearchQueueTask(task.taskInfo)
@@ -80,14 +82,20 @@ class WorkerTaskService {
   }
 
   async finishBuildingQueueTask (taskInfo) {
-    return sequelize.transaction(async (t1) => {
+    await sequelize.transaction(async (t1) => {
       // 修改等级
       PlanetSubDao.updateLevel(taskInfo.buildCode, taskInfo.planetId, taskInfo.level)
       // 写入日志
       BuildQueueDao.insertLog('finishBuildQueueTask', JSON.stringify(taskInfo), dayjs().valueOf())
       // 删除队列
-      BuildQueueDao.delete({ id: taskInfo.id })
-      // 加入后续任务 && 验证星球资源, 修改状态&时间
+      await BuildQueueDao.delete({ id: taskInfo.id })
+    })
+    // 加入后续任务 && 验证星球资源, 修改状态&时间
+    return this.addBuildingQueueTask(taskInfo)
+  }
+
+  async addBuildingQueueTask (taskInfo) {
+    return sequelize.transaction(async (t2) => {
       const buildQueueOne = await BuildQueueDao.findOneByOrderTime({ planetId: taskInfo.planetId, buildType: BuildTypeEnum.BUILDING })
       if (buildQueueOne) {
         // 查询星球信息
@@ -97,8 +105,8 @@ class WorkerTaskService {
         }
         if (buildQueueOne.metal > planet.metal || buildQueueOne.crystal > planet.crystal || buildQueueOne.deuterium > planet.deuterium) {
           // 资源不足删除所有队列
-          await BuildQueueDao.delete({ planetId: taskInfo.planetId, status: QueueStatusEnum.PENDING })
-          throw new BusinessError('资源不足' + planet)
+          return BuildQueueDao.delete({ planetId: taskInfo.planetId, status: QueueStatusEnum.PENDING })
+          // throw new BusinessError('资源不足' + planet)
         }
         // 扣减资源
         PlanetDao.updatePlanet({ metal: planet.metal - buildQueueOne.metal, crystal: planet.crystal - buildQueueOne.crystal, deuterium: planet.deuterium - buildQueueOne.deuterium }, { id: buildQueueOne.planetId })
@@ -112,6 +120,8 @@ class WorkerTaskService {
         }, { id: buildQueueOne.id })
         if (rest[0] === 1) {
           return BuildQueueDao.findByPk(buildQueueOne.id)
+        } else {
+          throw new BusinessError('错误')
         }
       }
     })
