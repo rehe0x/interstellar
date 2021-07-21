@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import { parentPort, workerData, MessagePort } from 'worker_threads'
 
 const slot = [] // 环形队列
+const slotMap = new Map() // 环形队列map
 const maxIndex = 3600 // 环形队列最大指针
 let currentIndex = 0 // 环形队列指针
 const startTime = dayjs().valueOf() // 起始时间
@@ -18,6 +19,7 @@ const slotHandle = async (index) => {
         arrTask.cycle_num--
       } else {
         arr.splice(i, 1)
+        slotMap.delete(`${arrTask.taskType}-${arrTask.taskInfo.id}`)
         workerData.port.postMessage(arrTask)
       }
     }
@@ -41,8 +43,9 @@ const pushSlot = async (task) => {
   if (slot[index]) {
     slot[index].push(task)
   } else {
-    slot[index] = new Array(task)
+    slot[index] = [task]
   }
+  slotMap.set(`${task.taskType}-${task.taskInfo.id}`, index)
 }
 
 // 主线程加入定时任务

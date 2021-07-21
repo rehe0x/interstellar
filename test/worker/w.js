@@ -5,6 +5,7 @@ import { parentPort, workerData, MessagePort } from 'worker_threads'
 import { remainingTime } from '../../src/lib/utils.js'
 
 const slot = [] // 环形队列
+const slotMap = new Map() // 环形队列map
 const maxIndex = 3600 // 环形队列最大指针
 let currentIndex = 0 // 环形队列指针
 const startTime = dayjs().valueOf() // 起始时间
@@ -20,6 +21,7 @@ const slotHandle = async (index) => {
         arrTask.cycle_num--
       } else {
         arr.splice(i, 1)
+        slotMap.delete(`${arrTask.seconds}-${arrTask.date}`)
         workerData.port.postMessage(arrTask)
       }
     }
@@ -51,6 +53,7 @@ export const pushSlot = async (task) => {
   } else {
     slot[index] = new Array(task)
   }
+  slotMap.set(`${task.seconds}-${task.date}`, index)
 }
 
 parentPort.on('message', data => {
