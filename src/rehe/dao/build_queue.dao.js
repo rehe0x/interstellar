@@ -1,6 +1,12 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class BuildQueueDao extends Model {
+  static async findAllByItem (whereClause) {
+    return await this.findAll({
+      where: whereClause
+    })
+  }
+
   static async findOneByItem (whereClause) {
     return await this.findOne({ where: whereClause })
   }

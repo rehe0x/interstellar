@@ -1,7 +1,7 @@
 import { deepFreeze } from '../../lib/utils.js'
 
 const ResearchMap = {
-  researchSpyTech: {
+  researchSpy: {
     name: '空间探测技术',
     about: '',
     description: `星球探测技术主要是研究资料感应器和智慧型装置与知识，以供探测资料并防止外来的探测器进行探测。这项技术的等级越高，就能从其他帝国的行星获得更多资料。探测器探测资料的多寡，主要取决于自己和对手的探测技术的差距。自己的技术等级越高，就能获得更多资料且被发现的机率也越低。发送的探测器越多，就能回传更多讯息－但此举也大大提高了被发现的机率。提升空间探测技术也可以得知关于接近自己星球的舰队资料
@@ -22,7 +22,7 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchComputerTech: {
+  researchComputer: {
     name: '计算机技术',
     about: '',
     description: '计算机技术研究用来提高计算机的计算能力。研究出更高性能更有效的控制系统。每一等级的提升都增强了运算能力和资料的平行处理能力。计算机技术的提升能指挥更多的舰队。每次出发的舰队越多，能攻击的也就越多，带回的资源也越多，当然这项技术也被商人利用，因为他能让更多的商业舰队出发',
@@ -38,7 +38,7 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchMilitaryTech: {
+  researchMilitary: {
     name: '武器技术',
     about: '',
     description: `武器技术研究如何让现有的武器系统产生更大的破坏力。它主要是著重于让武器能更有效的利用能量，发挥更佳的效能。 如此一来每提升一级技术，相同的武器拥有更多能量，攻击力也越强 － 每提升一级，武器攻击力在基础值增加10%。由于武器技术能让你保持和敌人之间的优势，因此你应该在游戏中持续的升级武器技术。
@@ -55,14 +55,14 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchDefenceTech: {
+  researchDefence: {
     name: '防御技术',
     about: '',
     description: `防御盾系统用来在你的船舰周围产生防护性的粒子护盾。每提升一个等级可以为防护盾增加10%的效率。等级提升增加了护盾能量总额，使它在崩溃前能够吸收更多的能量。防御盾装置不仅被使用在船舰上，在行星防御罩上也能见到它的踪影。
     Ogame 的技术都是提升基础值，也就是一级的时候为 10%，二级的时候为基础值增加20%`,
     image: '',
     requeriments: {
-      researchEnergyTech: 3,
+      researchEnergy: 3,
       buildingLaboratory: 6
     },
     pricelist: {
@@ -73,7 +73,7 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchShieldTech: {
+  researchShield: {
     name: '装甲技术',
     about: '',
     description: `T特殊的合金使装甲更加强大。一旦一种十分强固的合金被找到，就会被特殊的射线改变船舰壳体的分子结构从而达到合金最好的状态。装甲的效力在每升一级飞船装甲化后在基础值上升10%。
@@ -90,7 +90,7 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchEnergyTech: {
+  researchEnergy: {
     name: '能量技术',
     about: '',
     description: '能量技术致力于发展能量系统和能量储存技术的开发和研究：当技术等级提升得越高，你的能源系统便越有效率。从能量技术上获得的知识将成为研究其它特定技术的基础。',
@@ -106,15 +106,15 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchHyperspaceTech: {
+  researchHyperspace: {
     name: '超空间技术',
     about: '',
     description: `通过结合四维和五维的推进技术，可以创造出一种新的推进系统－效率更高，更节省燃料。超空间技术提供了大型战舰和空间传送点进行传送所需要的基本技术。这种崭新而复杂的技术需要昂贵的实验设备和测试用的设施。
                   超空间推动的前置作业，一样点基础数值就行了`,
     image: '',
     requeriments: {
-      researchEnergyTech: 5,
-      researchDefenceTech: 5,
+      researchEnergy: 5,
+      researchDefence: 5,
       buildingLaboratory: 7
     },
     pricelist: {
@@ -125,14 +125,14 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchCombustionTech: {
+  researchCombustion: {
     name: '燃烧引擎',
     about: '',
     description: `基于反作用原理，燃烧引擎是最古老的引擎类型。高温的粒子被高速的甩出飞船并以此来推动飞船向反方向前进。燃烧引擎效率低下，但是因为它便宜，容易操作，体积小的原因，适合于小型船舰，操作过程中也不需要耗费太多的电脑系统资源。
                   每提升一个等级可以在基础值上增加10%的速度：小型和大型运输舰，轻型战舰，回收舰和探测器`,
     image: '',
     requeriments: {
-      researchEnergyTech: 1,
+      researchEnergy: 1,
       buildingLaboratory: 1
     },
     pricelist: {
@@ -143,7 +143,7 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchImpulseMotorTech: {
+  researchImpulseMotor: {
     name: '脉冲引擎',
     about: '',
     description: `脉冲引擎基于反作用力的原理而设计。此种推进系统所用的燃料是核融合炉生产能量后产生的垃圾。与简单的燃烧引擎比较之下，脉冲引擎更为先进，可以用较少的燃料消耗量获得较高的速度。每升一级提高速度20%。
@@ -151,7 +151,7 @@ const ResearchMap = {
                 关系到你的巡洋、重型战斗机、殖民飞船跟导弹舰的速度，每升一级加基本速度的20%，最少点到3(殖民飞船底限)，不过点到的话5，可以让你的小型运输机换引擎(非法改装!?) 速度飙超快，很诱人的一件事`,
     image: '',
     requeriments: {
-      researchEnergyTech: 1,
+      researchEnergy: 1,
       buildingLaboratory: 2
     },
     pricelist: {
@@ -162,14 +162,14 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchHyperspaceMotorTech: {
+  researchHyperspaceMotor: {
     name: '超空间引擎',
     about: '',
     description: `通过对时间和空间的弯曲从而使船舰周围的空间进行压缩，从而使飞行的距离减少。这项技术水平越高，空间压缩的也越剧烈，从而达到提高速度的目的。每升一级提高速度30％需求: 超空间技术（等级3）研究实验室 （等级7）。
     关系到你战列、毁灭者、战斗巡洋舰跟死星的速度，每升一级加基本速度的30%，最少点到4，不过点到8可以让你的导弹舰换引擎，速度一样会有所提升`,
     image: '',
     requeriments: {
-      researchHyperspaceTech: 3,
+      researchHyperspace: 3,
       buildingLaboratory: 7
     },
     pricelist: {
@@ -180,7 +180,7 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchLaserTech: {
+  researchLaser: {
     name: '激光技术',
     about: '',
     description: `激光是高能量的光子束,具有指向性和绝佳的聚焦性质。激光装置的用途很广泛：从导航陀螺仪，光学电脑或武器系统，雷射技术对每个帝国来说都是基础知识。
@@ -188,7 +188,7 @@ const ResearchMap = {
     image: '',
     requeriments: {
       buildingLaboratory: 1,
-      researchEnergyTech: 2
+      researchEnergy: 2
     },
     pricelist: {
       metal: 200,
@@ -198,7 +198,7 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchIonicTech: {
+  researchIonic: {
     name: '中子技术',
     about: '',
     description: `中子武器技术基于将高加速的中子光束投射在目标上，依靠目标物带电荷的本质，可以造成巨大的伤害。中子光束比激光优秀，但需要更多的研究费用。虽然与其他技术相较之下较为简易，在大多数的星球上，被运用到的机会并不大。
@@ -206,8 +206,8 @@ const ResearchMap = {
     image: '',
     requeriments: {
       buildingLaboratory: 4,
-      researchLaserTech: 5,
-      researchEnergyTech: 4
+      researchLaser: 5,
+      researchEnergy: 4
     },
     pricelist: {
       metal: 1000,
@@ -217,7 +217,7 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchBusterTech: {
+  researchBuster: {
     name: '等离子技术',
     about: '',
     description: `由于等离子不友善的性质，等离子武器比任何已知的武器系统都要来得危险。等离子是物质四态的其中之一（固态, 液态, 气态, 等离子[电浆态]），是由带正电荷和带负电荷的离子所组成的流体。只要输入的能量足够，原本为电中性的气体会分离成为各带有正负电荷的离子和电子。利用磁力技术，这些带电的粒子被包裹成“球状”以便发射。
@@ -225,9 +225,9 @@ const ResearchMap = {
     image: '',
     requeriments: {
       buildingLaboratory: 5,
-      researchEnergyTech: 8,
-      researchLaserTech: 10,
-      researchIonicTech: 5
+      researchEnergy: 8,
+      researchLaser: 10,
+      researchIonic: 5
     },
     pricelist: {
       metal: 2000,
@@ -237,7 +237,7 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchIntergalacticTech: {
+  researchIntergalactic: {
     name: '跨星系科研网络',
     about: '',
     description: `跨星系科研网络
@@ -250,8 +250,8 @@ const ResearchMap = {
     image: '',
     requeriments: {
       buildingLaboratory: 10,
-      researchComputerTech: 8,
-      researchHyperspaceTech: 8
+      researchComputer: 8,
+      researchHyperspace: 8
     },
     pricelist: {
       metal: 240000,
@@ -261,7 +261,7 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchExpeditionTech: {
+  researchExpedition: {
     name: '远征科技',
     about: '',
     description: `远征技术1级，可以发一个远征舰队；远征技术4级，可以发2个远征舰队；远征技术9级，可以发3个远征舰队；远征技术16级，可以发4个远征舰队；
@@ -269,8 +269,8 @@ const ResearchMap = {
     image: '',
     requeriments: {
       buildingLaboratory: 3,
-      researchComputerTech: 4,
-      researchImpulseMotorTech: 3
+      researchComputer: 4,
+      researchImpulseMotor: 3
 
     },
     pricelist: {
@@ -281,7 +281,7 @@ const ResearchMap = {
       factor: 2
     }
   },
-  researchGravitonTech: {
+  researchGraviton: {
     name: '引力技术',
     about: '',
     description: `重力子是产生重力的基本微粒。它是自己的反粒子，没有质量，不带电荷，自旋数为2。通过发射密集的重力微粒，人工的重力场被制造出来，其能量和吸引力不只可以摧毁船舰，甚至是月球。为了产生足够的重力微粒，需要大量的能量。需求：研究实验室（等级12）

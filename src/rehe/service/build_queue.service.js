@@ -5,6 +5,8 @@ import { BuildTypeEnum, QueueStatusEnum } from '../../enum/base.enum.js'
 import { Formula } from '../../game/formula.js'
 import { BuildingMap, ResearchMap } from '../../game/build/index.js'
 import { BuildQueueDao } from '../dao/build_queue.dao.js'
+import { UserSubDao } from '../dao/user_sub.dao.js'
+import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 import { PlanetDao } from '../dao/planet.dao.js'
 import { workerTimer } from '../../worker/worker_main.js'
 
@@ -15,18 +17,24 @@ class BuildQueueService {
     if (!building) {
       throw new BusinessError('建筑不存在')
     }
-
-    // 查询星球信息
+    // 查询用户和星球信息
+    const userSub = await UserSubDao.findByUser({ userId })
+    const planetSub = await PlanetSubDao.findByPlanet({ planetId })
     const planet = await PlanetDao.findByPk(planetId)
-    if (!planet || planet.userId !== userId) {
-      throw new BusinessError('星球不存在')
+    // 验证数据
+    if (!userSub || !planetSub || !planet ||
+      planetSub.userId !== userSub.userId || planet.id !== planetSub.planetId) {
+      throw new BusinessError('数据错误')
     }
-    if (!Formula.isRequeriment(building, planet)) {
+    if (!Formula.isRequeriment(building, planetSub, userSub)) {
       throw new BusinessError('前置条件不满足')
     }
-    // 查询星球队列信息 等级降序查询 取第一个
-    const buildQueueOne = await BuildQueueDao.findOneByOrderLevel({ planetId, buildCode })
-    let level = !buildQueueOne ? planet[buildCode] : buildQueueOne.level
+    // 查询星球队列信息
+    const buildQueueList = await BuildQueueDao.findAllByItem({ planetId, buildType: BuildTypeEnum.BUILDING })
+    const isQueue = buildQueueList.length !== 0
+    const buildQueueOne = buildQueueList.filter(item => item.buildCode === buildCode).sort((a, b) => b.level - a.level)[0]
+
+    let level = !buildQueueOne ? planetSub[buildCode] : buildQueueOne.level
     let status = QueueStatusEnum.PENDING
     let startTime = null
     let endTime = null
@@ -36,10 +44,9 @@ class BuildQueueService {
     const crystal = price.crystal
     const deuterium = price.deuterium
     // 计算建造时间 s
-    const seconds = Formula.buildTime({ metal, crystal }, planet)
-
+    const seconds = Formula.buildingTime({ metal, crystal }, planetSub, userSub)
     // 如果没有队列
-    if (!buildQueueOne) {
+    if (!isQueue) {
       if (metal > planet.metal || crystal > planet.crystal || deuterium > planet.deuterium) {
         throw new BusinessError('资源不足' + planet)
       }
@@ -86,20 +93,23 @@ class BuildQueueService {
       if (!research) {
         throw new BusinessError('研究不存在')
       }
-
-      // 查询星球信息
+      // 查询用户和星球信息
+      const userSub = await UserSubDao.findByUser({ userId })
+      const planetSub = await PlanetSubDao.findByPlanet({ planetId })
       const planet = await PlanetDao.findByPk(planetId)
-      if (!planet || planet.userId !== userId) {
-        throw new BusinessError('星球不存在')
+      // 验证数据
+      if (!userSub || !planetSub || !planet ||
+        planetSub.userId !== userSub.userId || planet.id !== planetSub.planetId) {
+        throw new BusinessError('数据错误')
       }
-      if (!Formula.isRequeriment(research, planet)) {
+      if (!Formula.isRequeriment(research, planetSub, userSub)) {
         throw new BusinessError('前置条件不满足')
       }
       // 查询星球队列信息 等级降序查询 取一个
-      const buildQueueOne = await BuildQueueDao.findOneByItem({ planetId, buildType: BuildTypeEnum.RESEARCH })
+      const buildQueueOne = await BuildQueueDao.findOneByItem({ userId, buildType: BuildTypeEnum.RESEARCH })
       // 如果没有队列
       if (!buildQueueOne) {
-        let level = planet[buildCode]
+        let level = userSub[buildCode]
         // 查询造价
         const price = Formula.price(research, level)
         const metal = price.metal
@@ -108,10 +118,10 @@ class BuildQueueService {
 
         // 计算建造时间 获取研究所等级 + 计算跨行星网络 获取所有星球研究所等级
         let lablevel = 5
-        if (planet.researchIntergalacticTech >= 1) {
+        if (userSub.researchIntergalactic >= 1) {
           lablevel += 5
         }
-        const seconds = Formula.researchTime({ metal, crystal }, planet, lablevel)
+        const seconds = Formula.researchTime({ metal, crystal }, userSub, lablevel)
         const status = QueueStatusEnum.RUNNING
 
         const day = dayjs()

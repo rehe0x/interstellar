@@ -1,57 +1,62 @@
 import loadsh from 'lodash'
+import { BusinessError } from '../../lib/error.js'
 import { remainingTime } from '../../lib/utils.js'
 import { Formula } from '../../game/formula.js'
 import { BuildingMap, ResearchMap } from '../../game/build/index.js'
+import { UserSubDao } from '../dao/user_sub.dao.js'
+import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 
 class BuildService {
-  static async getBuilding () {
+  static async getBuilding (userId, planetId) {
     const rest = loadsh.cloneDeep(BuildingMap)
-    const level = 0
-    const planet = {
-      buildingRobotFactory: 0,
-      buildingNanoFactory: 0,
-      universe: 1,
-      rpgConstructeur: 0
+    // 查询用户和星球信息
+    const userSub = await UserSubDao.findByUser({ userId })
+    const planetSub = await PlanetSubDao.findByPlanet({ planetId })
+    // 验证数据
+    if (planetSub.userId !== userSub.userId) {
+      throw new BusinessError('数据错误')
     }
-
     for (const key in rest) {
       const obj = rest[key]
-      obj.level = level
-      const price = Formula.price(obj, level)
-      obj.metal = price.metal
-      obj.crystal = price.crystal
-      obj.deuterium = price.deuterium
-      obj.buildTime = Formula.buildTime(obj, planet)
+      const { metal, crystal, deuterium } = Formula.price(obj, planetSub[key])
+      obj.metal = metal
+      obj.crystal = crystal
+      obj.deuterium = deuterium
+      obj.level = planetSub[key]
+      obj.buildTime = Formula.buildingTime(obj, planetSub, userSub)
       obj.buildTimeShow = remainingTime(obj.buildTime)
-      obj.requeriment = Formula.isRequeriment(obj, planet)
+      obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub)
       delete obj.requeriments
       delete obj.pricelist
     }
     return rest
   }
 
-  static async getResearch () {
+  static async getResearch (userId, planetId) {
     const rest = loadsh.cloneDeep(ResearchMap)
-    const level = 3 // 等级 研究所等级 事务官
-    const planet = {
-      buildingLaboratory: 1,
-      researchIntergalacticTech: 1,
-      universe: 1,
-      rpgConstructeur: 0
+    // 查询用户和星球信息
+    const userSub = await UserSubDao.findByUser({ userId })
+    const planetSub = await PlanetSubDao.findByPlanet({ planetId })
+    // 验证数据
+    if (planetSub.userId !== userSub.userId) {
+      throw new BusinessError('数据错误')
     }
     // 获取研究所等级 + 计算跨行星网络 获取所有星球研究所等级
-    let lablevel = planet.buildingLaboratory
-    if (planet.researchIntergalacticTech >= 1) {
+    let lablevel = planetSub.buildingLaboratory
+    if (userSub.researchIntergalactic >= 1) {
       lablevel += 2
     }
 
     for (const key in rest) {
       const obj = rest[key]
-      obj.metal = Formula.price(obj, level).metal
-      obj.crystal = Formula.price(obj, level).crystal
-      obj.deuterium = Formula.price(obj, level).deuterium
-      obj.buildTime = Formula.researchTime(obj, planet, lablevel)
-      obj.requeriment = Formula.isRequeriment(obj, planet)
+      const { metal, crystal, deuterium } = Formula.price(obj, userSub[key])
+      obj.metal = metal
+      obj.crystal = crystal
+      obj.deuterium = deuterium
+      obj.level = userSub[key]
+      obj.buildTime = Formula.researchTime(obj, userSub, lablevel)
+      obj.buildTimeShow = remainingTime(obj.buildTime)
+      obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub)
       delete obj.requeriments
       delete obj.pricelist
     }

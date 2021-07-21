@@ -70,7 +70,7 @@ const BuildingMap = {
     image: '',
     requeriments: {
       buildingDeuteriumSintetizer: 5,
-      researchEnergyTech: 3
+      researchEnergy: 3
     },
     pricelist: {
       metal: 900,
@@ -101,7 +101,7 @@ const BuildingMap = {
     image: '',
     requeriments: {
       buildingRobotFactory: 10,
-      researchComputerTech: 10
+      researchComputer: 10
     },
     pricelist: {
       metal: 1000000,
@@ -191,7 +191,7 @@ const BuildingMap = {
     image: '',
     requeriments: {
       buildingNanoFactory: 1,
-      researchEnergyTech: 12
+      researchEnergy: 12
     },
     pricelist: {
       metal: 0,
@@ -255,7 +255,7 @@ const BuildingMap = {
     image: '',
     requeriments: {
       buildingMondbasis: 1,
-      researchHyperspaceTech: 7
+      researchHyperspace: 7
     },
     pricelist: {
       metal: 2000000,

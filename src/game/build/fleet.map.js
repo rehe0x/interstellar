@@ -14,7 +14,7 @@ const BaseSD = {
   fleetSolarSatelit: 1,
   fleetDestructor: 1,
   fleetDearthStar: 1,
-  fleetBattleship: 1,
+  fleetBattleCruiser: 1,
   defenseMisilLauncher: 1,
   defenseSmallLaser: 1,
   defenseBigLaser: 1,
@@ -33,7 +33,7 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 2,
-      researchCombustionTech: 2
+      researchCombustion: 2
     },
     pricelist: {
       metal: 2000,
@@ -68,7 +68,7 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 4,
-      researchCombustionTech: 6
+      researchCombustion: 6
     },
     pricelist: {
       metal: 6000,
@@ -103,7 +103,7 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 1,
-      researchCombustionTech: 1
+      researchCombustion: 1
     },
     pricelist: {
       metal: 3000,
@@ -139,8 +139,8 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 1,
-      researchShieldTech: 2,
-      researchImpulseMotorTech: 2
+      researchShield: 2,
+      researchImpulseMotor: 2
     },
     pricelist: {
       metal: 6000,
@@ -179,8 +179,8 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 5,
-      researchImpulseMotorTech: 4,
-      researchIonicTech: 2
+      researchImpulseMotor: 4,
+      researchIonic: 2
     },
     pricelist: {
       metal: 20000,
@@ -219,7 +219,7 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 7,
-      researchHyperspaceMotorTech: 4
+      researchHyperspaceMotor: 4
     },
     pricelist: {
       metal: 45000,
@@ -253,7 +253,7 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 4,
-      researchImpulseMotorTech: 3
+      researchImpulseMotor: 3
     },
     pricelist: {
       metal: 10000,
@@ -287,8 +287,8 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 4,
-      researchCombustionTech: 6,
-      researchDefenceTech: 2
+      researchCombustion: 6,
+      researchDefence: 2
     },
     pricelist: {
       metal: 10000,
@@ -339,8 +339,8 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 3,
-      researchCombustionTech: 4,
-      researchSpyTech: 2
+      researchCombustion: 4,
+      researchSpy: 2
     },
     pricelist: {
       metal: 0,
@@ -371,7 +371,7 @@ const FleetMap = {
         fleetSolarSatelit: 0,
         fleetDestructor: 0,
         fleetDearthStar: 0,
-        fleetBattleship: 0,
+        fleetBattleCruiser: 0,
         defenseMisilLauncher: 0,
         defenseSmallLaser: 0,
         defenseBigLaser: 0,
@@ -399,8 +399,8 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 8,
-      researchImpulseMotorTech: 6,
-      researchBusterTech: 5
+      researchImpulseMotor: 6,
+      researchBuster: 5
     },
     pricelist: {
       metal: 50000,
@@ -485,8 +485,8 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 9,
-      researchHyperspaceMotorTech: 6,
-      researchHyperspaceTech: 5
+      researchHyperspaceMotor: 6,
+      researchHyperspace: 5
     },
     pricelist: {
       metal: 60000,
@@ -508,7 +508,7 @@ const FleetMap = {
         fleetSolarSatelit: 5,
         fleetSpySonde: 5,
         defenseSmallLaser: 10,
-        fleetBattleship: 2
+        fleetBattleCruiser: 2
       }
     }
   },
@@ -539,9 +539,9 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 12,
-      researchHyperspaceMotorTech: 7,
-      researchHyperspaceTech: 6,
-      researchGravitonTech: 1
+      researchHyperspaceMotor: 7,
+      researchHyperspace: 6,
+      researchGraviton: 1
     },
     pricelist: {
       metal: 5000000,
@@ -572,7 +572,7 @@ const FleetMap = {
         fleetSolarSatelit: 1250,
         fleetDestructor: 5,
         fleetDearthStar: 1,
-        fleetBattleship: 15,
+        fleetBattleCruiser: 15,
         defenseMisilLauncher: 200,
         defenseSmallLaser: 200,
         defenseBigLaser: 100,
@@ -584,7 +584,7 @@ const FleetMap = {
       }
     }
   },
-  fleetBattleship: {
+  fleetBattleCruiser: {
     name: '战斗巡洋舰',
     about: '当脉冲引擎研发到5级时,小型运输舰将会换装此型引擎,并增加速度',
     description: `这艘舰艇对敌方重型舰艇来说是死亡舰艇。由于他的小型化设计跟精密的武器设计,使得他只能拥有最小型的货舱，相对的他可以使用燃料消耗较少的超空间引擎，以及使得它可以在一瞬间摧毁大量的重型舰艇而在战斗中占有一定的优势地位.
@@ -600,9 +600,9 @@ const FleetMap = {
     image: '',
     requeriments: {
       buildingHangar: 8,
-      researchHyperspaceMotorTech: 5,
-      researchHyperspaceTech: 5,
-      researchLaserTech: 12
+      researchHyperspaceMotor: 5,
+      researchHyperspace: 5,
+      researchLaser: 12
     },
     pricelist: {
       metal: 30000,

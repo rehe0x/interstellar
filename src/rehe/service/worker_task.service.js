@@ -4,6 +4,8 @@ import { BuildTypeEnum, QueueStatusEnum } from '../../enum/base.enum.js'
 import { sequelize } from '../../lib/sequelize.js'
 import { BuildQueueDao } from '../dao/build_queue.dao.js'
 import { PlanetDao } from '../dao/planet.dao.js'
+import { PlanetSubDao } from '../dao/planet_sub.dao.js'
+import { UserSubDao } from '../dao/user_sub.dao.js'
 
 class WorkerTaskService {
   constructor (workerData) {
@@ -80,7 +82,7 @@ class WorkerTaskService {
   async finishBuildingQueueTask (taskInfo) {
     return sequelize.transaction(async (t1) => {
       // 修改等级
-      PlanetDao.updateLevel(taskInfo.buildCode, taskInfo.planetId)
+      PlanetSubDao.updateLevel(taskInfo.buildCode, taskInfo.planetId, taskInfo.level)
       // 写入日志
       BuildQueueDao.insertLog('finishBuildQueueTask', JSON.stringify(taskInfo), dayjs().valueOf())
       // 删除队列
@@ -95,7 +97,7 @@ class WorkerTaskService {
         }
         if (buildQueueOne.metal > planet.metal || buildQueueOne.crystal > planet.crystal || buildQueueOne.deuterium > planet.deuterium) {
           // 资源不足删除所有队列
-          BuildQueueDao.delete({ planetId: taskInfo.planetId, status: QueueStatusEnum.PENDING })
+          await BuildQueueDao.delete({ planetId: taskInfo.planetId, status: QueueStatusEnum.PENDING })
           throw new BusinessError('资源不足' + planet)
         }
         // 扣减资源
@@ -118,7 +120,7 @@ class WorkerTaskService {
   async finishResearchQueueTask (taskInfo) {
     return sequelize.transaction((t1) => {
       // 修改等级
-      PlanetDao.updateLevel(taskInfo.buildCode, taskInfo.planetId)
+      UserSubDao.updateLevel(taskInfo.buildCode, taskInfo.userId, taskInfo.level)
       // 写入日志
       BuildQueueDao.insertLog('finishBuildQueueTask', JSON.stringify(taskInfo), dayjs().valueOf())
       // 删除队列

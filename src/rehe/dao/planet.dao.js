@@ -1,11 +1,6 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class PlanetDao extends Model {
-  static async updateLevel (code, planetId) {
-    const rest = await sequelize.query(`update game_planet set ${code} = ${code}+1 where id = ${planetId}`)
-    return rest
-  }
-
   static async updatePlanet (field, whereClause) {
     return await this.update(field, {
       where: whereClause
@@ -21,49 +16,65 @@ PlanetDao.init({
   },
   userId: {
     type: DataTypes.INTEGER,
-    allowNull: true
+    allowNull: false
   },
   universe: {
     type: DataTypes.INTEGER,
-    allowNull: true
-  },
-  buildingMetalMine: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    comment: '金属矿等级'
-  },
-  buildingRobotFactory: {
-    type: DataTypes.INTEGER,
-    allowNull: true
-  },
-  buildingNanoFactory: {
-    type: DataTypes.INTEGER,
-    allowNull: true
-  },
-  rpgConstructeur: {
-    type: DataTypes.INTEGER,
-    allowNull: true
+    allowNull: false,
+    defaultValue: 1
   },
   metal: {
-    type: DataTypes.BIGINT,
-    allowNull: false
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '金属资源'
   },
   crystal: {
-    type: DataTypes.BIGINT,
-    allowNull: false
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '晶体资源'
   },
   deuterium: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.BIGINT.UNSIGNED,
     allowNull: false,
-    defaultValue: 0
+    defaultValue: 0,
+    comment: '重氦资源'
   },
-  researchSpyTech: {
-    type: DataTypes.INTEGER,
-    allowNull: true
+  metalPerhour: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '金属产量1小时'
   },
-  buildingLaboratory: {
-    type: DataTypes.INTEGER,
-    allowNull: true
+  crystalPerhour: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '晶体产量1小时'
+  },
+  deuteriumPerhour: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '重氦产量1小时'
+  },
+  energyUsed: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '已消耗能量1总'
+  },
+  energyMax: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '能量1总'
+  },
+  resourcesUpdateTime: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
+    comment: '资源更新时间'
   }
 }, {
   sequelize,

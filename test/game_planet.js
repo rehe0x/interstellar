@@ -2,67 +2,88 @@ import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class gamePlanet extends Model {}
 gamePlanet.init({
-    id: {
-      autoIncrement: true,
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true
-    },
-    universe: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 1
-    },
-    buildingMetalMine: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-      comment: "金属矿等级"
-    },
-    buildingRobotFactory: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0
-    },
-    buildingNanoFactory: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0
-    },
-    rpgConstructeur: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0
-    },
-    metal: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      defaultValue: 0
-    },
-    crystal: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      defaultValue: 0
-    },
-    deuterium: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      defaultValue: 0
+  id: {
+    autoIncrement: true,
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  universe: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 1
+  },
+  metal: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '金属资源'
+  },
+  crystal: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '晶体资源'
+  },
+  deuterium: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '重氦资源'
+  },
+  metalPerhour: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '金属产量1小时'
+  },
+  crystalPerhour: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '晶体产量1小时'
+  },
+  deuteriumPerhour: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '重氦产量1小时'
+  },
+  energyUsed: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '已消耗能量1总'
+  },
+  energyMax: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '能量1总'
+  },
+  resourcesUpdateTime: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
+    comment: '资源更新时间'
+  }
+}, {
+  sequelize,
+  tableName: 'game_planet',
+  timestamps: false,
+  indexes: [
+    {
+      name: 'PRIMARY',
+      unique: true,
+      using: 'BTREE',
+      fields: [
+        { name: 'id' }
+      ]
     }
-  }, {
-    sequelize,
-    tableName: 'game_planet',
-    timestamps: false,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "id" },
-        ]
-      },
-    ]
-  });
+  ]
+})
 
 export { gamePlanet }

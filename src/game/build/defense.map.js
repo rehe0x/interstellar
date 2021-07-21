@@ -56,8 +56,8 @@ const DefenseMap = {
     image: '',
     requeriments: {
       buildingHangar: 2,
-      researchEnergyTech: 1,
-      researchLaserTech: 3
+      researchEnergy: 1,
+      researchLaser: 3
     },
     pricelist: {
       metal: 1500,
@@ -84,8 +84,8 @@ const DefenseMap = {
     image: '',
     requeriments: {
       buildingHangar: 4,
-      researchEnergyTech: 3,
-      researchLaserTech: 6
+      researchEnergy: 3,
+      researchLaser: 6
     },
     pricelist: {
       metal: 6000,
@@ -112,9 +112,9 @@ const DefenseMap = {
     image: '',
     requeriments: {
       buildingHangar: 6,
-      researchEnergyTech: 6,
-      researchMilitaryTech: 3,
-      researchDefenceTech: 1
+      researchEnergy: 6,
+      researchMilitary: 3,
+      researchDefence: 1
     },
     pricelist: {
       metal: 20000,
@@ -142,7 +142,7 @@ const DefenseMap = {
     image: '',
     requeriments: {
       buildingHangar: 6,
-      researchIonicTech: 4
+      researchIonic: 4
     },
     pricelist: {
       metal: 2000,
@@ -169,7 +169,7 @@ const DefenseMap = {
     image: '',
     requeriments: {
       buildingHangar: 8,
-      researchBusterTech: 7
+      researchBuster: 7
     },
     pricelist: {
       metal: 50000,
@@ -195,7 +195,7 @@ const DefenseMap = {
     image: '',
     requeriments: {
       buildingHangar: 1,
-      researchDefenceTech: 2
+      researchDefence: 2
     },
     pricelist: {
       metal: 10000,
@@ -221,7 +221,7 @@ const DefenseMap = {
     image: '',
     requeriments: {
       buildingHangar: 6,
-      researchDefenceTech: 6
+      researchDefence: 6
     },
     pricelist: {
       metal: 50000,
