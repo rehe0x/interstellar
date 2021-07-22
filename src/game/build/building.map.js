@@ -55,9 +55,6 @@ const BuildingMap = {
       deuterium: 0,
       energy: 0,
       factor: 1.5
-    },
-    formulas: {
-      energy: (BuildLevel, BuildLevelFactor) => (20 * BuildLevel * (1.1 ** BuildLevel)) * (0.1 * BuildLevelFactor)
     }
   },
   buildingFusionPlant: {

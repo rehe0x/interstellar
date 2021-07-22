@@ -43,31 +43,31 @@ class Formula {
   }
 
   // 计算仓库最大容量
-  static storageMax (planet, user) {
-    const metalStorageMax = Math.floor((GameConfig.BASE_STORAGE_SIZE * (1.5 ** planet.buildingMetalStore)) * (1 + (user.rpgStockeur * 0.5)) * GameConfig.MAX_OVERFLOW)
-    const crystalStorageMax = Math.floor((GameConfig.BASE_STORAGE_SIZE * (1.5 ** planet.buildingCrystalStore)) * (1 + (user.rpgStockeur * 0.5)) * GameConfig.MAX_OVERFLOW)
-    const deuteriumStorageMax = Math.floor((GameConfig.BASE_STORAGE_SIZE * (1.5 ** planet.buildingDeuteriumStore)) * (1 + (user.rpgStockeur * 0.5)) * GameConfig.MAX_OVERFLOW)
+  static storageMax (planetSub, userSub) {
+    const metalStorageMax = Math.floor((GameConfig.BASE_STORAGE_SIZE * (1.5 ** planetSub.buildingMetalStore)) * (1 + (userSub.rpgStockeur * 0.5)) * GameConfig.MAX_OVERFLOW)
+    const crystalStorageMax = Math.floor((GameConfig.BASE_STORAGE_SIZE * (1.5 ** planetSub.buildingCrystalStore)) * (1 + (userSub.rpgStockeur * 0.5)) * GameConfig.MAX_OVERFLOW)
+    const deuteriumStorageMax = Math.floor((GameConfig.BASE_STORAGE_SIZE * (1.5 ** planetSub.buildingDeuteriumStore)) * (1 + (userSub.rpgStockeur * 0.5)) * GameConfig.MAX_OVERFLOW)
     return { metalStorageMax, crystalStorageMax, deuteriumStorageMax }
   }
 
   // 产量计算（每小时） && 能源消耗
-  static prodPerhour (planet, user) {
-    const buildLevelFactor = 0
+  static prodPerhour (planetSub, planet, userSub) {
+    const buildLevelFactor = 10
     // 资源生产
-    const metalPerhour = Math.floor(30 * planet.buildingMetalMine * (1.1 ** planet.buildingMetalMine) * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (user.rpgGeologue * 0.05))
-    const crystalPerhour = Math.floor(20 * planet.buildingCrystalMine * (1.1 ** planet.buildingCrystalMine) * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (user.rpgGeologue * 0.05))
-    let deuteriumPerhour = Math.floor((10 * planet.buildingDeuteriumSintetizer * (1.1 ** planet.buildingDeuteriumSintetizer) * (-0.002 * planet.tempMax + 1.28)) * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (user.rpgGeologue * 0.05))
+    const metalPerhour = Math.floor(30 * planetSub.buildingMetalMine * (1.1 ** planetSub.buildingMetalMine) * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (1 + (userSub.rpgGeologue * 0.05)))
+    const crystalPerhour = Math.floor(20 * planetSub.buildingCrystalMine * (1.1 ** planetSub.buildingCrystalMine) * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (1 + (userSub.rpgGeologue * 0.05)))
+    let deuteriumPerhour = Math.floor((10 * planetSub.buildingDeuteriumSintetizer * (1.1 ** planetSub.buildingDeuteriumSintetizer) * (-0.002 * planet.tempMax + 1.28)) * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (1 + (userSub.rpgGeologue * 0.05)))
     // 减去核电消耗
-    deuteriumPerhour += -Math.floor(10 * planet.buildingFusionPlant * (1.1, planet.buildingFusionPlant) * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (user.rpgGeologue * 0.05))
+    deuteriumPerhour += -Math.floor(10 * planetSub.buildingFusionPlant * (1.1, planetSub.buildingFusionPlant) * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (1 + (userSub.rpgGeologue * 0.05)))
     // 消耗能量
-    const metalEnergy = Math.floor(10 * planet.buildingMetalMine * (1.1 ** planet.buildingMetalMine) * GameConfig.RESOURCE_MULTIPLIER * (user.rpgIngenieur * 0.05))
-    const crystalEnergy = Math.floor(10 * planet.buildingCrystalMine * (1.1 ** planet.buildingCrystalMine) * GameConfig.RESOURCE_MULTIPLIER * (user.rpgIngenieur * 0.05))
-    const deuteriumEnergy = Math.floor(30 * planet.buildingDeuteriumSintetizer * (1.1 ** planet.buildingDeuteriumSintetizer) * GameConfig.RESOURCE_MULTIPLIER * (user.rpgIngenieur * 0.05))
+    const metalEnergy = Math.floor(10 * planetSub.buildingMetalMine * (1.1 ** planetSub.buildingMetalMine) * GameConfig.RESOURCE_MULTIPLIER * (1 + (userSub.rpgIngenieur * 0.05)))
+    const crystalEnergy = Math.floor(10 * planetSub.buildingCrystalMine * (1.1 ** planetSub.buildingCrystalMine) * GameConfig.RESOURCE_MULTIPLIER * (1 + (userSub.rpgIngenieur * 0.05)))
+    const deuteriumEnergy = Math.floor(30 * planetSub.buildingDeuteriumSintetizer * (1.1 ** planetSub.buildingDeuteriumSintetizer) * GameConfig.RESOURCE_MULTIPLIER * (1 + (userSub.rpgIngenieur * 0.05)))
     const energyUsed = metalEnergy + crystalEnergy + deuteriumEnergy
     // 生产能量
-    const energyBSP = Math.floor(20 * planet.buildingSolarPlant * (1.1, planet.buildingSolarPlant) * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (user.rpgIngenieur * 0.05))
-    const energyBFP = Math.floor(50 * planet.buildingFusionPlant * (1.1, planet.buildingFusionPlant) * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (user.rpgIngenieur * 0.05))
-    const energyFSS = Math.floor((planet.tempMax / 4 + 20) * planet.fleetSolarSatelit * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (user.rpgIngenieur * 0.05))
+    const energyBSP = Math.floor(20 * planetSub.buildingSolarPlant * (1.1, planetSub.buildingSolarPlant) * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (1 + (userSub.rpgIngenieur * 0.05)))
+    const energyBFP = Math.floor(50 * planetSub.buildingFusionPlant * (1.1, planetSub.buildingFusionPlant) * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (1 + (userSub.rpgIngenieur * 0.05)))
+    const energyFSS = Math.floor((planet.tempMax / 4 + 20) * planetSub.fleetSolarSatelit * (0.1 * buildLevelFactor) * GameConfig.RESOURCE_MULTIPLIER * (1 + (userSub.rpgIngenieur * 0.05)))
     const energyMax = energyBSP + energyBFP + energyFSS
 
     return { metalPerhour, crystalPerhour, deuteriumPerhour, energyUsed, energyMax }
@@ -77,26 +77,27 @@ class Formula {
   static prodTheorical (obj, planet) {
     let productionLevel = 100
     if (obj.energyMax === 0) {
-      obj.metalPerhour = GameConfig.METAL_BASIC_INCOME
-      obj.crystalPerhour = GameConfig.CRYSTAL_BASIC_INCOME
-      obj.deuteriumPerhour = GameConfig.DEUTERIUM_BASIC_INCOME
+      obj.metalPerhour = obj.metalPerhour !== 0 ? GameConfig.METAL_BASIC_INCOME : 0
+      obj.crystalPerhour = obj.crystalPerhour !== 0 ? GameConfig.CRYSTAL_BASIC_INCOME : 0
+      obj.deuteriumPerhour = obj.deuteriumPerhour !== 0 ? GameConfig.DEUTERIUM_BASIC_INCOME : 0
     } else if ((obj.energyMax - obj.energyUsed) < 0) {
       productionLevel = Math.floor((obj.energyMax / obj.energyUsed) * 100)
     }
+    console.log(productionLevel)
     // 计算间隔时间
     const nowTime = obj.nowTime
     const prodTime = Math.floor((nowTime - planet.resourcesUpdateTime) / 1000)
     const metalProduction = Math.floor(prodTime * (obj.metalPerhour / 3600) * GameConfig.RESOURCE_MULTIPLIER * (0.01 * productionLevel))
-    const metalBaseProduc = Math.floor(prodTime * (GameConfig.METAL_BASIC_INCOME / 3600) * GameConfig.RESOURCE_MULTIPLIER)
-    const metalTheorical = metalProduction + metalBaseProduc
+    // const metalBaseProduc = Math.floor(prodTime * (GameConfig.METAL_BASIC_INCOME / 3600) * GameConfig.RESOURCE_MULTIPLIER)
+    const metalTheorical = metalProduction + 0
 
     const crystalProduction = Math.floor(prodTime * (obj.crystalPerhour / 3600) * GameConfig.RESOURCE_MULTIPLIER * (0.01 * productionLevel))
-    const crystalBaseProduc = Math.floor(prodTime * (GameConfig.CRYSTAL_BASIC_INCOME / 3600) * GameConfig.RESOURCE_MULTIPLIER)
-    const crystalTheorical = crystalProduction + crystalBaseProduc
+    // const crystalBaseProduc = Math.floor(prodTime * (GameConfig.CRYSTAL_BASIC_INCOME / 3600) * GameConfig.RESOURCE_MULTIPLIER)
+    const crystalTheorical = crystalProduction + 0
 
     const deuteriumProduction = Math.floor(prodTime * (obj.deuteriumPerhour / 3600) * GameConfig.RESOURCE_MULTIPLIER * (0.01 * productionLevel))
-    const deuteriumBaseProduc = Math.floor(prodTime * (GameConfig.DEUTERIUM_BASIC_INCOME / 3600) * GameConfig.RESOURCE_MULTIPLIER)
-    const deuteriumTheorical = deuteriumProduction + deuteriumBaseProduc
+    // const deuteriumBaseProduc = Math.floor(prodTime * (GameConfig.DEUTERIUM_BASIC_INCOME / 3600) * GameConfig.RESOURCE_MULTIPLIER)
+    const deuteriumTheorical = deuteriumProduction + 0
 
     return { metalTheorical, crystalTheorical, deuteriumTheorical }
   }

@@ -23,6 +23,12 @@ PlanetDao.init({
     allowNull: false,
     defaultValue: 1
   },
+  tempMax: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '星球最大温度'
+  },
   metal: {
     type: DataTypes.BIGINT.UNSIGNED,
     allowNull: false,

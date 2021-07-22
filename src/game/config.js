@@ -10,7 +10,7 @@ const GameConfig = {
   FIELDS_BY_MOONBASIS_LEVEL: 4, // 最大星球数量，包括殖民星和母星
   MAX_PLAYER_PLANETS: 10, // 建筑最大建造队列
   MAX_BUILDING_QUEUE_SIZE: 1000000, // 舰队&防御最大建造队列
-  MAX_OVERFLOW: 1.1, // 最大溢出上限 1.1=110%
+  MAX_OVERFLOW: 1, // 最大溢出上限 1.1=110%
   // 行星基础设置
   BASE_STORAGE_SIZE: 200000, // 仓库上限
   BUILD_METAL: 20000, // 金属矿

@@ -55,7 +55,6 @@ class WorkerTaskService {
         }, { id: item.id })
         if (rest[0] === 1) {
           this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: item })
-          return BuildQueueDao.findByPk(item.id)
         }
       } else {
         const nowTime = dayjs().valueOf()
