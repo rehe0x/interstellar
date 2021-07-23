@@ -9,8 +9,10 @@ import bodyparser from 'koa-bodyparser'
 import logger from 'koa-logger'
 import { indexRouter } from './routes/index.js'
 import { auth, restful, error, mylogger } from './handler/index.js'
+import cors from 'koa2-cors'
 const app = new Koa()
-
+// 跨域设置
+app.use(cors())
 // 统一返回
 app.use(restful())
 // 统一异常处理

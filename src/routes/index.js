@@ -1,6 +1,6 @@
 import Router from 'koa-router'
 import { userRouter } from './users.js'
-import { buildRouter } from './build.js'
+import { planetRouter } from './planet.js'
 
 const indexRouter = new Router()
 const apiRouter = new Router()
@@ -12,14 +12,14 @@ indexRouter.get('/', async (ctx, next) => {
   })
 })
 
-indexRouter.get('/build', async (ctx, next) => {
+indexRouter.get('/planet', async (ctx, next) => {
   ctx.body = {
 
   }
 })
 // 注册路由 》 api
 apiRouter.use(userRouter.routes(), userRouter.allowedMethods())
-apiRouter.use(buildRouter.routes(), buildRouter.allowedMethods())
+apiRouter.use(planetRouter.routes(), planetRouter.allowedMethods())
 
 // api > 主路由
 indexRouter.use(apiRouter.routes(), apiRouter.allowedMethods())

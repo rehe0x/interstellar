@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import joi from 'joi'
 import { validation } from '../handler/validation.js'
-import { BuildController } from '../rehe/controller/build.controller.js'
+import { PlanetController } from '../rehe/controller/planet.controller.js'
 import Router from 'koa-router'
 
 const routers = new Router()
-routers.prefix('/build')
+routers.prefix('/planet')
 
 const v = {
   add: {
@@ -19,10 +19,10 @@ const v = {
     // sex: joi.number().valid(0, 1).required().error(new Error('性别格式不正确'))
   }
 }
-routers.get('/getPlanetResources', BuildController.getPlanetResources)
-routers.get('/getBuilding', BuildController.getBuilding)
-routers.get('/getResearch', BuildController.getResearch)
-routers.get('/addBuildingQueue', BuildController.addBuildingQueue)
-routers.get('/addResearchQueue', BuildController.addResearchQueue)
+routers.get('/getResources', PlanetController.getPlanetResources)
+routers.get('/getBuilding', PlanetController.getBuilding)
+routers.get('/getResearch', PlanetController.getResearch)
+routers.post('/addBuildingQueue', PlanetController.addBuildingQueue)
+routers.post('/addResearchQueue', PlanetController.addResearchQueue)
 
-export { routers as buildRouter }
+export { routers as planetRouter }

@@ -7,8 +7,9 @@ import { PlanetDao } from '../dao/planet.dao.js'
 
 class ResourcesService {
   static async getPlanetResources (userId, planetId) {
-    await this.updatePlanetResources(userId, planetId)
-    return PlanetDao.findByPk(planetId)
+    const rest = await this.updatePlanetResources(userId, planetId)
+    const planet = await PlanetDao.findByPk(planetId)
+    return { ...planet, ...rest }
   }
 
   // 资源更新
@@ -58,6 +59,7 @@ class ResourcesService {
       resourcesUpdateTime: nowTime
     }
     await PlanetDao.updatePlanet(updateDate, { id: planetId })
+    return { metalStorageMax, crystalStorageMax, deuteriumStorageMax }
   }
 }
 
