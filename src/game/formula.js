@@ -87,19 +87,30 @@ class Formula {
     // 计算间隔时间
     const nowTime = obj.nowTime
     const prodTime = Math.floor((nowTime - planet.resourcesUpdateTime) / 1000)
-    const metalProduction = Math.floor(prodTime * (obj.metalPerhour / 3600) * GameConfig.RESOURCE_MULTIPLIER * (0.01 * productionLevel))
+    // 计算资源
+    const metalTime = (obj.metalPerhour / 3600) * GameConfig.RESOURCE_MULTIPLIER * (0.01 * productionLevel)
+    const metalProduction = Math.floor(prodTime * metalTime)
     // const metalBaseProduc = Math.floor(prodTime * (GameConfig.METAL_BASIC_INCOME / 3600) * GameConfig.RESOURCE_MULTIPLIER)
     const metalTheorical = metalProduction + 0
 
-    const crystalProduction = Math.floor(prodTime * (obj.crystalPerhour / 3600) * GameConfig.RESOURCE_MULTIPLIER * (0.01 * productionLevel))
+    const crystalTime = (obj.crystalPerhour / 3600) * GameConfig.RESOURCE_MULTIPLIER * (0.01 * productionLevel)
+    const crystalProduction = Math.floor(prodTime * crystalTime)
     // const crystalBaseProduc = Math.floor(prodTime * (GameConfig.CRYSTAL_BASIC_INCOME / 3600) * GameConfig.RESOURCE_MULTIPLIER)
     const crystalTheorical = crystalProduction + 0
 
-    const deuteriumProduction = Math.floor(prodTime * (obj.deuteriumPerhour / 3600) * GameConfig.RESOURCE_MULTIPLIER * (0.01 * productionLevel))
+    const deuteriumTime = (obj.deuteriumPerhour / 3600) * GameConfig.RESOURCE_MULTIPLIER * (0.01 * productionLevel)
+    const deuteriumProduction = Math.floor(prodTime * deuteriumTime)
     // const deuteriumBaseProduc = Math.floor(prodTime * (GameConfig.DEUTERIUM_BASIC_INCOME / 3600) * GameConfig.RESOURCE_MULTIPLIER)
     const deuteriumTheorical = deuteriumProduction + 0
 
-    return { metalTheorical, crystalTheorical, deuteriumTheorical }
+    return {
+      metalTheorical,
+      crystalTheorical,
+      deuteriumTheorical,
+      metalTime: Number.parseFloat(metalTime).toFixed(2),
+      crystalTime: Number.parseFloat(crystalTime).toFixed(2),
+      deuteriumTime: Number.parseFloat(deuteriumTime).toFixed(2)
+    }
   }
 }
 

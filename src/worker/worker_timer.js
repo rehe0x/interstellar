@@ -37,6 +37,10 @@ setTimeout(buildTimer, interval)
 
 const pushSlot = async (task) => {
   console.log('加入定时任务', task)
+  if (task.taskInfo.seconds === 0) {
+    task.taskInfo.seconds = 1
+  }
+
   let index = (task.taskInfo.seconds % maxIndex) + currentIndex
   index = index > maxIndex ? index - maxIndex : index
   task.cycle_num = Math.floor(task.taskInfo.seconds / maxIndex)

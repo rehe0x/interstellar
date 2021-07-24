@@ -12,7 +12,7 @@ const options = {
   password: Config.mysqlConfig.password,
   database: Config.mysqlConfig.database,
   pool: { // 连接池设置
-    max: 5, // 最大连接数
+    max: 20, // 最大连接数
     idle: 30000,
     acquire: 60000
   },

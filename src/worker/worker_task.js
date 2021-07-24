@@ -14,7 +14,9 @@ parentPort.postMessage('任务执行线程启动成功！')
 
 const wts = new WorkerTaskService(workerData)
 // 初始化
-wts.initQueueTask()
+d.run(async () => {
+  wts.initQueueTask()
+})
 workerData.port.on('message', async (task) => {
   console.log('完成', task)
   d.run(async () => {

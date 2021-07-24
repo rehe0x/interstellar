@@ -32,7 +32,7 @@ class ResourcesService {
     // 期间生产资源计算
     const nowTime = dayjs().valueOf()
     let metal = planet.metal; let crystal = planet.crystal; let deuterium = planet.deuterium
-    let { metalTheorical, crystalTheorical, deuteriumTheorical } = Formula.prodTheorical({ ...prodPerhour, nowTime }, planet)
+    let { metalTheorical, crystalTheorical, deuteriumTheorical, metalTime, crystalTime, deuteriumTime } = Formula.prodTheorical({ ...prodPerhour, nowTime }, planet)
     console.log(metalTheorical, crystalTheorical, deuteriumTheorical)
     if (planet.metal < metalStorageMax) {
       metalTheorical += planet.metal
@@ -59,7 +59,7 @@ class ResourcesService {
       resourcesUpdateTime: nowTime
     }
     await PlanetDao.updatePlanet(updateDate, { id: planetId })
-    return { metalStorageMax, crystalStorageMax, deuteriumStorageMax }
+    return { metalStorageMax, crystalStorageMax, deuteriumStorageMax, metalTime, crystalTime, deuteriumTime }
   }
 }
 

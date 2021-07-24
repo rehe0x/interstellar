@@ -1,11 +1,13 @@
 import dayjs from 'dayjs'
 import { BusinessError } from '../../lib/error.js'
 import { BuildTypeEnum, QueueStatusEnum } from '../../enum/base.enum.js'
+import { Formula } from '../../game/formula.js'
 import { sequelize } from '../../lib/sequelize.js'
 import { BuildQueueDao } from '../dao/build_queue.dao.js'
 import { PlanetDao } from '../dao/planet.dao.js'
 import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 import { UserSubDao } from '../dao/user_sub.dao.js'
+import { ResourcesService } from '../service/resources.service.js'
 
 class WorkerTaskService {
   constructor (workerData) {
@@ -33,19 +35,24 @@ class WorkerTaskService {
     buildingArr.forEach(async (item) => {
       console.log('buildingArr', item)
       if (item.status !== QueueStatusEnum.RUNNING) {
-        // 查询星球信息
+        // 查询用户和星球信息
+        const userSub = await UserSubDao.findByUser({ userId: item.userId })
+        const planetSub = await PlanetSubDao.findByPlanet({ planetId: item.planetId })
         const planet = await PlanetDao.findByPk(item.planetId)
-        if (!planet) {
-          throw new BusinessError('星球不存在')
+        // 验证数据
+        if (!userSub || !planetSub || !planet ||
+          planetSub.userId !== userSub.userId || planet.id !== planetSub.planetId) {
+          throw new BusinessError('数据错误')
         }
         if (item.metal > planet.metal || item.crystal > planet.crystal || item.deuterium > planet.deuterium) {
           // 资源不足删除所有队列
           BuildQueueDao.delete({ planetId: item.planetId, status: QueueStatusEnum.PENDING })
-          return
+          throw new BusinessError('资源不足')
         }
         // 扣减资源
         await PlanetDao.updatePlanet({ metal: planet.metal - item.metal, crystal: planet.crystal - item.crystal, deuterium: planet.deuterium - item.deuterium }, { id: item.planetId })
-
+        // 计算建造时间 s
+        item.seconds = Formula.buildingTime({ metal: item.metal, crystal: item.crystal }, planetSub, userSub)
         // 修改为执行队列
         const rest = await BuildQueueDao.updateBuildQueue({
           status: QueueStatusEnum.RUNNING,
@@ -73,7 +80,7 @@ class WorkerTaskService {
   async finishQueueTask (task) {
     if (task.taskType === BuildTypeEnum.BUILDING) {
       this.finishBuildingQueueTask(task.taskInfo).then(rest => {
-        rest && rest.seconds && this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: rest })
+        rest && typeof rest.seconds !== 'undefined' && this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: rest })
       })
     } else if (task.taskType === BuildTypeEnum.RESEARCH) {
       this.finishResearchQueueTask(task.taskInfo)
@@ -82,6 +89,8 @@ class WorkerTaskService {
 
   async finishBuildingQueueTask (taskInfo) {
     await sequelize.transaction(async (t1) => {
+      // 先更新产量
+      await ResourcesService.updatePlanetResources(taskInfo.userId, taskInfo.planetId)
       // 修改等级
       PlanetSubDao.updateLevel(taskInfo.buildCode, taskInfo.planetId, taskInfo.level)
       // 写入日志
@@ -97,10 +106,14 @@ class WorkerTaskService {
     return sequelize.transaction(async (t2) => {
       const buildQueueOne = await BuildQueueDao.findOneByOrderTime({ planetId: taskInfo.planetId, buildType: BuildTypeEnum.BUILDING })
       if (buildQueueOne) {
-        // 查询星球信息
-        const planet = await PlanetDao.findByPk(taskInfo.planetId)
-        if (!planet) {
-          throw new BusinessError('星球不存在')
+        // 查询用户和星球信息
+        const userSub = await UserSubDao.findByUser({ userId: buildQueueOne.userId })
+        const planetSub = await PlanetSubDao.findByPlanet({ planetId: buildQueueOne.planetId })
+        const planet = await PlanetDao.findByPk(buildQueueOne.planetId)
+        // 验证数据
+        if (!userSub || !planetSub || !planet ||
+           planetSub.userId !== userSub.userId || planet.id !== planetSub.planetId) {
+          throw new BusinessError('数据错误')
         }
         if (buildQueueOne.metal > planet.metal || buildQueueOne.crystal > planet.crystal || buildQueueOne.deuterium > planet.deuterium) {
           // 资源不足删除所有队列
@@ -109,10 +122,12 @@ class WorkerTaskService {
         }
         // 扣减资源
         PlanetDao.updatePlanet({ metal: planet.metal - buildQueueOne.metal, crystal: planet.crystal - buildQueueOne.crystal, deuterium: planet.deuterium - buildQueueOne.deuterium }, { id: buildQueueOne.planetId })
-
+        // 计算建造时间 s
+        buildQueueOne.seconds = Formula.buildingTime({ metal: buildQueueOne.metal, crystal: buildQueueOne.crystal }, planetSub, userSub)
         // 修改为执行队列
         const rest = await BuildQueueDao.updateBuildQueue({
           status: QueueStatusEnum.RUNNING,
+          seconds: buildQueueOne.seconds,
           startTime: dayjs().valueOf(),
           endTime: dayjs().add(buildQueueOne.seconds, 'seconds').valueOf(),
           updateTime: dayjs().valueOf()
