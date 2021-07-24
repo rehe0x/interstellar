@@ -1,4 +1,4 @@
-export const dev = {
+export const pord = {
   env: 'dev',
   port: 3000,
   mysqlConfig: {
