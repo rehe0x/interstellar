@@ -19,6 +19,7 @@ const v = {
     // sex: joi.number().valid(0, 1).required().error(new Error('性别格式不正确'))
   }
 }
+routers.get('/getPlanetBuildQueue', PlanetController.getPlanetBuildQueue)
 routers.get('/getResources', PlanetController.getPlanetResources)
 routers.get('/getBuilding', PlanetController.getBuilding)
 routers.get('/getResearch', PlanetController.getResearch)

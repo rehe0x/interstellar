@@ -164,6 +164,10 @@ class BuildQueueService {
       }
     })
   }
+
+  static async getPlanetBuildQueue (userId, planetId) {
+    return await BuildQueueDao.findAllByOrderItem({ userId, planetId })
+  }
 }
 
 export { BuildQueueService }
