@@ -1,5 +1,6 @@
 import assert from 'assert'
 import dayjs from 'dayjs'
+import { BuildTypeEnum, QueueStatusEnum } from '../enum/base.enum.js'
 import { parentPort, workerData, MessagePort } from 'worker_threads'
 
 const slot = [] // 环形队列
@@ -19,7 +20,7 @@ const slotHandle = async (index) => {
         arrTask.cycle_num--
       } else {
         arr.splice(i, 1)
-        slotMap.delete(`${arrTask.taskType}-${arrTask.taskInfo.id}`)
+        slotMap.delete(`${arrTask.taskInfo.buildCode}-${arrTask.taskInfo.id}`)
         workerData.port.postMessage(arrTask)
       }
     }
@@ -49,12 +50,26 @@ const pushSlot = async (task) => {
   } else {
     slot[index] = [task]
   }
-  slotMap.set(`${task.taskType}-${task.taskInfo.id}`, index)
+  slotMap.set(`${task.taskInfo.buildCode}-${task.taskInfo.id}`, index)
+}
+
+const deleteSlot = async (task) => {
+  console.log('删除定时任务', task)
+  const index = slotMap.get(`${task.taskInfo.buildCode}-${task.taskInfo.id}`)
+  const arr = slot[index]
+  if (arr) {
+    const i = arr.findIndex(item => item.taskInfo.id === task.taskInfo.id)
+    slot[index].splice(i, 1)
+  }
 }
 
 // 主线程加入定时任务
 parentPort.on('message', data => {
-  pushSlot(data)
+  if (BuildTypeEnum.DELETE === data.taskType) {
+    deleteSlot(data)
+  } else {
+    pushSlot(data)
+  }
 })
 assert(workerData.port instanceof MessagePort)
 parentPort.postMessage('定时线程启动成功！')

@@ -1,6 +1,7 @@
 export const BuildTypeEnum = Object.freeze({
   BUILDING: 'building',
-  RESEARCH: 'research'
+  RESEARCH: 'research',
+  DELETE: 'delete'
 })
 
 export const QueueStatusEnum = Object.freeze({

@@ -25,5 +25,6 @@ routers.get('/getBuilding', PlanetController.getBuilding)
 routers.get('/getResearch', PlanetController.getResearch)
 routers.post('/addBuildingQueue', PlanetController.addBuildingQueue)
 routers.post('/addResearchQueue', PlanetController.addResearchQueue)
+routers.post('/deleteBuildQueue', PlanetController.deleteBuildQueue)
 
 export { routers as planetRouter }

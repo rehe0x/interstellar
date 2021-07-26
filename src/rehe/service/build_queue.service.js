@@ -168,6 +168,22 @@ class BuildQueueService {
   static async getPlanetBuildQueue (userId, planetId) {
     return await BuildQueueDao.findAllByOrderItem({ userId, planetId })
   }
+
+  static async deleteBuildQueue (queueId) {
+    const rest = await BuildQueueDao.findByPk(queueId)
+    if (!rest) {
+      throw new BusinessError('队列不存在')
+    }
+    return await sequelize.transaction(async (t1) => {
+      const d = await BuildQueueDao.delete({ id: queueId })
+      if (rest.status === QueueStatusEnum.RUNNING) {
+        // 恢复资源
+        await PlanetDao.incrementPlanet({ metal: rest.metal, crystal: rest.crystal, deuterium: rest.deuterium }, { id: rest.planetId })
+        workerTimer.postMessage({ taskType: BuildTypeEnum.DELETE, taskInfo: rest })
+      }
+      return d
+    })
+  }
 }
 
 export { BuildQueueService }

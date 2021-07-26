@@ -35,6 +35,12 @@ class PlanetController {
     const rest = await BuildQueueService.addResearchQueue(1, 3, param.buildCode)
     ctx.success(rest)
   }
+
+  static async deleteBuildQueue (ctx, next) {
+    const param = ctx.request.body
+    const rest = await BuildQueueService.deleteBuildQueue(param.queueId)
+    ctx.success(rest)
+  }
 }
 
 export { PlanetController }

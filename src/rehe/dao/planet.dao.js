@@ -6,6 +6,10 @@ class PlanetDao extends Model {
       where: whereClause
     })
   }
+
+  static async incrementPlanet (field, whereClause) {
+    return await this.increment(field, { where: whereClause })
+  }
 }
 PlanetDao.init({
   id: {
