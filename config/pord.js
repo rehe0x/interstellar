@@ -2,7 +2,7 @@ export const pord = {
   env: 'dev',
   port: 3000,
   mysqlConfig: {
-    host: '127.0.0.1',
+    host: '39.108.218.149',
     port: 3306,
     user: 'root',
     password: 'Xiehong123',
