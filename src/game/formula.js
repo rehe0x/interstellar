@@ -1,5 +1,6 @@
 
 import { GameConfig } from './config.js'
+import { BuildingMap, ResearchMap } from './build/index.js'
 
 class Formula {
   //  造价
@@ -32,14 +33,21 @@ class Formula {
 
   // 是否满足前置条件
   static isRequeriment (obj, planetSub, userSub) {
+    const requerimentArr = []
     let b = true
     for (const key in obj.requeriments) {
-      if ((!planetSub[key] && !userSub[key]) || (planetSub[key] && obj.requeriments[key] > planetSub[key]) || (userSub[key] && obj.requeriments[key] > userSub[key])) {
-        b = false
-        break
+      const name = ResearchMap[key] ? ResearchMap[key].name : BuildingMap[key] ? BuildingMap[key].name : null
+      const mylevel = planetSub[key] ? planetSub[key] : userSub[key] ? userSub[key] : 0
+      if (b) {
+        b = !(obj.requeriments[key] > mylevel)
       }
+      requerimentArr.push({
+        name,
+        level: obj.requeriments[key],
+        mylevel
+      })
     }
-    return b
+    return { isReq: b, requeriments: requerimentArr }
   }
 
   // 计算仓库最大容量

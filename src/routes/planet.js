@@ -20,6 +20,7 @@ const v = {
   }
 }
 routers.get('/getPlanetBuildQueue', PlanetController.getPlanetBuildQueue)
+routers.get('/getPlanetBuildQueueByType', PlanetController.getPlanetBuildQueueByType)
 routers.get('/getResources', PlanetController.getPlanetResources)
 routers.get('/getBuilding', PlanetController.getBuilding)
 routers.get('/getResearch', PlanetController.getResearch)

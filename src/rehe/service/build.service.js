@@ -25,7 +25,7 @@ class BuildService {
       obj.level = planetSub[key]
       obj.buildTime = Formula.buildingTime(obj, planetSub, userSub)
       obj.buildTimeShow = remainingTime(obj.buildTime)
-      obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub)
+      obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub).isReq
       delete obj.requeriments
       delete obj.pricelist
     }
@@ -44,7 +44,7 @@ class BuildService {
     // 获取研究所等级 + 计算跨行星网络 获取所有星球研究所等级
     let lablevel = planetSub.buildingLaboratory
     if (userSub.researchIntergalactic >= 1) {
-      lablevel += 2
+      lablevel += 0
     }
 
     for (const key in rest) {
@@ -56,7 +56,7 @@ class BuildService {
       obj.level = userSub[key]
       obj.buildTime = Formula.researchTime(obj, userSub, lablevel)
       obj.buildTimeShow = remainingTime(obj.buildTime)
-      obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub)
+      obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub).isReq
       delete obj.requeriments
       delete obj.pricelist
     }

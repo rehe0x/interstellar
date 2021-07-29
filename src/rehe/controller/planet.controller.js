@@ -24,6 +24,12 @@ class PlanetController {
     ctx.success(rest)
   }
 
+  static async getPlanetBuildQueueByType (ctx, next) {
+    const param = ctx.request.query
+    const rest = await BuildQueueService.getPlanetBuildQueueByType(1, 3, param.buildType)
+    ctx.success(rest)
+  }
+
   static async addBuildingQueue (ctx, next) {
     const param = ctx.request.body
     const rest = await BuildQueueService.addBuildingQueue(1, 3, param.buildCode)

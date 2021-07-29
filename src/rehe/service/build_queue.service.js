@@ -26,8 +26,9 @@ class BuildQueueService {
       planetSub.userId !== userSub.userId || planet.id !== planetSub.planetId) {
       throw new BusinessError('数据错误')
     }
-    if (!Formula.isRequeriment(building, planetSub, userSub)) {
-      throw new BusinessError('前置条件不满足')
+    const requeriment = Formula.isRequeriment(building, planetSub, userSub)
+    if (!requeriment.isReq) {
+      throw new BusinessError(JSON.stringify(requeriment.requeriments))
     }
     // 查询星球队列信息
     const buildQueueList = await BuildQueueDao.findAllByItem({ planetId, buildType: BuildTypeEnum.BUILDING })
@@ -102,8 +103,9 @@ class BuildQueueService {
         planetSub.userId !== userSub.userId || planet.id !== planetSub.planetId) {
         throw new BusinessError('数据错误')
       }
-      if (!Formula.isRequeriment(research, planetSub, userSub)) {
-        throw new BusinessError('前置条件不满足')
+      const requeriment = Formula.isRequeriment(research, planetSub, userSub)
+      if (!requeriment.isReq) {
+        throw new BusinessError(JSON.stringify(requeriment.requeriments))
       }
       // 查询星球队列信息 等级降序查询 取一个
       const buildQueueOne = await BuildQueueDao.findOneByItem({ userId, buildType: BuildTypeEnum.RESEARCH })
@@ -117,9 +119,9 @@ class BuildQueueService {
         const deuterium = price.deuterium
 
         // 计算建造时间 获取研究所等级 + 计算跨行星网络 获取所有星球研究所等级
-        let lablevel = 5
+        let lablevel = planetSub.buildingLaboratory
         if (userSub.researchIntergalactic >= 1) {
-          lablevel += 5
+          lablevel += 0
         }
         const seconds = Formula.researchTime({ metal, crystal }, userSub, lablevel)
         const status = QueueStatusEnum.RUNNING
@@ -167,6 +169,10 @@ class BuildQueueService {
 
   static async getPlanetBuildQueue (userId, planetId) {
     return await BuildQueueDao.findAllByOrderItem({ userId, planetId })
+  }
+
+  static async getPlanetBuildQueueByType (userId, planetId, buildType) {
+    return await BuildQueueDao.findAllByOrderItem({ userId, planetId, buildType })
   }
 
   static async deleteBuildQueue (queueId) {
