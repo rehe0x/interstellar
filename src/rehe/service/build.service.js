@@ -25,7 +25,7 @@ class BuildService {
       obj.level = planetSub[key]
       obj.buildTime = Formula.buildingTime(obj, planetSub, userSub)
       obj.buildTimeShow = remainingTime(obj.buildTime)
-      obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub).isReq
+      obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub)
       delete obj.requeriments
       delete obj.pricelist
     }
@@ -56,7 +56,7 @@ class BuildService {
       obj.level = userSub[key]
       obj.buildTime = Formula.researchTime(obj, userSub, lablevel)
       obj.buildTimeShow = remainingTime(obj.buildTime)
-      obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub).isReq
+      obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub)
       delete obj.requeriments
       delete obj.pricelist
     }
