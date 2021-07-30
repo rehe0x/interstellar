@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 export const restful = (option = {}) => {
   const allowedMethods = async (ctx, next) => {
     ctx.success = function (data) {
@@ -5,7 +7,8 @@ export const restful = (option = {}) => {
       ctx.body = {
         code: option.successCode || 200,
         msg: option.successMsg || 'success',
-        result: data
+        result: data,
+        time: dayjs().valueOf()
       }
     }
     ctx.fail = function (msg, code) {
