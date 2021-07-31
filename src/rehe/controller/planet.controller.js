@@ -1,8 +1,13 @@
+import dayjs from 'dayjs'
 import { BuildService } from '../service/build.service.js'
 import { BuildQueueService } from '../service/build_queue.service.js'
 import { ResourcesService } from '../service/resources.service.js'
 
 class PlanetController {
+  static async getNowTime (ctx, next) {
+    ctx.success({ nowTime: dayjs().valueOf() })
+  }
+
   static async getPlanetResources (ctx, next) {
     const rest = await ResourcesService.getPlanetResources(1, 3)
     ctx.success(rest)
