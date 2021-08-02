@@ -1,6 +1,12 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class PlanetDao extends Model {
+  static async findAllByItem (whereClause) {
+    return await this.findAll({
+      where: whereClause
+    })
+  }
+
   static async updatePlanet (field, whereClause) {
     return await this.update(field, {
       where: whereClause
@@ -26,6 +32,31 @@ PlanetDao.init({
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 1
+  },
+  name: {
+    type: DataTypes.STRING(64),
+    allowNull: false,
+    comment: '星球名称'
+  },
+  planetType: {
+    type: DataTypes.STRING(32),
+    allowNull: false,
+    comment: '类型 star moon'
+  },
+  galaxyX: {
+    type: DataTypes.SMALLINT,
+    allowNull: false,
+    comment: '坐标x1-9'
+  },
+  galaxyY: {
+    type: DataTypes.SMALLINT,
+    allowNull: false,
+    comment: '坐标y1-499'
+  },
+  galaxyZ: {
+    type: DataTypes.SMALLINT,
+    allowNull: false,
+    comment: '坐标z1-15'
   },
   tempMax: {
     type: DataTypes.INTEGER,
@@ -85,6 +116,11 @@ PlanetDao.init({
     type: DataTypes.BIGINT.UNSIGNED,
     allowNull: false,
     comment: '资源更新时间'
+  },
+  createTime: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    comment: '创建时间'
   }
 }, {
   sequelize,

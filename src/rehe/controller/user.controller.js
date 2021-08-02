@@ -2,8 +2,14 @@ import Jwt from 'jsonwebtoken'
 import { Config } from '../../../config/index.js'
 import { BusinessError } from '../../lib/error.js'
 import { UserService } from '../service/user.service.js'
+import { PlanetService } from '../service/planet.service.js'
 
 class UserController {
+  static async getUserPlanet (ctx, next) {
+    const rest = await PlanetService.getUserPlanet(1)
+    ctx.success(rest)
+  }
+
   static async login (ctx, next) {
     const param = ctx.request.body
     const user = await UserService.findOne({ username: param.username })

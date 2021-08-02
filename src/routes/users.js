@@ -19,6 +19,7 @@ const v = {
   }
 }
 
+routers.get('/getUserPlanet', UserController.getUserPlanet)
 routers.get('/login', UserController.login)
 routers.post('/add', validation(v.add), UserController.add)
 routers.get('/find', UserController.find)
