@@ -28,10 +28,9 @@ PlanetDao.init({
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  universe: {
+  universeId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 1
+    allowNull: false
   },
   name: {
     type: DataTypes.STRING(64),

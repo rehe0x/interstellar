@@ -27,6 +27,10 @@ PlanetSubDao.init({
     type: DataTypes.INTEGER,
     allowNull: false
   },
+  universeId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
   buildingMetalMine: {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,

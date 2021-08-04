@@ -23,6 +23,10 @@ UserSubDao.init({
     type: DataTypes.INTEGER,
     allowNull: false
   },
+  universeId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
   researchSpy: {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,

@@ -10,17 +10,25 @@ class UserController {
     ctx.success(rest)
   }
 
+  static async sendPhoneCode (ctx, next) {
+    const param = ctx.request.query
+    ctx.success(param)
+  }
+
+  static async verifyPhoneCode (ctx, next) {
+    const param = ctx.request.query
+    ctx.success(param)
+  }
+
   static async login (ctx, next) {
     const param = ctx.request.body
-    const user = await UserService.findOne({ username: param.username })
+    // 验证验证码
+    let user = await UserService.findOne({ universeId: param.universeId, phone: param.phone })
     if (!user) {
-      throw new BusinessError('用户名不存在～')
-    }
-    if (user.password !== String(param.password)) {
-      throw new BusinessError('密码错误～')
+      user = await UserService.signIn(param)
     }
     const token = Jwt.sign(
-      { name: user.username, password: user.password }, // 加密userToken
+      { userId: user.id, phone: user.phone }, // 加密userToken
       Config.SECRET,
       { expiresIn: '1h' }
     )

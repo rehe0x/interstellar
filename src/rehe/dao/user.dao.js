@@ -5,6 +5,12 @@ class UserDao extends Model {
     const rest = await sequelize.query('select * from user')
     return rest
   }
+
+  static async updateUser (field, whereClause) {
+    return await this.update(field, {
+      where: whereClause
+    })
+  }
 }
 UserDao.init({
   id: {
@@ -12,6 +18,14 @@ UserDao.init({
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true
+  },
+  universeId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  planetId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   },
   username: {
     type: DataTypes.STRING(255),

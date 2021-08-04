@@ -18,7 +18,8 @@ const v = {
     // sex: joi.number().valid(0, 1).required().error(new Error('性别格式不正确'))
   }
 }
-
+routers.get('/sendPhoneCode', UserController.sendPhoneCode)
+routers.get('/verifyPhoneCode', UserController.verifyPhoneCode)
 routers.get('/getUserPlanet', UserController.getUserPlanet)
 routers.get('/login', UserController.login)
 routers.post('/add', validation(v.add), UserController.add)
