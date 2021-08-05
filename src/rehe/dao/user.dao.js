@@ -25,15 +25,15 @@ UserDao.init({
   },
   planetId: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true
   },
   username: {
     type: DataTypes.STRING(255),
-    allowNull: false
+    allowNull: true
   },
   password: {
     type: DataTypes.STRING(255),
-    allowNull: false
+    allowNull: true
   },
   nickname: {
     type: DataTypes.STRING(255),
@@ -45,7 +45,7 @@ UserDao.init({
   },
   phone: {
     type: DataTypes.STRING(255),
-    allowNull: true
+    allowNull: false
   },
   avatarPath: {
     type: DataTypes.STRING(255),
@@ -57,7 +57,7 @@ UserDao.init({
   }
 }, {
   sequelize,
-  tableName: 'user',
+  tableName: 'game_user',
   timestamps: false,
   indexes: [
     {

@@ -21,9 +21,7 @@ const v = {
 routers.get('/sendPhoneCode', UserController.sendPhoneCode)
 routers.get('/verifyPhoneCode', UserController.verifyPhoneCode)
 routers.get('/getUserPlanet', UserController.getUserPlanet)
-routers.get('/login', UserController.login)
-routers.post('/add', validation(v.add), UserController.add)
-routers.get('/find', UserController.find)
+routers.post('/login', UserController.login)
 routers.get('/findPage', UserController.findPage)
 routers.get('/findPageQuery', UserController.findPageQuery)
 

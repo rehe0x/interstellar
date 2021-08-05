@@ -22,7 +22,7 @@ const v = {
 routers.get('/getNowTime', PlanetController.getNowTime)
 routers.get('/getPlanetBuildQueue', PlanetController.getPlanetBuildQueue)
 routers.get('/getPlanetBuildQueueByType', PlanetController.getPlanetBuildQueueByType)
-routers.get('/getResources', PlanetController.getPlanetResources)
+routers.get('/getPlanetResources', PlanetController.getPlanetResources)
 routers.get('/getBuilding', PlanetController.getBuilding)
 routers.get('/getResearch', PlanetController.getResearch)
 routers.post('/addBuildingQueue', PlanetController.addBuildingQueue)

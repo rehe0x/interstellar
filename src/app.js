@@ -38,13 +38,14 @@ app.use(views(path.join(path.resolve(), '/src/views'), {
   extension: 'ejs'
 }))
 
-// // auth
-// app.use(auth().unless([
-//   '/',
-//   '/favicon.ico',
-//   /\/api\/admin\/auth/,
-//   /\/api\/users\/login/
-// ]))
+// auth
+app.use(auth().unless([
+  '/favicon.ico',
+  '/api/home/getUniverse',
+  '/api/user/sendPhoneCode',
+  '/api/user/verifyPhoneCode',
+  '/api/user/login'
+]))
 
 // routes
 app.use(indexRouter.routes(), indexRouter.allowedMethods())

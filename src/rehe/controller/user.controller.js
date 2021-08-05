@@ -6,7 +6,8 @@ import { PlanetService } from '../service/planet.service.js'
 
 class UserController {
   static async getUserPlanet (ctx, next) {
-    const rest = await PlanetService.getUserPlanet(1)
+    const param = ctx.request.query
+    const rest = await PlanetService.getUserPlanet(ctx.loginInfo.userId)
     ctx.success(rest)
   }
 
@@ -25,7 +26,8 @@ class UserController {
     // 验证验证码
     let user = await UserService.findOne({ universeId: param.universeId, phone: param.phone })
     if (!user) {
-      user = await UserService.signIn(param)
+      const rest = await UserService.signIn(param)
+      user = rest.dataValues
     }
     const token = Jwt.sign(
       { userId: user.id, phone: user.phone }, // 加密userToken
@@ -33,17 +35,8 @@ class UserController {
       { expiresIn: '1h' }
     )
     user.token = token
+    console.log(user, token)
     ctx.success(user)
-  }
-
-  static async add (ctx, next) {
-    const rest = await UserService.add(ctx.request.body)
-    ctx.success(rest)
-  }
-
-  static async find (ctx, next) {
-    const rest = await UserService.find()
-    ctx.success(rest)
   }
 
   static async findPage (ctx, next) {

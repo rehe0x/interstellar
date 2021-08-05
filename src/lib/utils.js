@@ -2,6 +2,8 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration.js'
 dayjs.extend(duration)
 
+export const genRandom = (min, max) => Math.floor((Math.random() * ((max - min) + 1) || 0) + min)
+
 export const deepFreeze = (obj) => {
   for (const key in obj) {
     const v = obj[key]

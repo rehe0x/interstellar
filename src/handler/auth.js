@@ -6,6 +6,7 @@ export const auth = (option = {}) => {
     const token = ctx.header.authorization
     const data = await jwt.verify(token, Config.SECRET)
     if (data) {
+      ctx.loginInfo = data
       // ctx.status = 200 //这里非常重要，只有设置了status，koa-router才识别请求正确继续进入路由
       await next()
     }
@@ -14,7 +15,7 @@ export const auth = (option = {}) => {
     const originalMiddleware = this
     return async function (ctx, next) {
       const y = options.some(function (p) {
-        return (typeof p === 'string' && p === ctx.url) ||
+        return (typeof p === 'string' && ctx.url.startsWith(p)) ||
           (p instanceof RegExp && !!p.exec(ctx.url))
       })
       if (y) {

@@ -9,41 +9,44 @@ class PlanetController {
   }
 
   static async getPlanetResources (ctx, next) {
-    const rest = await ResourcesService.getPlanetResources(1, 3)
+    const param = ctx.request.query
+    const rest = await ResourcesService.getPlanetResources(ctx.loginInfo.userId, param.planetId)
     ctx.success(rest)
   }
 
   static async getBuilding (ctx, next) {
-    const rest = await BuildService.getBuilding(1, 3)
+    const param = ctx.request.query
+    const rest = await BuildService.getBuilding(ctx.loginInfo.userId, param.planetId)
     ctx.success(rest)
   }
 
   static async getResearch (ctx, next) {
-    const rest = await BuildService.getResearch(1, 3)
+    const param = ctx.request.query
+    const rest = await BuildService.getResearch(ctx.loginInfo.userId, param.planetId)
     ctx.success(rest)
   }
 
   static async getPlanetBuildQueue (ctx, next) {
-    const param = ctx.request.body
-    const rest = await BuildQueueService.getPlanetBuildQueue(1, 3)
+    const param = ctx.request.query
+    const rest = await BuildQueueService.getPlanetBuildQueue(ctx.loginInfo.userId, param.planetId)
     ctx.success(rest)
   }
 
   static async getPlanetBuildQueueByType (ctx, next) {
     const param = ctx.request.query
-    const rest = await BuildQueueService.getPlanetBuildQueueByType(1, 3, param.buildType)
+    const rest = await BuildQueueService.getPlanetBuildQueueByType(ctx.loginInfo.userId, param.planetId, param.buildType)
     ctx.success(rest)
   }
 
   static async addBuildingQueue (ctx, next) {
     const param = ctx.request.body
-    const rest = await BuildQueueService.addBuildingQueue(1, 3, param.buildCode)
+    const rest = await BuildQueueService.addBuildingQueue(ctx.loginInfo.userId, param.planetId, param.buildCode)
     ctx.success(rest)
   }
 
   static async addResearchQueue (ctx, next) {
     const param = ctx.request.body
-    const rest = await BuildQueueService.addResearchQueue(1, 3, param.buildCode)
+    const rest = await BuildQueueService.addResearchQueue(ctx.loginInfo.userId, param.planetId, param.buildCode)
     ctx.success(rest)
   }
 
