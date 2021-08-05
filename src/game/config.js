@@ -29,6 +29,6 @@ const GameConfig = {
 }
 
 deepFreeze(GameConfig)
-export {
-  GameConfig
-}
+// export {
+//   GameConfig
+// }

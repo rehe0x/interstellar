@@ -35,7 +35,6 @@ class UserController {
       { expiresIn: '1h' }
     )
     user.token = token
-    console.log(user, token)
     ctx.success(user)
   }
 

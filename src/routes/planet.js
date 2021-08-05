@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import joi from 'joi'
+import { BuildTypeEnum, QueueStatusEnum } from '../enum/base.enum.js'
 import { validation } from '../handler/validation.js'
 import { PlanetController } from '../rehe/controller/planet.controller.js'
 import Router from 'koa-router'
@@ -8,25 +9,27 @@ const routers = new Router()
 routers.prefix('/planet')
 
 const v = {
-  add: {
-    // username必须是字符串类型、最小长度是2、最大长度是6、必填项、自定义验证失败错误信息
-    username: joi.string().min(2).max(6).required().error(new Error('用户名格式不正确'))
-    // // email必须是字符串类型、必须符合邮箱格式、必填项、自定义验证失败错误信息
-    // email: joi.string().email().required().error(new Error('邮箱格式不正确')),
-    // // pwd必须是字符串类型、必须符合指定的正则规则、自定义验证失败错误信息
-    // pwd: joi.string().regex(/^[a-zA-Z0-9]+$/).error(new Error('密码格式不正确')),
-    // // sex必须是数字类型、值是0或1、必填项、自定义验证失败错误信息
-    // sex: joi.number().valid(0, 1).required().error(new Error('性别格式不正确'))
+  base: {
+    planetId: joi.number().integer().required().error(new Error('星球参数错误'))
+  },
+  queueId: {
+    queueId: joi.number().integer().required().error(new Error('队列参数错误'))
+  },
+  buildType: {
+    buildType: joi.string().valid(...Object.values(BuildTypeEnum)).required().error(new Error('建筑类型错误'))
+  },
+  buildCode: {
+    buildCode: joi.string().required().error(new Error('建筑参数错误'))
   }
 }
 routers.get('/getNowTime', PlanetController.getNowTime)
-routers.get('/getPlanetBuildQueue', PlanetController.getPlanetBuildQueue)
-routers.get('/getPlanetBuildQueueByType', PlanetController.getPlanetBuildQueueByType)
-routers.get('/getPlanetResources', PlanetController.getPlanetResources)
-routers.get('/getBuilding', PlanetController.getBuilding)
-routers.get('/getResearch', PlanetController.getResearch)
-routers.post('/addBuildingQueue', PlanetController.addBuildingQueue)
-routers.post('/addResearchQueue', PlanetController.addResearchQueue)
-routers.post('/deleteBuildQueue', PlanetController.deleteBuildQueue)
+routers.get('/getPlanetBuildQueue', validation(v.base), PlanetController.getPlanetBuildQueue)
+routers.get('/getPlanetBuildQueueByType', validation({ ...v.base, ...v.buildType }), PlanetController.getPlanetBuildQueueByType)
+routers.get('/getPlanetResources', validation(v.base), PlanetController.getPlanetResources)
+routers.get('/getBuilding', validation(v.base), PlanetController.getBuilding)
+routers.get('/getResearch', validation(v.base), PlanetController.getResearch)
+routers.post('/addBuildingQueue', validation({ ...v.base, ...v.buildCode }), PlanetController.addBuildingQueue)
+routers.post('/addResearchQueue', validation({ ...v.base, ...v.buildCode }), PlanetController.addResearchQueue)
+routers.post('/deleteBuildQueue', validation(v.queueId), PlanetController.deleteBuildQueue)
 
 export { routers as planetRouter }
