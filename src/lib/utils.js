@@ -1,5 +1,8 @@
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration.js'
+import { Cache } from './cache.js'
+import { BusinessError } from './error.js'
+
 dayjs.extend(duration)
 
 export const genRandom = (min, max) => Math.floor((Math.random() * ((max - min) + 1) || 0) + min)
@@ -25,8 +28,18 @@ export const remainingTime = (seconds) => {
 
 export const wait = (seconds) => new Promise((resolve, reject) => { setTimeout(() => { resolve('ok') }, seconds) })
 
-// export class TimeUtil(){
-//   static getNowTime(){
-//     return 
-//   }
-// }
+export const getLock = async (key, func) => {
+  console.log('cache=======', Cache.get(key))
+  if (!Cache.get(key)) {
+    Cache.put(key, key)
+    try {
+      return await func()
+    } catch (error) {
+      throw new BusinessError(error.message)
+    } finally {
+      Cache.del(key)
+    }
+  } else {
+    return {}
+  }
+}

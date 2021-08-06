@@ -1,6 +1,8 @@
 export const BuildTypeEnum = Object.freeze({
   BUILDING: 'building',
   RESEARCH: 'research',
+  FLEET: 'fleet',
+  DEFENSE: 'defense',
   DELETE: 'delete'
 })
 

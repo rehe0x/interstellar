@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { getLock } from '../../lib/utils.js'
 import { BuildService } from '../service/build.service.js'
 import { BuildQueueService } from '../service/build_queue.service.js'
 import { ResourcesService } from '../service/resources.service.js'
@@ -40,19 +41,25 @@ class PlanetController {
 
   static async addBuildingQueue (ctx, next) {
     const param = ctx.request.body
-    const rest = await BuildQueueService.addBuildingQueue(ctx.loginInfo.userId, param.planetId, param.buildCode)
+    const rest = await getLock(`addBuildingQueue_${ctx.loginInfo.userId}`, async () => {
+      return await BuildQueueService.addBuildingQueue(ctx.loginInfo.userId, param.planetId, param.buildCode)
+    })
     ctx.success(rest)
   }
 
   static async addResearchQueue (ctx, next) {
     const param = ctx.request.body
-    const rest = await BuildQueueService.addResearchQueue(ctx.loginInfo.userId, param.planetId, param.buildCode)
+    const rest = await getLock(`addResearchQueue_${ctx.loginInfo.userId}`, async () => {
+      return await BuildQueueService.addResearchQueue(ctx.loginInfo.userId, param.planetId, param.buildCode)
+    })
     ctx.success(rest)
   }
 
   static async deleteBuildQueue (ctx, next) {
     const param = ctx.request.body
-    const rest = await BuildQueueService.deleteBuildQueue(param.queueId)
+    const rest = await getLock(`deleteBuildQueue_${ctx.loginInfo.userId}`, async () => {
+      return await BuildQueueService.deleteBuildQueue(param.queueId)
+    })
     ctx.success(rest)
   }
 }
