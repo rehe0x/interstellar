@@ -27,6 +27,18 @@ class PlanetController {
     ctx.success(rest)
   }
 
+  static async getFleet (ctx, next) {
+    const param = ctx.request.query
+    const rest = await BuildService.getFleet(ctx.loginInfo.userId, param.planetId)
+    ctx.success(rest)
+  }
+
+  static async getDefense (ctx, next) {
+    const param = ctx.request.query
+    const rest = await BuildService.getDefense(ctx.loginInfo.userId, param.planetId)
+    ctx.success(rest)
+  }
+
   static async getPlanetBuildQueue (ctx, next) {
     const param = ctx.request.query
     const rest = await BuildQueueService.getPlanetBuildQueue(ctx.loginInfo.userId, param.planetId)

@@ -28,6 +28,8 @@ routers.get('/getPlanetBuildQueueByType', validation({ ...v.base, ...v.buildType
 routers.get('/getPlanetResources', validation(v.base), PlanetController.getPlanetResources)
 routers.get('/getBuilding', validation(v.base), PlanetController.getBuilding)
 routers.get('/getResearch', validation(v.base), PlanetController.getResearch)
+routers.get('/getFleet', validation(v.base), PlanetController.getFleet)
+routers.get('/getDefense', validation(v.base), PlanetController.getDefense)
 routers.post('/addBuildingQueue', validation({ ...v.base, ...v.buildCode }), PlanetController.addBuildingQueue)
 routers.post('/addResearchQueue', validation({ ...v.base, ...v.buildCode }), PlanetController.addResearchQueue)
 routers.post('/deleteBuildQueue', validation(v.queueId), PlanetController.deleteBuildQueue)
