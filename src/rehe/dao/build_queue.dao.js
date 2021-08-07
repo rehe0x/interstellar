@@ -97,6 +97,11 @@ BuildQueueDao.init({
     allowNull: false,
     comment: '等级'
   },
+  remainLevel: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: true,
+    comment: '剩余'
+  },
   metal: {
     type: DataTypes.BIGINT.UNSIGNED,
     allowNull: false,
@@ -136,6 +141,10 @@ BuildQueueDao.init({
     allowNull: true
   },
   endTime: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: true
+  },
+  remainUpdateTime: {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true
   },

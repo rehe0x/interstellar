@@ -20,7 +20,10 @@ const v = {
   },
   buildCode: {
     buildCode: joi.string().required().error(new Error('建筑参数错误'))
-  }
+  },
+  buildNum: {
+    buildNum: joi.number().min(1).max(9999).required().error(new Error('建造数量参数错误'))
+  },
 }
 routers.get('/getNowTime', PlanetController.getNowTime)
 routers.get('/getPlanetBuildQueue', validation(v.base), PlanetController.getPlanetBuildQueue)
@@ -32,6 +35,8 @@ routers.get('/getFleet', validation(v.base), PlanetController.getFleet)
 routers.get('/getDefense', validation(v.base), PlanetController.getDefense)
 routers.post('/addBuildingQueue', validation({ ...v.base, ...v.buildCode }), PlanetController.addBuildingQueue)
 routers.post('/addResearchQueue', validation({ ...v.base, ...v.buildCode }), PlanetController.addResearchQueue)
+routers.post('/addFleetQueue', validation({ ...v.base, ...v.buildCode, ...v.buildNum }), PlanetController.addFleetQueue)
+routers.post('/addDefenseQueue', validation({ ...v.base, ...v.buildCode, ...v.buildNum }), PlanetController.addDefenseQueue)
 routers.post('/deleteBuildQueue', validation(v.queueId), PlanetController.deleteBuildQueue)
 
 export { routers as planetRouter }

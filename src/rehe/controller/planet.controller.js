@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { BuildTypeEnum } from '../../enum/base.enum.js'
 import { getLock } from '../../lib/utils.js'
 import { BuildService } from '../service/build.service.js'
 import { BuildQueueService } from '../service/build_queue.service.js'
@@ -41,6 +42,7 @@ class PlanetController {
 
   static async getPlanetBuildQueue (ctx, next) {
     const param = ctx.request.query
+    await ResourcesService.updatePlanetBuild(ctx.loginInfo.userId, param.planetId)
     const rest = await BuildQueueService.getPlanetBuildQueue(ctx.loginInfo.userId, param.planetId)
     ctx.success(rest)
   }
@@ -63,6 +65,22 @@ class PlanetController {
     const param = ctx.request.body
     const rest = await getLock(`addResearchQueue_${ctx.loginInfo.userId}`, async () => {
       return await BuildQueueService.addResearchQueue(ctx.loginInfo.userId, param.planetId, param.buildCode)
+    })
+    ctx.success(rest)
+  }
+
+  static async addFleetQueue (ctx, next) {
+    const param = ctx.request.body
+    const rest = await getLock(`addFleetQueue_${ctx.loginInfo.userId}`, async () => {
+      return await BuildQueueService.addFDQueue(ctx.loginInfo.userId, param.planetId, param.buildCode, param.buildNum, BuildTypeEnum.FLEET)
+    })
+    ctx.success(rest)
+  }
+
+  static async addDefenseQueue (ctx, next) {
+    const param = ctx.request.body
+    const rest = await getLock(`addDefenseQueue_${ctx.loginInfo.userId}`, async () => {
+      return await BuildQueueService.addFDQueue(ctx.loginInfo.userId, param.planetId, param.buildCode, param.buildNum, BuildTypeEnum.DEFENSE)
     })
     ctx.success(rest)
   }
