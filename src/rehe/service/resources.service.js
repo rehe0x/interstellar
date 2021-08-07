@@ -74,32 +74,30 @@ class ResourcesService {
 
   // 舰队防御更新
   static async updatePlanetBuild (userId, planetId, buildType) {
-    // 查询用户和星球信息
-    const { userSub, planetSub, planet } = await this.getUserPlanetSub(userId, planetId)
-   
     if (!buildType) {
       buildType = [BuildTypeEnum.FLEET, BuildTypeEnum.DEFENSE]
     }
     // 查询星球队列信息
-    const buildQueueList = await BuildQueueDao.findAllByItem({ planetId, status: QueueStatusEnum.RUNNING, buildType: buildType })
+    const buildQueueList = await BuildQueueDao.findAllByItem({ userId, planetId, status: QueueStatusEnum.RUNNING, buildType: buildType })
     for (const element of buildQueueList) {
       // 计算间隔时间
       const nowTime = dayjs().valueOf()
       const prodNum = element.seconds / element.level
       const prodTime = Math.floor((nowTime - element.remainUpdateTime) / 1000)
-      const n = Math.floor(prodTime / prodNum)
-      console.log('nnnnnnnnnnnnnnnnnnnnnnn', n)
-      if (n === 0) continue
+      let n = Math.floor(prodTime / prodNum)
+      if (!n || n === 0) continue
       await sequelize.transaction(async (t1) => {
         // 修改为执行队列
+        n > element.remainLevel && (n = element.remainLevel)
+        console.log('nnnnnnnnnnnnnnnnnn', n)
         const rest = await BuildQueueDao.updateBuildQueue({
           remainLevel: element.remainLevel - n,
-          remainUpdateTime: nowTime,
+          remainUpdateTime: element.remainUpdateTime + (n * prodNum * 1000),
           updateTime: dayjs().valueOf()
         }, { id: element.id })
         if (rest[0] === 1) {
           // 修改数量
-          await PlanetSubDao.updateIncrementLevel(element.buildCode, planetId,  n)
+          await PlanetSubDao.updateIncrementLevel(element.buildCode, planetId, n)
         }
       })
     }

@@ -15,7 +15,7 @@ class WorkerTaskService {
     this.workerData = workerData
   }
 
-  static async getUserPlanetSub (userId, planetId) {
+  async getUserPlanetSub (userId, planetId) {
     // 查询用户和星球信息
     const userSub = await UserSubDao.findByUser({ userId })
     const planetSub = await PlanetSubDao.findByPlanet({ planetId })
@@ -50,7 +50,7 @@ class WorkerTaskService {
       console.log('buildingArr', item)
       if (item.status !== QueueStatusEnum.RUNNING) {
         // 查询用户和星球信息
-        const { userSub, planetSub, planet } = await this.getUserPlanetSub(taskInfo.userId, taskInfo.planetId)
+        const { userSub, planetSub, planet } = await this.getUserPlanetSub(item.userId, item.planetId)
         if (item.metal > planet.metal || item.crystal > planet.crystal || item.deuterium > planet.deuterium) {
           // 资源不足删除所有队列
           BuildQueueDao.delete({ planetId: item.planetId, status: QueueStatusEnum.PENDING })
@@ -63,6 +63,7 @@ class WorkerTaskService {
         // 修改为执行队列
         const rest = await BuildQueueDao.updateBuildQueue({
           status: QueueStatusEnum.RUNNING,
+          seconds: item.seconds,
           startTime: dayjs().valueOf(),
           endTime: dayjs().add(item.seconds, 'seconds').valueOf(),
           updateTime: dayjs().valueOf()
@@ -82,6 +83,88 @@ class WorkerTaskService {
         this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: item })
       }
     })
+
+    // 建筑队列
+    const fleetArr = await BuildQueueDao.findAllGroupByPlanet(BuildTypeEnum.FLEET)
+    fleetArr.forEach(async (item) => {
+      console.log('fleetArr', item)
+      if (item.status !== QueueStatusEnum.RUNNING) {
+        // 查询建筑信息
+        const fleetObj = FleetMap[item.buildCode]
+        if (!fleetObj) {
+          throw new BusinessError('建造不存在')
+        }
+        // 查询用户和星球信息
+        const { userSub, planetSub } = await this.getUserPlanetSub(item.userId, item.planetId)
+
+        const seconds = Formula.fleetDefenseTime({ metal: fleetObj.pricelist.metal, crystal: fleetObj.pricelist.crystal }, planetSub, userSub)
+        item.seconds = seconds * item.remainLevel
+
+        // 修改为执行队列
+        const rest = await BuildQueueDao.updateBuildQueue({
+          status: QueueStatusEnum.RUNNING,
+          seconds: item.seconds,
+          startTime: dayjs().valueOf(),
+          endTime: dayjs().add(item.seconds, 'seconds').valueOf(),
+          remainUpdateTime: dayjs().valueOf(),
+          updateTime: dayjs().valueOf()
+        }, { id: item.id })
+        if (rest[0] === 1) {
+          this.workerData.port.postMessage({ taskType: BuildTypeEnum.FLEET, taskInfo: item })
+        }
+      } else {
+        const nowTime = dayjs().valueOf()
+        const endTime = item.endTime
+        if (endTime <= nowTime) {
+          // 马上执行
+          item.seconds = 1
+        } else {
+          item.seconds = Math.floor((endTime - nowTime) / 1000)
+        }
+        this.workerData.port.postMessage({ taskType: BuildTypeEnum.FLEET, taskInfo: item })
+      }
+    })
+
+    // 建筑队列
+    const defenseArr = await BuildQueueDao.findAllGroupByPlanet(BuildTypeEnum.DEFENSE)
+    defenseArr.forEach(async (item) => {
+      console.log('defenseArr', item)
+      if (item.status !== QueueStatusEnum.RUNNING) {
+        // 查询建筑信息
+        const defenseObj = DefenseMap[item.buildCode]
+        if (!defenseObj) {
+          throw new BusinessError('建造不存在')
+        }
+        // 查询用户和星球信息
+        const { userSub, planetSub } = await this.getUserPlanetSub(item.userId, item.planetId)
+
+        const seconds = Formula.fleetDefenseTime({ metal: defenseObj.pricelist.metal, crystal: defenseObj.pricelist.crystal }, planetSub, userSub)
+        item.seconds = seconds * item.remainLevel
+
+        // 修改为执行队列
+        const rest = await BuildQueueDao.updateBuildQueue({
+          status: QueueStatusEnum.RUNNING,
+          seconds: item.seconds,
+          startTime: dayjs().valueOf(),
+          endTime: dayjs().add(item.seconds, 'seconds').valueOf(),
+          remainUpdateTime: dayjs().valueOf(),
+          updateTime: dayjs().valueOf()
+        }, { id: item.id })
+        if (rest[0] === 1) {
+          this.workerData.port.postMessage({ taskType: BuildTypeEnum.DEFENSE, taskInfo: item })
+        }
+      } else {
+        const nowTime = dayjs().valueOf()
+        const endTime = item.endTime
+        if (endTime <= nowTime) {
+          // 马上执行
+          item.seconds = 1
+        } else {
+          item.seconds = Math.floor((endTime - nowTime) / 1000)
+        }
+        this.workerData.port.postMessage({ taskType: BuildTypeEnum.DEFENSE, taskInfo: item })
+      }
+    })
   }
 
   async finishQueueTask (task) {
@@ -91,7 +174,7 @@ class WorkerTaskService {
       })
     } else if (task.taskType === BuildTypeEnum.RESEARCH) {
       this.finishResearchQueueTask(task.taskInfo)
-    } else if(task.taskType === BuildTypeEnum.FLEET || task.taskType === BuildTypeEnum.DEFENSE){
+    } else if (task.taskType === BuildTypeEnum.FLEET || task.taskType === BuildTypeEnum.DEFENSE) {
       this.finishFDQueueTask(task.taskInfo).then(rest => {
         rest && typeof rest.seconds !== 'undefined' && this.workerData.port.postMessage({ taskType: task.taskType, taskInfo: rest })
       })
@@ -159,10 +242,14 @@ class WorkerTaskService {
 
   async finishFDQueueTask (taskInfo) {
     await sequelize.transaction(async (t1) => {
+      const rest = await BuildQueueDao.findByPk(taskInfo.id)
+      if (!rest) {
+        throw new BusinessError('队列不存在')
+      }
       // 先更新产量
       await ResourcesService.updatePlanetResources(taskInfo.userId, taskInfo.planetId)
       // 修改数量
-      PlanetSubDao.updateIncrementLevel(taskInfo.buildCode, taskInfo.planetId, taskInfo.remainLevel)
+      PlanetSubDao.updateIncrementLevel(taskInfo.buildCode, taskInfo.planetId, rest.remainLevel)
       // 写入日志
       BuildQueueDao.insertLog('finishFDQueueTask', JSON.stringify(taskInfo), dayjs().valueOf())
       // 删除队列
@@ -177,16 +264,16 @@ class WorkerTaskService {
       const buildQueueOne = await BuildQueueDao.findOneByOrderTime({ planetId: taskInfo.planetId, buildType: taskInfo.buildType })
       if (buildQueueOne) {
         // 查询建筑信息
-        const fdObj = taskInfo.buildType === BuildTypeEnum.FLEET ? FleetMap[taskInfo.buildCode] :  DefenseMap[taskInfo.buildCode]
+        const fdObj = taskInfo.buildType === BuildTypeEnum.FLEET ? FleetMap[buildQueueOne.buildCode] : DefenseMap[buildQueueOne.buildCode]
         if (!fdObj) {
           throw new BusinessError('建造不存在')
         }
         // 查询用户和星球信息
         const { userSub, planetSub } = await this.getUserPlanetSub(taskInfo.userId, taskInfo.planetId)
 
-        let seconds = Formula.fleetDefenseTime({ metal: fdObj.pricelist.metal, crystal: fdObj.pricelist.crystal }, planetSub, userSub)
-        buildQueueOne.seconds = seconds * taskInfo.remainLevel
-        
+        const seconds = Formula.fleetDefenseTime({ metal: fdObj.pricelist.metal, crystal: fdObj.pricelist.crystal }, planetSub, userSub)
+        buildQueueOne.seconds = seconds * buildQueueOne.remainLevel
+
         // 修改为执行队列
         const rest = await BuildQueueDao.updateBuildQueue({
           status: QueueStatusEnum.RUNNING,
