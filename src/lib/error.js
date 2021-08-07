@@ -16,7 +16,17 @@ class HttpError extends Error {
   }
 }
 
+class LoginError extends Error {
+  constructor (msg) {
+    super(msg)
+    this.code = 10
+    this.msg = msg
+    this.name = 'LoginError'
+  }
+}
+
 export {
   BusinessError,
-  HttpError
+  HttpError,
+  LoginError
 }

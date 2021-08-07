@@ -2,6 +2,6 @@
 export const error = async (ctx, next) => {
   return next().catch((err) => {
     console.log(err)
-    ctx.fail(err.message)
+    ctx.fail(err.message, err.code)
   })
 }

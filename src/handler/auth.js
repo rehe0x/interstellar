@@ -1,10 +1,16 @@
 import { Config } from '../../config/index.js'
+import { LoginError } from '../lib/error.js'
 import jwt from 'jsonwebtoken'
 
 export const auth = (option = {}) => {
   const auth = async function verify (ctx, next) {
-    const token = ctx.header.authorization
-    const data = await jwt.verify(token, Config.SECRET)
+    let data = null
+    try {
+      const token = ctx.header.authorization
+      data = await jwt.verify(token, Config.SECRET)
+    } catch (error) {
+      throw new LoginError('登陆过期')
+    }
     if (data) {
       ctx.loginInfo = data
       // ctx.status = 200 //这里非常重要，只有设置了status，koa-router才识别请求正确继续进入路由
