@@ -7,6 +7,24 @@ dayjs.extend(duration)
 
 export const genRandom = (min, max) => Math.floor((Math.random() * ((max - min) + 1) || 0) + min)
 
+export const getRandomChineseWord = (min, max) => {
+  const l = genRandom(min, max)
+  const rsl = []
+  for (let index = 0; index < l; index++) {
+    const _randomUniCode = Math.floor(Math.random() * (40870 - 19968) + 19968).toString(16)
+    rsl.push(eval('"\\u' + _randomUniCode + '"'))
+  }
+  return rsl.join('')
+}
+
+export const getRandomString = (min, max) => {
+  const l = genRandom(min, max)
+  const str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  let result = ''
+  for (let i = l; i > 0; --i) { result += str[Math.floor(Math.random() * str.length)] }
+  return result
+}
+
 export const deepFreeze = (obj) => {
   for (const key in obj) {
     const v = obj[key]

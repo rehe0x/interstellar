@@ -2,15 +2,18 @@ import { sequelize } from '../../lib/sequelize.js'
 import { UserDao } from '../dao/user.dao.js'
 import { PlanetService } from '../service/planet.service.js'
 import { UserSubDao } from '../dao/user_sub.dao.js'
+import { genRandom, getRandomChineseWord, getRandomString } from '../../lib/utils.js'
+
 class UserService {
-  static async signIn (param) {
+  static async signIn ({ universeId, phone }) {
     return await sequelize.transaction(async (t1) => {
       // 初始化账号
-      const newUser = await UserService.add({ universeId: param.universeId, phone: param.phone })
-      UserSubDao.create({ userId: newUser.id, universeId: param.universeId })
-      const newPlannet = await PlanetService.colony(newUser.id, param.universeId)
-      await UserDao.updateUser({ planetId: newPlannet.id }, { id: newUser.id })
-      newUser.planetId = newPlannet.id
+      const uname = genRandom(1, 4) !== 1 ? getRandomChineseWord(2, 12) : getRandomString(5, 18)
+      const newUser = await UserService.add({ universeId, phone, username: uname })
+      UserSubDao.create({ userId: newUser.id, universeId })
+      const newPlanet = await PlanetService.colony(newUser.id, universeId)
+      await UserDao.updateUser({ planetId: newPlanet.id }, { id: newUser.id })
+      newUser.planetId = newPlanet.id
       return newUser
     })
   }

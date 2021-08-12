@@ -27,6 +27,10 @@ UserDao.init({
     type: DataTypes.INTEGER,
     allowNull: true
   },
+  allianceId: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
   username: {
     type: DataTypes.STRING(255),
     allowNull: true

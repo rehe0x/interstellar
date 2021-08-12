@@ -2,7 +2,7 @@
 import { Config } from '../../config/index.js'
 import Sequelizes from 'sequelize'
 import cls from 'cls-hooked'
-const { Sequelize, DataTypes, Model } = Sequelizes
+const { Sequelize, DataTypes, Model, QueryTypes } = Sequelizes
 
 const options = {
   dialect: 'mysql', // 数据库类型
@@ -12,7 +12,7 @@ const options = {
   password: Config.mysqlConfig.password,
   database: Config.mysqlConfig.database,
   pool: { // 连接池设置
-    max: 20, // 最大连接数
+    max: 100, // 最大连接数
     idle: 30000,
     acquire: 60000
   },
@@ -39,6 +39,7 @@ sequelize.authenticate().then(() => {
 export {
   sequelize,
   DataTypes,
+  QueryTypes,
   Model,
   transaction
 }

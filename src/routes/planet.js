@@ -23,7 +23,7 @@ const v = {
   },
   buildNum: {
     buildNum: joi.number().min(1).max(9999).required().error(new Error('建造数量参数错误'))
-  },
+  }
 }
 routers.get('/getNowTime', PlanetController.getNowTime)
 routers.get('/getPlanetBuildQueue', validation(v.base), PlanetController.getPlanetBuildQueue)

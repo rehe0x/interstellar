@@ -10,3 +10,8 @@ export const QueueStatusEnum = Object.freeze({
   RUNNING: 'running',
   PENDING: 'pending'
 })
+
+export const PlanetTypeEnum = Object.freeze({
+  STAR: 'star',
+  MOON: 'moon'
+})

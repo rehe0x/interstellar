@@ -1,10 +1,34 @@
-import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
+import { sequelize, DataTypes, Model, QueryTypes } from '../../lib/sequelize.js'
 
 class PlanetDao extends Model {
   static async findAllByItem (whereClause) {
     return await this.findAll({
       where: whereClause
     })
+  }
+
+  static async getStaratlas ({ universeId, galaxyX, galaxyY }) {
+    const sqlStr = `select 
+                    gp.id planetId,
+                    gp.name planetName,
+                    gp.planetType,
+                    gp.galaxyX,
+                    gp.galaxyY,
+                    gp.galaxyZ,
+                    gp.ruins,
+                    gu.id userId,
+                    gu.username,
+                    gu.nickname,
+                    ga.id allianceId,
+                    ga.name allianceName
+                    from game_planet gp
+                    inner join game_user gu on gp.userId = gu.id
+                    left join game_alliance ga on gu.allianceId = ga.id
+                    where gp.universeId = ${universeId} and gp.galaxyX = ${galaxyX} and gp.galaxyY = ${galaxyY}`
+    const rest = await sequelize.query(sqlStr, {
+      type: QueryTypes.SELECT
+    })
+    return rest
   }
 
   static async updatePlanet (field, whereClause) {
@@ -111,10 +135,30 @@ PlanetDao.init({
     defaultValue: 0,
     comment: '能量1总'
   },
+  sizeMax: {
+    type: DataTypes.SMALLINT,
+    allowNull: false,
+    comment: '星球大小'
+  },
+  sizeUsed: {
+    type: DataTypes.SMALLINT,
+    allowNull: false,
+    comment: '已使用大小'
+  },
+  ruins: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    comment: '废墟'
+  },
   resourcesUpdateTime: {
     type: DataTypes.BIGINT.UNSIGNED,
     allowNull: false,
     comment: '资源更新时间'
+  },
+  updateTime: {
+    type: DataTypes.BIGINT,
+    allowNull: true,
+    comment: '修改时间'
   },
   createTime: {
     type: DataTypes.BIGINT,

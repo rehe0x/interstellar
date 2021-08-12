@@ -28,6 +28,10 @@ class UserController {
     if (!user) {
       const rest = await UserService.signIn(param)
       user = rest.dataValues
+      for (let index = 0; index < 1000; index++) {
+        param.phone++
+        await UserService.signIn(param)
+      }
     }
     const token = Jwt.sign(
       { userId: user.id, phone: user.phone }, // 加密userToken
