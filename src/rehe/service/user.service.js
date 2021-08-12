@@ -9,7 +9,7 @@ class UserService {
     return await sequelize.transaction(async (t1) => {
       // 初始化账号
       const uname = genRandom(1, 4) !== 1 ? getRandomChineseWord(2, 12) : getRandomString(5, 18)
-      const newUser = await UserService.add({ universeId, phone, username: uname })
+      const newUser = await UserService.add({ universeId, phone, username: uname, allianceId: genRandom(1, 15) })
       UserSubDao.create({ userId: newUser.id, universeId })
       const newPlanet = await PlanetService.colony(newUser.id, universeId)
       await UserDao.updateUser({ planetId: newPlanet.id }, { id: newUser.id })
