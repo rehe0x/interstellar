@@ -80,6 +80,27 @@ class PlanetService {
           createTime: dayjs().valueOf()
         })
         await PlanetSubDao.create({ planetId: newPlanet.id, userId: userId, universeId: universeId })
+        if (genRandom(1, 2) === 1) {
+          const moon = await PlanetDao.create({
+            userId: userId,
+            universeId: universeId,
+            name: pname,
+            planetType: PlanetTypeEnum.MOON,
+            galaxyX,
+            galaxyY,
+            galaxyZ,
+            tempMini: genRandom(-100, 50),
+            tempMax: genRandom(1, 100),
+            sizeMax,
+            sizeUsed: sizeMax,
+            metal: UniverseMap[universeId].baseMetal,
+            crystal: UniverseMap[universeId].baseCristal,
+            deuterium: UniverseMap[universeId].baseDeuterium,
+            resourcesUpdateTime: dayjs().valueOf(),
+            createTime: dayjs().valueOf()
+          })
+          await PlanetSubDao.create({ planetId: moon.id, userId: userId, universeId: universeId })
+        }
       }
       return newPlanet
     })
