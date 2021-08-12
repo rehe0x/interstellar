@@ -50,7 +50,7 @@ class PlanetService {
       let newPlanet
       for (let index = 0; index < 100; index++) {
         if (count >= 10) break
-        const galaxyX = genRandom(1, 4)
+        const galaxyX = genRandom(1, 9)
         const galaxyY = genRandom(1, 499)
         const galaxyZ = genRandom(1, 15)
         const op = await this.getPlanetByGalaxy({ universeId, star: PlanetTypeEnum.STAR, galaxyX, galaxyY, galaxyZ })
