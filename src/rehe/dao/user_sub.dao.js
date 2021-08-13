@@ -1,14 +1,20 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class UserSubDao extends Model {
-  static async updateLevel (code, userId, level) {
-    const rest = await sequelize.query(`update game_user_sub set ${code} = ${level} where userId = ${userId}`)
+  static async insert ({ userId, universeId }) {
+    return await this.create({ userId, universeId })
+  }
+
+  static async updateLevel ({ userId, code, level }) {
+    const rest = await sequelize.query(`update game_user_sub set ${code} = :level where userId = :userId`, {
+      replacements: { userId, level }
+    })
     return rest
   }
 
-  static async findByUser (whereClause) {
+  static async findByUserId (userId) {
     return await this.findOne({
-      where: whereClause
+      where: { userId }
     })
   }
 }

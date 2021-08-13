@@ -9,37 +9,23 @@ import dayjs from 'dayjs'
 
 class PlanetService {
   static async getUserPlanet (userId) {
-    const rest = await PlanetDao.findAllByItem({
-      userId
-    })
+    const rest = await PlanetDao.findByUserId({ userId })
     return rest
   }
 
   static async getPlanetByGalaxy ({ universeId, planetType, galaxyX, galaxyY, galaxyZ }) {
-    const whereClause = {
-      universeId,
-      galaxyX,
-      galaxyY,
-      galaxyZ
-    }
-    if (planetType) whereClause.planetType = planetType
-    const rest = await PlanetDao.findAllByItem(whereClause)
+    const rest = await PlanetDao.findByGalaxy({ universeId, planetType, galaxyX, galaxyY, galaxyZ })
     return rest
   }
 
   static async getStaratlas ({ userId, planetId, galaxyX, galaxyY }) {
     // 查询星球信息
-    const planet = await PlanetDao.findByPk(planetId)
+    const planet = await PlanetDao.findById(planetId)
     // 验证数据
     if (!planet || planet.userId !== userId) {
       throw new BusinessError('数据错误')
     }
-    const whereClause = {
-      universeId: planet.universeId,
-      galaxyX,
-      galaxyY
-    }
-    const rest = await PlanetDao.getStaratlas(whereClause)
+    const rest = await PlanetDao.findStaratlas({ universeId: planet.universeId, galaxyX, galaxyY })
     return rest
   }
 
@@ -60,9 +46,9 @@ class PlanetService {
           count++
         }
         const pname = genRandom(1, 4) !== 1 ? getRandomChineseWord(2, 12) : getRandomString(5, 18)
-        newPlanet = await PlanetDao.create({
-          userId: userId,
-          universeId: universeId,
+        newPlanet = await PlanetDao.insert({
+          userId,
+          universeId,
           name: pname,
           planetType: PlanetTypeEnum.STAR,
           galaxyX,
@@ -77,11 +63,11 @@ class PlanetService {
           resourcesUpdateTime: dayjs().valueOf(),
           createTime: dayjs().valueOf()
         })
-        await PlanetSubDao.create({ planetId: newPlanet.id, userId: userId, universeId: universeId })
+        await PlanetSubDao.insert({ planetId: newPlanet.id, userId: userId, universeId: universeId })
         if (genRandom(1, 2) === 1) {
-          const moon = await PlanetDao.create({
-            userId: userId,
-            universeId: universeId,
+          const moon = await PlanetDao.insert({
+            userId,
+            universeId,
             name: pname,
             planetType: PlanetTypeEnum.MOON,
             galaxyX,
@@ -89,15 +75,14 @@ class PlanetService {
             galaxyZ,
             tempMini: genRandom(-100, 50),
             tempMax: genRandom(1, 100),
-            sizeMax,
-            sizeUsed: sizeMax,
+            sizeMax: genRandom(180, 350),
             metal: UniverseMap[universeId].baseMetal,
             crystal: UniverseMap[universeId].baseCristal,
             deuterium: UniverseMap[universeId].baseDeuterium,
             resourcesUpdateTime: dayjs().valueOf(),
             createTime: dayjs().valueOf()
           })
-          await PlanetSubDao.create({ planetId: moon.id, userId: userId, universeId: universeId })
+          await PlanetSubDao.insert({ planetId: moon.id, userId: userId, universeId: universeId })
         }
       }
       return newPlanet

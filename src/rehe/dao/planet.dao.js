@@ -1,13 +1,49 @@
 import { sequelize, DataTypes, Model, QueryTypes } from '../../lib/sequelize.js'
 
 class PlanetDao extends Model {
-  static async findAllByItem (whereClause) {
-    return await this.findAll({
-      where: whereClause
+  static async insert ({
+    userId, universeId, name, planetType, galaxyX, galaxyY, galaxyZ
+    , tempMini, tempMax, sizeMax, metal, crystal, deuterium, resourcesUpdateTime, createTime
+  }) {
+    return await this.create({
+      userId,
+      universeId,
+      name,
+      planetType,
+      galaxyX,
+      galaxyY,
+      galaxyZ,
+      tempMini,
+      tempMax,
+      sizeMax,
+      metal,
+      crystal,
+      deuterium,
+      resourcesUpdateTime,
+      createTime
     })
   }
 
-  static async getStaratlas ({ universeId, galaxyX, galaxyY }) {
+  static async findById (planetId) {
+    return await PlanetDao.findByPk(planetId)
+  }
+
+  static async findByUserId ({ userId }) {
+    return await this.findAll({ where: { userId } })
+  }
+
+  static async findByGalaxy ({ universeId, planetType, galaxyX, galaxyY, galaxyZ }) {
+    const whereClause = {
+      universeId,
+      galaxyX,
+      galaxyY,
+      galaxyZ
+    }
+    if (planetType) whereClause.planetType = planetType
+    return await this.findAll({ where: whereClause })
+  }
+
+  static async findStaratlas ({ universeId, galaxyX, galaxyY }) {
     const sqlStr = `select 
                     gp.id planetId,
                     gp.name planetName,
@@ -24,21 +60,45 @@ class PlanetDao extends Model {
                     from game_planet gp
                     inner join game_user gu on gp.userId = gu.id
                     left join game_alliance ga on gu.allianceId = ga.id
-                    where gp.universeId = ${universeId} and gp.galaxyX = ${galaxyX} and gp.galaxyY = ${galaxyY}`
+                    where gp.universeId = :universeId and gp.galaxyX = :galaxyX and gp.galaxyY = :galaxyY`
     const rest = await sequelize.query(sqlStr, {
+      replacements: { universeId, galaxyX, galaxyY },
       type: QueryTypes.SELECT
     })
     return rest
   }
 
-  static async updatePlanet (field, whereClause) {
-    return await this.update(field, {
-      where: whereClause
+  static async updateTimeResources ({
+    metal, crystal, deuterium, metalPerhour, crystalPerhour
+    , deuteriumPerhour, energyUsed, energyMax, resourcesUpdateTime
+  }, { planetId }) {
+    return await this.update({
+      metal,
+      crystal,
+      deuterium,
+      metalPerhour,
+      crystalPerhour,
+      deuteriumPerhour,
+      energyUsed,
+      energyMax,
+      resourcesUpdateTime
+    }, {
+      where: {
+        id: planetId
+      }
     })
   }
 
-  static async incrementPlanet (field, whereClause) {
-    return await this.increment(field, { where: whereClause })
+  static async incrementResources ({ metal, crystal, deuterium }, { planetId }) {
+    return await this.increment({ metal, crystal, deuterium }, { where: { id: planetId } })
+  }
+
+  static async incrementSzie ({ metal, crystal, deuterium }, { planetId }) {
+    return await this.increment({ metal, crystal, deuterium }, { where: { id: planetId } })
+  }
+
+  static async incrementPlanet ({ sizeUsed }, { planetId }) {
+    return await this.increment({ sizeUsed }, { where: { id: planetId } })
   }
 }
 PlanetDao.init({

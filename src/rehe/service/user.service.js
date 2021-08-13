@@ -9,46 +9,35 @@ class UserService {
     return await sequelize.transaction(async (t1) => {
       // 初始化账号
       const uname = genRandom(1, 4) !== 1 ? getRandomChineseWord(2, 12) : getRandomString(5, 18)
-      const newUser = await UserService.add({ universeId, phone, username: uname, allianceId: genRandom(1, 15) })
-      UserSubDao.create({ userId: newUser.id, universeId })
+      const newUser = await UserService.addUser({ universeId, phone, username: uname, allianceId: genRandom(1, 15) })
+      UserSubDao.insert({ userId: newUser.id, universeId })
       const newPlanet = await PlanetService.colony(newUser.id, universeId)
-      await UserDao.updateUser({ planetId: newPlanet.id }, { id: newUser.id })
+      await UserDao.updateUserPlanet(newPlanet.id, newUser.id)
       newUser.planetId = newPlanet.id
       return newUser
     })
   }
 
-  static async add (user) {
-    const rest = await UserDao.create(user)
+  static async addUser ({ universeId, phone, username, allianceId }) {
+    const rest = await UserDao.insert({ universeId, phone, username, allianceId })
     return rest
   }
 
-  static async find (item = {}) {
-    const rest = await UserDao.findAll(item)
+  static async findOneByUPhone ({ universeId, phone }) {
+    console.log('ffffffffffssssss', universeId, phone)
+    const rest = await UserDao.findOneByUPhone({ universeId, phone })
     return rest
   }
 
-  static async findOne (item = {}) {
-    const rest = await UserDao.findOne({
-      where: item
-    })
-    return rest
-  }
-
-  static async findPage (item = {}) {
+  static async findItemPage ({ username, password, pageSzie = 10, pageNum = 0 }) {
     const whereClause = {}
-    if (item.username) whereClause.username = item.username
-    if (item.password) whereClause.password = item.password
+    if (username) whereClause.username = username
+    if (password) whereClause.password = password
     const rest = await UserDao.findAndCountAll({
       where: whereClause,
-      limit: item.pageSzie,
-      offset: item.pageSzie * (item.pageNum - 1)
+      limit: pageSzie,
+      offset: pageSzie * (pageNum - 1)
     })
-    return rest
-  }
-
-  static async findPageQuery (item = {}) {
-    const rest = UserDao.findPage()
     return rest
   }
 }

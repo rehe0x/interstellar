@@ -41,15 +41,11 @@ class PlanetController {
   }
 
   static async getPlanetBuildQueue (ctx, next) {
-    const param = ctx.request.query
-    await ResourcesService.updatePlanetBuild(ctx.loginInfo.userId, param.planetId)
-    const rest = await BuildQueueService.getPlanetBuildQueue(ctx.loginInfo.userId, param.planetId)
-    ctx.success(rest)
-  }
-
-  static async getPlanetBuildQueueByType (ctx, next) {
-    const param = ctx.request.query
-    const rest = await BuildQueueService.getPlanetBuildQueueByType(ctx.loginInfo.userId, param.planetId, param.buildType)
+    const { planetId, buildType } = ctx.request.query
+    if (!buildType) {
+      await ResourcesService.updatePlanetBuild(ctx.loginInfo.userId, planetId)
+    }
+    const rest = await BuildQueueService.getPlanetBuildQueue(ctx.loginInfo.userId, planetId, buildType)
     ctx.success(rest)
   }
 

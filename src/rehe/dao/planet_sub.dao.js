@@ -1,19 +1,27 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class PlanetSubDao extends Model {
-  static async updateLevel (code, planetId, level) {
-    const rest = await sequelize.query(`update game_planet_sub set ${code} = ${level} where planetId = ${planetId}`)
+  static async insert ({ planetId, userId, universeId }) {
+    return await this.create({ planetId, userId, universeId })
+  }
+
+  static async updateLevel ({ planetId, code, level }) {
+    const rest = await sequelize.query(`update game_planet_sub set ${code} = :level where planetId = :planetId`, {
+      replacements: { planetId, level }
+    })
     return rest
   }
 
-  static async updateIncrementLevel (code, planetId, level) {
-    const rest = await sequelize.query(`update game_planet_sub set ${code} = ${code} + ${level} where planetId = ${planetId}`)
+  static async updateIncrementLevel ({ planetId, code, level }) {
+    const rest = await sequelize.query(`update game_planet_sub set ${code} = ${code} + :level where planetId = :planetId`, {
+      replacements: { planetId, level }
+    })
     return rest
   }
 
-  static async findByPlanet (whereClause) {
+  static async findByPlanetId (planetId) {
     return await this.findOne({
-      where: whereClause
+      where: { planetId }
     })
   }
 }
@@ -232,61 +240,61 @@ PlanetSubDao.init({
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
-    comment: "火箭发射器"
+    comment: '火箭发射器'
   },
   defenseSmallLaser: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
-    comment: "轻型激光炮"
+    comment: '轻型激光炮'
   },
   defenseBigLaser: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
-    comment: "重型激光炮"
+    comment: '重型激光炮'
   },
   defenseGaussCanyon: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
-    comment: "高斯炮"
+    comment: '高斯炮'
   },
   defenseIonicCanyon: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
-    comment: "中子炮"
+    comment: '中子炮'
   },
   defenseBusterCanyon: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
-    comment: "等离子炮"
+    comment: '等离子炮'
   },
   defenseSmallProtectionShield: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
-    comment: "小型防护罩"
+    comment: '小型防护罩'
   },
   defenseBigProtectionShield: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
-    comment: "大型防护罩"
+    comment: '大型防护罩'
   },
   defenseInterceptorMisil: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
-    comment: "拦截导弹"
+    comment: '拦截导弹'
   },
   defenseInterplanetaryMisil: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
-    comment: "星际导弹"
+    comment: '星际导弹'
   }
 }, {
   sequelize,

@@ -8,13 +8,12 @@ import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 import { PlanetDao } from '../dao/planet.dao.js'
 import { BuildQueueDao } from '../dao/build_queue.dao.js'
 
-
 class ResourcesService {
   static async getUserPlanetSub (userId, planetId) {
     // 查询用户和星球信息
-    const userSub = await UserSubDao.findByUser({ userId })
-    const planetSub = await PlanetSubDao.findByPlanet({ planetId })
-    const planet = await PlanetDao.findByPk(planetId)
+    const userSub = await UserSubDao.findByUserId(userId)
+    const planetSub = await PlanetSubDao.findByPlanetId(planetId)
+    const planet = await PlanetDao.findById(planetId)
     // 验证数据
     if (!userSub || !planetSub || !planet ||
        planetSub.userId !== userSub.userId || planet.id !== planetSub.planetId) {
@@ -25,7 +24,7 @@ class ResourcesService {
 
   static async getPlanetResources (userId, planetId) {
     const rest = await this.updatePlanetResources(userId, planetId)
-    const planet = await PlanetDao.findByPk(planetId)
+    const planet = await PlanetDao.findById(planetId)
     return { ...planet, ...rest }
   }
 
@@ -68,7 +67,7 @@ class ResourcesService {
       energyMax: prodPerhour.energyMax,
       resourcesUpdateTime: nowTime
     }
-    await PlanetDao.updatePlanet(updateDate, { id: planetId })
+    await PlanetDao.updateTimeResources(updateDate, { planetId })
     return { metalStorageMax, crystalStorageMax, deuteriumStorageMax, metalTime, crystalTime, deuteriumTime }
   }
 
@@ -78,26 +77,25 @@ class ResourcesService {
       buildType = [BuildTypeEnum.FLEET, BuildTypeEnum.DEFENSE]
     }
     // 查询星球队列信息
-    const buildQueueList = await BuildQueueDao.findAllByItem({ userId, planetId, status: QueueStatusEnum.RUNNING, buildType: buildType })
-    for (const element of buildQueueList) {
+    const buildQueueList = await BuildQueueDao.findPlanetByTypeStatus({ userId, planetId, buildType: buildType, status: QueueStatusEnum.RUNNING })
+    for (const buildQueue of buildQueueList) {
       // 计算间隔时间
       const nowTime = dayjs().valueOf()
-      const prodNum = element.seconds / element.level
-      const prodTime = Math.floor((nowTime - element.remainUpdateTime) / 1000)
+      const prodNum = buildQueue.seconds / buildQueue.level
+      const prodTime = Math.floor((nowTime - buildQueue.remainUpdateTime) / 1000)
       let n = Math.floor(prodTime / prodNum)
       if (!n || n === 0) continue
       await sequelize.transaction(async (t1) => {
         // 修改为执行队列
-        n > element.remainLevel && (n = element.remainLevel)
-        console.log('nnnnnnnnnnnnnnnnnn', n)
-        const rest = await BuildQueueDao.updateBuildQueue({
-          remainLevel: element.remainLevel - n,
-          remainUpdateTime: element.remainUpdateTime + (n * prodNum * 1000),
+        n > buildQueue.remainLevel && (n = buildQueue.remainLevel)
+        const rest = await BuildQueueDao.updateRemain({
+          remainLevel: buildQueue.remainLevel - n,
+          remainUpdateTime: buildQueue.remainUpdateTime + (n * prodNum * 1000),
           updateTime: dayjs().valueOf()
-        }, { id: element.id })
+        }, { queueId: buildQueue.id })
         if (rest[0] === 1) {
           // 修改数量
-          await PlanetSubDao.updateIncrementLevel(element.buildCode, planetId, n)
+          await PlanetSubDao.updateIncrementLevel({ planetId, code: buildQueue.buildCode, level: n })
         }
       })
     }

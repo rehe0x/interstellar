@@ -7,9 +7,9 @@ class HomeController {
   }
 
   static async getStaratlas (ctx, next) {
-    const param = ctx.request.query
+    const { planetId, galaxyX, galaxyY } = ctx.request.query
     const rest = await PlanetService.getStaratlas({
-      userId: ctx.loginInfo.userId, planetId: param.planetId, galaxyX: param.galaxyX, galaxyY: param.galaxyY
+      userId: ctx.loginInfo.userId, planetId, galaxyX, galaxyY
     })
     ctx.success(rest)
   }

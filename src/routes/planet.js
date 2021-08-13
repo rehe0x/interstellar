@@ -27,7 +27,6 @@ const v = {
 }
 routers.get('/getNowTime', PlanetController.getNowTime)
 routers.get('/getPlanetBuildQueue', validation(v.base), PlanetController.getPlanetBuildQueue)
-routers.get('/getPlanetBuildQueueByType', validation({ ...v.base, ...v.buildType }), PlanetController.getPlanetBuildQueueByType)
 routers.get('/getPlanetResources', validation(v.base), PlanetController.getPlanetResources)
 routers.get('/getBuilding', validation(v.base), PlanetController.getBuilding)
 routers.get('/getResearch', validation(v.base), PlanetController.getResearch)

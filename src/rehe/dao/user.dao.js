@@ -1,15 +1,16 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class UserDao extends Model {
-  static async findPage () {
-    const rest = await sequelize.query('select * from user')
-    return rest
+  static async findOneByUPhone ({ universeId, phone }) {
+    return await UserDao.findOne({ where: { universeId, phone } })
   }
 
-  static async updateUser (field, whereClause) {
-    return await this.update(field, {
-      where: whereClause
-    })
+  static async insert ({ universeId, phone, username, allianceId }) {
+    return await this.create({ universeId, phone, username, allianceId })
+  }
+
+  static async updateUserPlanet (planetId, userId) {
+    return await this.update({ planetId: planetId }, { where: { id: userId } })
   }
 }
 UserDao.init({

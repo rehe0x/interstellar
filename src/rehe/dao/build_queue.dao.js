@@ -1,63 +1,113 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class BuildQueueDao extends Model {
-  static async findAllByOrderItem (whereClause) {
+  static async insert ({
+    userId, planetId, buildCode, buildName, level, remainLevel, metal, crystal
+    , deuterium, energy, buildType, status, seconds, startTime, endTime, remainUpdateTime
+    , updateTime, createTime
+  }) {
+    return await BuildQueueDao.create({
+      userId,
+      planetId,
+      buildCode,
+      buildName,
+      level,
+      remainLevel,
+      metal,
+      crystal,
+      deuterium,
+      energy,
+      buildType,
+      status,
+      seconds,
+      startTime,
+      endTime,
+      remainUpdateTime,
+      updateTime,
+      createTime
+    })
+  }
+
+  static async findById (queueId) {
+    return await this.findByPk(queueId)
+  }
+
+  static async findByItem ({ userId, planetId, buildType }) {
+    const whereClause = {
+      userId
+    }
+    if (planetId) whereClause.planetId = planetId
+    if (buildType) whereClause.buildType = buildType
     return await this.findAll({
       where: whereClause,
       order: [['id', 'ASC']]
     })
   }
 
-  static async findAllByItem (whereClause) {
+  static async findPlanetByType ({ userId, planetId, buildType }) {
     return await this.findAll({
-      where: whereClause
+      where: { userId, planetId, buildType }
     })
   }
 
-  static async findOneByItem (whereClause) {
-    return await this.findOne({ where: whereClause })
-  }
-
-  static async findOneByOrderLevel (whereClause) {
+  static async findOneUserByType ({ userId, buildType }) {
     return await this.findOne({
-      where: whereClause,
-      order: [['level', 'DESC']]
+      where: { userId, buildType }
     })
   }
 
-  static async findOneByOrderTime (whereClause) {
+  static async findPlanetByTypeStatus ({ userId, planetId, buildType, status }) {
+    return await this.findAll({
+      where: { userId, planetId, buildType, status }
+    })
+  }
+
+  static async findOnePlanetByTypeIdAsc ({ userId, planetId, buildType }) {
     return await this.findOne({
-      where: whereClause,
+      where: { userId, planetId, buildType },
       order: [['id', 'ASC']]
     })
   }
 
-  static async findAllByBuildType (buildType) {
+  static async findByBuildType (buildType) {
     return await this.findAll({
       where: { buildType }
     })
   }
 
-  static async findAllGroupByPlanet (buildType) {
-    const rest = await sequelize.query(` select mm.* from game_build_queue mm, (
-      select min(gbq.id) gid from game_build_queue gbq where gbq.buildType = '${buildType}' group by gbq.planetId) gg
+  static async findByBuildTypeGroup (buildType) {
+    const rest = await sequelize.query(`select mm.* from game_build_queue mm, (
+      select min(gbq.id) gid from game_build_queue gbq where gbq.buildType = :buildType group by gbq.planetId) gg
       where mm.id = gg.gid`, {
+      replacements: { buildType },
       model: BuildQueueDao
     })
     return rest
   }
 
-  static async updateBuildQueue (field, whereClause) {
-    return await this.update(field, {
-      where: whereClause
+  static async updateRemain ({ remainLevel, remainUpdateTime, updateTime }, { queueId }) {
+    return await this.update({ remainLevel, remainUpdateTime, updateTime }, {
+      where: { id: queueId }
     })
   }
 
-  static async delete (whereClause) {
-    return await this.destroy({ where: whereClause })
+  static async updateBuildQueueRun ({ status, seconds, startTime, endTime, remainUpdateTime, updateTime }, { queueId }) {
+    return await this.update({
+      status, seconds, startTime, endTime, remainUpdateTime, updateTime
+    }, {
+      where: { id: queueId }
+    })
   }
 
-  static async insertLog (title, text, time) {
+  static async deleteById (queueId) {
+    return await this.destroy({ where: { id: queueId } })
+  }
+
+  static async deleteByPlanetId (planetId, status) {
+    return await this.destroy({ where: { planetId, status } })
+  }
+
+  static async insertLog ({ title, text, time }) {
     console.log(time)
     const rest = await sequelize.query('INSERT INTO game_build_log (title, text, createTime)VALUES(:title, :text, :time)', {
       replacements: { title, text, time }

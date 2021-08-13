@@ -9,8 +9,8 @@ import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 class BuildService {
   static async getUserPlanetSub (userId, planetId) {
     // 查询用户和星球信息
-    const userSub = await UserSubDao.findByUser({ userId })
-    const planetSub = await PlanetSubDao.findByPlanet({ planetId })
+    const userSub = await UserSubDao.findByUserId(userId)
+    const planetSub = await PlanetSubDao.findByPlanetId(planetId)
     // 验证数据
     if (!userSub || !planetSub || planetSub.userId !== userSub.userId) {
       throw new BusinessError('数据错误')

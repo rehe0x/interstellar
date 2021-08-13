@@ -17,7 +17,5 @@ routers.get('/sendPhoneCode', UserController.sendPhoneCode)
 routers.get('/verifyPhoneCode', UserController.verifyPhoneCode)
 routers.get('/getUserPlanet', UserController.getUserPlanet)
 routers.post('/login', validation(v.login), UserController.login)
-routers.get('/findPage', UserController.findPage)
-routers.get('/findPageQuery', UserController.findPageQuery)
 
 export { routers as userRouter }

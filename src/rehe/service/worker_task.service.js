@@ -17,9 +17,9 @@ class WorkerTaskService {
 
   async getUserPlanetSub (userId, planetId) {
     // 查询用户和星球信息
-    const userSub = await UserSubDao.findByUser({ userId })
-    const planetSub = await PlanetSubDao.findByPlanet({ planetId })
-    const planet = await PlanetDao.findByPk(planetId)
+    const userSub = await UserSubDao.findByUserId(userId)
+    const planetSub = await PlanetSubDao.findByPlanetId(planetId)
+    const planet = await PlanetDao.findById(planetId)
     // 验证数据
     if (!userSub || !planetSub || !planet ||
        planetSub.userId !== userSub.userId || planet.id !== planetSub.planetId) {
@@ -30,7 +30,7 @@ class WorkerTaskService {
 
   async initQueueTask () {
     // 先执行研究单队列
-    const researchArr = await BuildQueueDao.findAllByBuildType(BuildTypeEnum.RESEARCH)
+    const researchArr = await BuildQueueDao.findByBuildType(BuildTypeEnum.RESEARCH)
     researchArr.forEach(item => {
       console.log('researchArr', item)
       const nowTime = dayjs().valueOf()
@@ -45,7 +45,7 @@ class WorkerTaskService {
     })
 
     // 建筑队列
-    const buildingArr = await BuildQueueDao.findAllGroupByPlanet(BuildTypeEnum.BUILDING)
+    const buildingArr = await BuildQueueDao.findByBuildTypeGroup(BuildTypeEnum.BUILDING)
     buildingArr.forEach(async (item) => {
       console.log('buildingArr', item)
       if (item.status !== QueueStatusEnum.RUNNING) {
@@ -53,21 +53,22 @@ class WorkerTaskService {
         const { userSub, planetSub, planet } = await this.getUserPlanetSub(item.userId, item.planetId)
         if (item.metal > planet.metal || item.crystal > planet.crystal || item.deuterium > planet.deuterium) {
           // 资源不足删除所有队列
-          BuildQueueDao.delete({ planetId: item.planetId, status: QueueStatusEnum.PENDING })
+          BuildQueueDao.deleteByPlanetId({ planetId: item.planetId, status: QueueStatusEnum.PENDING })
           throw new BusinessError('资源不足')
         }
         // 扣减资源
-        await PlanetDao.updatePlanet({ metal: planet.metal - item.metal, crystal: planet.crystal - item.crystal, deuterium: planet.deuterium - item.deuterium }, { id: item.planetId })
+        await PlanetDao.incrementResources({ metal: -item.metal, crystal: -item.crystal, deuterium: -item.deuterium }, { planetId: item.planetId })
         // 计算建造时间 s
         item.seconds = Formula.buildingTime({ metal: item.metal, crystal: item.crystal }, planetSub, userSub)
         // 修改为执行队列
-        const rest = await BuildQueueDao.updateBuildQueue({
+        const rest = await BuildQueueDao.updateBuildQueueRun({
           status: QueueStatusEnum.RUNNING,
           seconds: item.seconds,
           startTime: dayjs().valueOf(),
           endTime: dayjs().add(item.seconds, 'seconds').valueOf(),
+          remainUpdateTime: dayjs().valueOf(),
           updateTime: dayjs().valueOf()
-        }, { id: item.id })
+        }, { queueId: item.id })
         if (rest[0] === 1) {
           this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: item })
         }
@@ -85,7 +86,7 @@ class WorkerTaskService {
     })
 
     // 建筑队列
-    const fleetArr = await BuildQueueDao.findAllGroupByPlanet(BuildTypeEnum.FLEET)
+    const fleetArr = await BuildQueueDao.findByBuildTypeGroup(BuildTypeEnum.FLEET)
     fleetArr.forEach(async (item) => {
       console.log('fleetArr', item)
       if (item.status !== QueueStatusEnum.RUNNING) {
@@ -101,14 +102,14 @@ class WorkerTaskService {
         item.seconds = seconds * item.remainLevel
 
         // 修改为执行队列
-        const rest = await BuildQueueDao.updateBuildQueue({
+        const rest = await BuildQueueDao.updateBuildQueueRun({
           status: QueueStatusEnum.RUNNING,
           seconds: item.seconds,
           startTime: dayjs().valueOf(),
           endTime: dayjs().add(item.seconds, 'seconds').valueOf(),
           remainUpdateTime: dayjs().valueOf(),
           updateTime: dayjs().valueOf()
-        }, { id: item.id })
+        }, { queueId: item.id })
         if (rest[0] === 1) {
           this.workerData.port.postMessage({ taskType: BuildTypeEnum.FLEET, taskInfo: item })
         }
@@ -126,7 +127,7 @@ class WorkerTaskService {
     })
 
     // 建筑队列
-    const defenseArr = await BuildQueueDao.findAllGroupByPlanet(BuildTypeEnum.DEFENSE)
+    const defenseArr = await BuildQueueDao.findByBuildTypeGroup(BuildTypeEnum.DEFENSE)
     defenseArr.forEach(async (item) => {
       console.log('defenseArr', item)
       if (item.status !== QueueStatusEnum.RUNNING) {
@@ -142,14 +143,14 @@ class WorkerTaskService {
         item.seconds = seconds * item.remainLevel
 
         // 修改为执行队列
-        const rest = await BuildQueueDao.updateBuildQueue({
+        const rest = await BuildQueueDao.updateBuildQueueRun({
           status: QueueStatusEnum.RUNNING,
           seconds: item.seconds,
           startTime: dayjs().valueOf(),
           endTime: dayjs().add(item.seconds, 'seconds').valueOf(),
           remainUpdateTime: dayjs().valueOf(),
           updateTime: dayjs().valueOf()
-        }, { id: item.id })
+        }, { queueId: item.id })
         if (rest[0] === 1) {
           this.workerData.port.postMessage({ taskType: BuildTypeEnum.DEFENSE, taskInfo: item })
         }
@@ -186,11 +187,11 @@ class WorkerTaskService {
       // 先更新产量
       await ResourcesService.updatePlanetResources(taskInfo.userId, taskInfo.planetId)
       // 修改等级
-      PlanetSubDao.updateLevel(taskInfo.buildCode, taskInfo.planetId, taskInfo.level)
+      PlanetSubDao.updateLevel({ planetId: taskInfo.planetId, code: taskInfo.buildCode, level: taskInfo.level })
       // 写入日志
-      BuildQueueDao.insertLog('finishBuildQueueTask', JSON.stringify(taskInfo), dayjs().valueOf())
+      BuildQueueDao.insertLog({ title: 'finishBuildQueueTask', text: JSON.stringify(taskInfo), time: dayjs().valueOf() })
       // 删除队列
-      await BuildQueueDao.delete({ id: taskInfo.id })
+      await BuildQueueDao.deleteById(taskInfo.id)
     })
     // 加入后续任务 && 验证星球资源, 修改状态&时间
     return this.addBuildingQueueTask(taskInfo)
@@ -198,30 +199,31 @@ class WorkerTaskService {
 
   async addBuildingQueueTask (taskInfo) {
     return sequelize.transaction(async (t2) => {
-      const buildQueueOne = await BuildQueueDao.findOneByOrderTime({ planetId: taskInfo.planetId, buildType: taskInfo.buildType })
+      const buildQueueOne = await BuildQueueDao.findOnePlanetByTypeIdAsc({ userId: taskInfo.userId, planetId: taskInfo.planetId, buildType: taskInfo.buildType })
       if (buildQueueOne) {
         // 查询用户和星球信息
         const { userSub, planetSub, planet } = await this.getUserPlanetSub(taskInfo.userId, taskInfo.planetId)
 
         if (buildQueueOne.metal > planet.metal || buildQueueOne.crystal > planet.crystal || buildQueueOne.deuterium > planet.deuterium) {
           // 资源不足删除所有队列
-          return BuildQueueDao.delete({ planetId: taskInfo.planetId, status: QueueStatusEnum.PENDING })
+          return BuildQueueDao.deleteByPlanetId({ planetId: taskInfo.planetId, status: QueueStatusEnum.PENDING })
           // throw new BusinessError('资源不足' + planet)
         }
         // 扣减资源
-        PlanetDao.updatePlanet({ metal: planet.metal - buildQueueOne.metal, crystal: planet.crystal - buildQueueOne.crystal, deuterium: planet.deuterium - buildQueueOne.deuterium }, { id: buildQueueOne.planetId })
+        PlanetDao.incrementResources({ metal: -buildQueueOne.metal, crystal: buildQueueOne.crystal, deuterium: -buildQueueOne.deuterium }, { planetId: buildQueueOne.planetId })
         // 计算建造时间 s
         buildQueueOne.seconds = Formula.buildingTime({ metal: buildQueueOne.metal, crystal: buildQueueOne.crystal }, planetSub, userSub)
         // 修改为执行队列
-        const rest = await BuildQueueDao.updateBuildQueue({
+        const rest = await BuildQueueDao.updateBuildQueueRun({
           status: QueueStatusEnum.RUNNING,
           seconds: buildQueueOne.seconds,
           startTime: dayjs().valueOf(),
           endTime: dayjs().add(buildQueueOne.seconds, 'seconds').valueOf(),
+          remainUpdateTime: dayjs().valueOf(),
           updateTime: dayjs().valueOf()
-        }, { id: buildQueueOne.id })
+        }, { queueId: buildQueueOne.id })
         if (rest[0] === 1) {
-          return BuildQueueDao.findByPk(buildQueueOne.id)
+          return BuildQueueDao.findById(buildQueueOne.id)
         } else {
           throw new BusinessError('错误')
         }
@@ -232,30 +234,31 @@ class WorkerTaskService {
   async finishResearchQueueTask (taskInfo) {
     return sequelize.transaction((t1) => {
       // 修改等级
-      UserSubDao.updateLevel(taskInfo.buildCode, taskInfo.userId, taskInfo.level)
+      UserSubDao.updateLevel({ userId: taskInfo.userId, code: taskInfo.buildCode, level: taskInfo.level })
       // 写入日志
-      BuildQueueDao.insertLog('finishBuildQueueTask', JSON.stringify(taskInfo), dayjs().valueOf())
+      BuildQueueDao.insertLog({ title: 'finishBuildQueueTask', text: JSON.stringify(taskInfo), time: dayjs().valueOf() })
       // 删除队列
-      return BuildQueueDao.delete({ id: taskInfo.id })
+      return BuildQueueDao.deleteById(taskInfo.id)
     })
   }
 
   async finishFDQueueTask (taskInfo) {
     await sequelize.transaction(async (t1) => {
-      const rest = await BuildQueueDao.findByPk(taskInfo.id)
+      const rest = await BuildQueueDao.findById(taskInfo.id)
       if (!rest) {
         throw new BusinessError('队列不存在')
       }
       // 先更新产量
       await ResourcesService.updatePlanetResources(taskInfo.userId, taskInfo.planetId)
       // 修改数量
-      PlanetSubDao.updateIncrementLevel(taskInfo.buildCode, taskInfo.planetId, rest.remainLevel)
+      PlanetSubDao.updateIncrementLevel({ planetId: taskInfo.planetId, code: taskInfo.buildCode, level: rest.remainLevel })
       // 星球已用空间+1
       PlanetDao.incrementPlanet({ sizeUsed: 1 }, { id: taskInfo.planetId })
       // 写入日志
-      BuildQueueDao.insertLog('finishFDQueueTask', JSON.stringify(taskInfo), dayjs().valueOf())
+      BuildQueueDao.insertLog({ title: 'finishFDQueueTask', text: JSON.stringify(taskInfo), time: dayjs().valueOf() })
+
       // 删除队列
-      await BuildQueueDao.delete({ id: taskInfo.id })
+      await BuildQueueDao.deleteById(taskInfo.id)
     })
     // 加入后续任务 && 验证星球资源, 修改状态&时间
     return this.addFDQueueTask(taskInfo)
@@ -263,7 +266,7 @@ class WorkerTaskService {
 
   async addFDQueueTask (taskInfo) {
     return sequelize.transaction(async (t2) => {
-      const buildQueueOne = await BuildQueueDao.findOneByOrderTime({ planetId: taskInfo.planetId, buildType: taskInfo.buildType })
+      const buildQueueOne = await BuildQueueDao.findOnePlanetByTypeIdAsc({ userId: taskInfo.userId, planetId: taskInfo.planetId, buildType: taskInfo.buildType })
       if (buildQueueOne) {
         // 查询建筑信息
         const fdObj = taskInfo.buildType === BuildTypeEnum.FLEET ? FleetMap[buildQueueOne.buildCode] : DefenseMap[buildQueueOne.buildCode]
@@ -277,16 +280,16 @@ class WorkerTaskService {
         buildQueueOne.seconds = seconds * buildQueueOne.remainLevel
 
         // 修改为执行队列
-        const rest = await BuildQueueDao.updateBuildQueue({
+        const rest = await BuildQueueDao.updateBuildQueueRun({
           status: QueueStatusEnum.RUNNING,
           seconds: buildQueueOne.seconds,
           startTime: dayjs().valueOf(),
           endTime: dayjs().add(buildQueueOne.seconds, 'seconds').valueOf(),
           remainUpdateTime: dayjs().valueOf(),
           updateTime: dayjs().valueOf()
-        }, { id: buildQueueOne.id })
+        }, { queueId: buildQueueOne.id })
         if (rest[0] === 1) {
-          return BuildQueueDao.findByPk(buildQueueOne.id)
+          return BuildQueueDao.findById(buildQueueOne.id)
         } else {
           throw new BusinessError('错误')
         }
