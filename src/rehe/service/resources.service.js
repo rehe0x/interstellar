@@ -1,27 +1,10 @@
 import dayjs from 'dayjs'
-import { sequelize } from '../../lib/sequelize.js'
-import { BuildTypeEnum, QueueStatusEnum } from '../../enum/base.enum.js'
 import { BusinessError } from '../../lib/error.js'
 import { Formula } from '../../game/formula.js'
-import { UserSubDao } from '../dao/user_sub.dao.js'
-import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 import { PlanetDao } from '../dao/planet.dao.js'
-import { BuildQueueDao } from '../dao/build_queue.dao.js'
+import { CommonService } from '../service/common.service.js'
 
 class ResourcesService {
-  static async getUserPlanetSub (userId, planetId) {
-    // 查询用户和星球信息
-    const userSub = await UserSubDao.findByUserId(userId)
-    const planetSub = await PlanetSubDao.findByPlanetId(planetId)
-    const planet = await PlanetDao.findById(planetId)
-    // 验证数据
-    if (!userSub || !planetSub || !planet ||
-       planetSub.userId !== userSub.userId || planet.id !== planetSub.planetId) {
-      throw new BusinessError('数据错误')
-    }
-    return { userSub, planetSub, planet }
-  }
-
   static async getPlanetResources (userId, planetId) {
     const rest = await this.updatePlanetResources(userId, planetId)
     const planet = await PlanetDao.findById(planetId)
@@ -31,7 +14,7 @@ class ResourcesService {
   // 资源更新
   static async updatePlanetResources (userId, planetId) {
     // 查询用户和星球信息
-    const { userSub, planetSub, planet } = await this.getUserPlanetSub(userId, planetId)
+    const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(userId, planetId)
     // 计算仓库最大容量
     const { metalStorageMax, crystalStorageMax, deuteriumStorageMax } = Formula.storageMax(planetSub, userSub)
     console.log(metalStorageMax, crystalStorageMax, deuteriumStorageMax)
@@ -69,36 +52,6 @@ class ResourcesService {
     }
     await PlanetDao.updateTimeResources(updateDate, { planetId })
     return { metalStorageMax, crystalStorageMax, deuteriumStorageMax, metalTime, crystalTime, deuteriumTime }
-  }
-
-  // 舰队防御更新
-  static async updatePlanetBuild (userId, planetId, buildType) {
-    if (!buildType) {
-      buildType = [BuildTypeEnum.FLEET, BuildTypeEnum.DEFENSE]
-    }
-    // 查询星球队列信息
-    const buildQueueList = await BuildQueueDao.findPlanetByTypeStatus({ userId, planetId, buildType: buildType, status: QueueStatusEnum.RUNNING })
-    for (const buildQueue of buildQueueList) {
-      // 计算间隔时间
-      const nowTime = dayjs().valueOf()
-      const prodNum = buildQueue.seconds / buildQueue.level
-      const prodTime = Math.floor((nowTime - buildQueue.remainUpdateTime) / 1000)
-      let n = Math.floor(prodTime / prodNum)
-      if (!n || n === 0) continue
-      await sequelize.transaction(async (t1) => {
-        // 修改为执行队列
-        n > buildQueue.remainLevel && (n = buildQueue.remainLevel)
-        const rest = await BuildQueueDao.updateRemain({
-          remainLevel: buildQueue.remainLevel - n,
-          remainUpdateTime: buildQueue.remainUpdateTime + (n * prodNum * 1000),
-          updateTime: dayjs().valueOf()
-        }, { queueId: buildQueue.id })
-        if (rest[0] === 1) {
-          // 修改数量
-          await PlanetSubDao.updateIncrementLevel({ planetId, code: buildQueue.buildCode, level: n })
-        }
-      })
-    }
   }
 }
 

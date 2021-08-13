@@ -3,24 +3,12 @@ import { BusinessError } from '../../lib/error.js'
 import { remainingTime } from '../../lib/utils.js'
 import { Formula } from '../../game/formula.js'
 import { BuildingMap, ResearchMap, FleetMap, DefenseMap } from '../../game/build/index.js'
-import { UserSubDao } from '../dao/user_sub.dao.js'
-import { PlanetSubDao } from '../dao/planet_sub.dao.js'
+import { CommonService } from '../service/common.service.js'
 
 class BuildService {
-  static async getUserPlanetSub (userId, planetId) {
-    // 查询用户和星球信息
-    const userSub = await UserSubDao.findByUserId(userId)
-    const planetSub = await PlanetSubDao.findByPlanetId(planetId)
-    // 验证数据
-    if (!userSub || !planetSub || planetSub.userId !== userSub.userId) {
-      throw new BusinessError('数据错误')
-    }
-    return { userSub, planetSub }
-  }
-
   static async getBuilding (userId, planetId) {
     const rest = loadsh.cloneDeep(BuildingMap)
-    const { userSub, planetSub } = await this.getUserPlanetSub(userId, planetId)
+    const { userSub, planetSub } = await CommonService.getUserPlanetSub(userId, planetId)
     for (const key in rest) {
       const obj = rest[key]
       const { metal, crystal, deuterium } = Formula.price(obj, planetSub[key])
@@ -39,7 +27,7 @@ class BuildService {
 
   static async getResearch (userId, planetId) {
     const rest = loadsh.cloneDeep(ResearchMap)
-    const { userSub, planetSub } = await this.getUserPlanetSub(userId, planetId)
+    const { userSub, planetSub } = await CommonService.getUserPlanetSub(userId, planetId)
     // 获取研究所等级 + 计算跨行星网络 获取所有星球研究所等级
     let lablevel = planetSub.buildingLaboratory
     if (userSub.researchIntergalactic >= 1) {
@@ -64,7 +52,7 @@ class BuildService {
 
   static async getFleet (userId, planetId) {
     const rest = loadsh.cloneDeep(FleetMap)
-    const { userSub, planetSub } = await this.getUserPlanetSub(userId, planetId)
+    const { userSub, planetSub } = await CommonService.getUserPlanetSub(userId, planetId)
     for (const key in rest) {
       const obj = rest[key]
       obj.metal = obj.pricelist.metal
@@ -84,7 +72,7 @@ class BuildService {
 
   static async getDefense (userId, planetId) {
     const rest = loadsh.cloneDeep(DefenseMap)
-    const { userSub, planetSub } = await this.getUserPlanetSub(userId, planetId)
+    const { userSub, planetSub } = await CommonService.getUserPlanetSub(userId, planetId)
     for (const key in rest) {
       const obj = rest[key]
       obj.metal = obj.pricelist.metal

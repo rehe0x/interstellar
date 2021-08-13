@@ -12,7 +12,7 @@ class UserService {
       const newUser = await UserService.addUser({ universeId, phone, username: uname, allianceId: genRandom(1, 15) })
       UserSubDao.insert({ userId: newUser.id, universeId })
       const newPlanet = await PlanetService.colony(newUser.id, universeId)
-      await UserDao.updateUserPlanet(newPlanet.id, newUser.id)
+      await UserDao.updateUserPlanetId(newPlanet.id, newUser.id)
       newUser.planetId = newPlanet.id
       return newUser
     })
@@ -24,7 +24,6 @@ class UserService {
   }
 
   static async findOneByUPhone ({ universeId, phone }) {
-    console.log('ffffffffffssssss', universeId, phone)
     const rest = await UserDao.findOneByUPhone({ universeId, phone })
     return rest
   }

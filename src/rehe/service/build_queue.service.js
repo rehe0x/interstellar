@@ -5,25 +5,11 @@ import { BuildTypeEnum, QueueStatusEnum } from '../../enum/base.enum.js'
 import { Formula } from '../../game/formula.js'
 import { BuildingMap, ResearchMap, FleetMap, DefenseMap } from '../../game/build/index.js'
 import { BuildQueueDao } from '../dao/build_queue.dao.js'
-import { UserSubDao } from '../dao/user_sub.dao.js'
-import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 import { PlanetDao } from '../dao/planet.dao.js'
+import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 import { workerTimer } from '../../worker/worker_main.js'
-
+import { CommonService } from '../service/common.service.js'
 class BuildQueueService {
-  static async getUserPlanetSub (userId, planetId) {
-    // 查询用户和星球信息
-    const userSub = await UserSubDao.findByUserId(userId)
-    const planetSub = await PlanetSubDao.findByPlanetId(planetId)
-    const planet = await PlanetDao.findById(planetId)
-    // 验证数据
-    if (!userSub || !planetSub || !planet ||
-       planetSub.userId !== userSub.userId || planet.id !== planetSub.planetId) {
-      throw new BusinessError('数据错误')
-    }
-    return { userSub, planetSub, planet }
-  }
-
   static async addBuildingQueue (userId, planetId, buildCode) {
     return await sequelize.transaction(async (t1) => {
       // 查询建筑信息
@@ -32,7 +18,7 @@ class BuildQueueService {
         throw new BusinessError('建筑不存在')
       }
       // 查询用户和星球信息
-      const { userSub, planetSub, planet } = await this.getUserPlanetSub(userId, planetId)
+      const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(userId, planetId)
       // 判断星球空间是否足够
       if (planet.sizeUsed >= planet.sizeMax) {
         throw new BusinessError('星球空间不足')
@@ -106,7 +92,7 @@ class BuildQueueService {
       throw new BusinessError('研究不存在')
     }
     // 查询用户和星球信息
-    const { userSub, planetSub, planet } = await this.getUserPlanetSub(userId, planetId)
+    const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(userId, planetId)
 
     const requeriment = Formula.isRequeriment(research, planetSub, userSub)
     if (!requeriment.isReq) {
@@ -179,7 +165,7 @@ class BuildQueueService {
       throw new BusinessError('建造不存在')
     }
     // 查询用户和星球信息
-    const { userSub, planetSub, planet } = await this.getUserPlanetSub(userId, planetId)
+    const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(userId, planetId)
 
     const requeriment = Formula.isRequeriment(fdObj, planetSub, userSub)
     if (!requeriment.isReq) {
@@ -256,7 +242,40 @@ class BuildQueueService {
   }
 
   static async getPlanetBuildQueue (userId, planetId, buildType) {
+    if (!buildType) {
+      await this.updatePlanetBuildQueueFD(userId, planetId)
+    }
     return await BuildQueueDao.findByItem({ userId, planetId, buildType })
+  }
+
+  // 舰队防御更新
+  static async updatePlanetBuildQueueFD (userId, planetId, buildType) {
+    if (!buildType) {
+      buildType = [BuildTypeEnum.FLEET, BuildTypeEnum.DEFENSE]
+    }
+    // 查询星球队列信息
+    const buildQueueList = await BuildQueueDao.findPlanetByTypeStatus({ userId, planetId, buildType: buildType, status: QueueStatusEnum.RUNNING })
+    for (const buildQueue of buildQueueList) {
+      // 计算间隔时间
+      const nowTime = dayjs().valueOf()
+      const prodNum = buildQueue.seconds / buildQueue.level
+      const prodTime = Math.floor((nowTime - buildQueue.remainUpdateTime) / 1000)
+      let n = Math.floor(prodTime / prodNum)
+      if (!n || n === 0) continue
+      await sequelize.transaction(async (t1) => {
+        // 修改为执行队列
+        n > buildQueue.remainLevel && (n = buildQueue.remainLevel)
+        const rest = await BuildQueueDao.updateRemain({
+          remainLevel: buildQueue.remainLevel - n,
+          remainUpdateTime: buildQueue.remainUpdateTime + (n * prodNum * 1000),
+          updateTime: dayjs().valueOf()
+        }, { queueId: buildQueue.id })
+        if (rest[0] === 1) {
+          // 修改数量
+          await PlanetSubDao.updateIncrementLevel({ planetId, code: buildQueue.buildCode, level: n })
+        }
+      })
+    }
   }
 
   static async deleteBuildQueue (queueId) {

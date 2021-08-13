@@ -9,23 +9,11 @@ import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 import { UserSubDao } from '../dao/user_sub.dao.js'
 import { ResourcesService } from '../service/resources.service.js'
 import { FleetMap, DefenseMap } from '../../game/build/index.js'
+import { CommonService } from '../service/common.service.js'
 
 class WorkerTaskService {
   constructor (workerData) {
     this.workerData = workerData
-  }
-
-  async getUserPlanetSub (userId, planetId) {
-    // 查询用户和星球信息
-    const userSub = await UserSubDao.findByUserId(userId)
-    const planetSub = await PlanetSubDao.findByPlanetId(planetId)
-    const planet = await PlanetDao.findById(planetId)
-    // 验证数据
-    if (!userSub || !planetSub || !planet ||
-       planetSub.userId !== userSub.userId || planet.id !== planetSub.planetId) {
-      throw new BusinessError('数据错误')
-    }
-    return { userSub, planetSub, planet }
   }
 
   async initQueueTask () {
@@ -50,7 +38,7 @@ class WorkerTaskService {
       console.log('buildingArr', item)
       if (item.status !== QueueStatusEnum.RUNNING) {
         // 查询用户和星球信息
-        const { userSub, planetSub, planet } = await this.getUserPlanetSub(item.userId, item.planetId)
+        const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(item.userId, item.planetId)
         if (item.metal > planet.metal || item.crystal > planet.crystal || item.deuterium > planet.deuterium) {
           // 资源不足删除所有队列
           BuildQueueDao.deleteByPlanetId({ planetId: item.planetId, status: QueueStatusEnum.PENDING })
@@ -96,7 +84,7 @@ class WorkerTaskService {
           throw new BusinessError('建造不存在')
         }
         // 查询用户和星球信息
-        const { userSub, planetSub } = await this.getUserPlanetSub(item.userId, item.planetId)
+        const { userSub, planetSub } = await CommonService.getUserPlanetSub(item.userId, item.planetId)
 
         const seconds = Formula.fleetDefenseTime({ metal: fleetObj.pricelist.metal, crystal: fleetObj.pricelist.crystal }, planetSub, userSub)
         item.seconds = seconds * item.remainLevel
@@ -137,7 +125,7 @@ class WorkerTaskService {
           throw new BusinessError('建造不存在')
         }
         // 查询用户和星球信息
-        const { userSub, planetSub } = await this.getUserPlanetSub(item.userId, item.planetId)
+        const { userSub, planetSub } = await CommonService.getUserPlanetSub(item.userId, item.planetId)
 
         const seconds = Formula.fleetDefenseTime({ metal: defenseObj.pricelist.metal, crystal: defenseObj.pricelist.crystal }, planetSub, userSub)
         item.seconds = seconds * item.remainLevel
@@ -202,7 +190,7 @@ class WorkerTaskService {
       const buildQueueOne = await BuildQueueDao.findOnePlanetByTypeIdAsc({ userId: taskInfo.userId, planetId: taskInfo.planetId, buildType: taskInfo.buildType })
       if (buildQueueOne) {
         // 查询用户和星球信息
-        const { userSub, planetSub, planet } = await this.getUserPlanetSub(taskInfo.userId, taskInfo.planetId)
+        const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(taskInfo.userId, taskInfo.planetId)
 
         if (buildQueueOne.metal > planet.metal || buildQueueOne.crystal > planet.crystal || buildQueueOne.deuterium > planet.deuterium) {
           // 资源不足删除所有队列
@@ -274,7 +262,7 @@ class WorkerTaskService {
           throw new BusinessError('建造不存在')
         }
         // 查询用户和星球信息
-        const { userSub, planetSub } = await this.getUserPlanetSub(taskInfo.userId, taskInfo.planetId)
+        const { userSub, planetSub } = await CommonService.getUserPlanetSub(taskInfo.userId, taskInfo.planetId)
 
         const seconds = Formula.fleetDefenseTime({ metal: fdObj.pricelist.metal, crystal: fdObj.pricelist.crystal }, planetSub, userSub)
         buildQueueOne.seconds = seconds * buildQueueOne.remainLevel
