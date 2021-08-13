@@ -250,6 +250,8 @@ class WorkerTaskService {
       await ResourcesService.updatePlanetResources(taskInfo.userId, taskInfo.planetId)
       // 修改数量
       PlanetSubDao.updateIncrementLevel(taskInfo.buildCode, taskInfo.planetId, rest.remainLevel)
+      // 星球已用空间+1
+      PlanetDao.incrementPlanet({ sizeUsed: 1 }, { id: taskInfo.planetId })
       // 写入日志
       BuildQueueDao.insertLog('finishFDQueueTask', JSON.stringify(taskInfo), dayjs().valueOf())
       // 删除队列

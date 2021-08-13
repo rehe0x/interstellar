@@ -60,7 +60,6 @@ class PlanetService {
           count++
         }
         const pname = genRandom(1, 4) !== 1 ? getRandomChineseWord(2, 12) : getRandomString(5, 18)
-        const sizeMax = genRandom(180, 350)
         newPlanet = await PlanetDao.create({
           userId: userId,
           universeId: universeId,
@@ -71,8 +70,7 @@ class PlanetService {
           galaxyZ,
           tempMini: genRandom(-100, 50),
           tempMax: genRandom(1, 100),
-          sizeMax,
-          sizeUsed: sizeMax,
+          sizeMax: genRandom(180, 350),
           metal: UniverseMap[universeId].baseMetal,
           crystal: UniverseMap[universeId].baseCristal,
           deuterium: UniverseMap[universeId].baseDeuterium,

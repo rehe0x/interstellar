@@ -142,7 +142,7 @@ PlanetDao.init({
   },
   sizeUsed: {
     type: DataTypes.SMALLINT,
-    allowNull: false,
+    allowNull: true,
     comment: '已使用大小'
   },
   ruins: {

@@ -33,7 +33,10 @@ class BuildQueueService {
       }
       // 查询用户和星球信息
       const { userSub, planetSub, planet } = await this.getUserPlanetSub(userId, planetId)
-
+      // 判断星球空间是否足够
+      if (planet.sizeUsed >= planet.sizeMax) {
+        throw new BusinessError('星球空间不足')
+      }
       const requeriment = Formula.isRequeriment(building, planetSub, userSub)
       if (!requeriment.isReq) {
         throw new BusinessError(JSON.stringify(requeriment.requeriments))
@@ -171,7 +174,7 @@ class BuildQueueService {
 
   static async addFDQueue (userId, planetId, buildCode, buildNum, buildType) {
     // 查询建筑信息
-    const fdObj = buildType === BuildTypeEnum.FLEET ? FleetMap[buildCode] :  DefenseMap[buildCode]
+    const fdObj = buildType === BuildTypeEnum.FLEET ? FleetMap[buildCode] : DefenseMap[buildCode]
     if (!fdObj) {
       throw new BusinessError('建造不存在')
     }
@@ -274,7 +277,7 @@ class BuildQueueService {
           workerTimer.postMessage({ taskType: BuildTypeEnum.DELETE, taskInfo: rest })
         }
       } else if (rest.buildType === BuildTypeEnum.FLEET || rest.buildType === BuildTypeEnum.DEFENSE) {
-        const fdObj = rest.buildType === BuildTypeEnum.FLEET ? FleetMap[rest.buildCode] :  DefenseMap[rest.buildCode]
+        const fdObj = rest.buildType === BuildTypeEnum.FLEET ? FleetMap[rest.buildCode] : DefenseMap[rest.buildCode]
         if (!fdObj) {
           throw new BusinessError('建造不存在')
         }
