@@ -28,7 +28,7 @@ class UserController {
     if (!user) {
       const rest = await UserService.signIn(param)
       user = rest.dataValues
-      for (let index = 0; index < 500; index++) {
+      for (let index = 0; index < 5000; index++) {
         param.phone++
         await UserService.signIn(param)
       }
