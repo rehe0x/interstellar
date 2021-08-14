@@ -10,12 +10,14 @@ const UniverseMap = {
     buildSpeed: 5, // 建筑时间速度
     baseStorageSize: 200000, // 仓库上限
     maxOverflow: 1, // 最大溢出上限 1.1=110%
-    metalBasicIncome: 20,
-    crystalBasicIncome: 10,
-    deuteriumBasicIncome: 0,
+    baseMetalIncome: 20,
+    baseCrystalIncome: 10,
+    baseDeuteriumIncome: 0,
     baseMetal: 200000, // 金属矿
     baseCristal: 200000, // 晶体矿
-    baseDeuterium: 5000 // 重氢
+    baseDeuterium: 5000, // 重氢
+    basePlanetSzie: 166,
+    basePlanetName: '殖民地'
     // shipSpeed: 1, // 舰队速度
     // buildQueue: 5, // 建筑队列
     // maxPlanet: 9 // 最大星球
@@ -29,12 +31,13 @@ const UniverseMap = {
     buildSpeed: 5, // 建筑时间速度
     baseStorageSize: 200000, // 仓库上限
     maxOverflow: 1, // 最大溢出上限 1.1=110%
-    metalBasicIncome: 20,
-    crystalBasicIncome: 10,
-    deuteriumBasicIncome: 0,
+    baseMetalIncome: 20,
+    baseCrystalIncome: 10,
+    baseDeuteriumIncome: 0,
     baseMetal: 200000, // 金属矿
     baseCristal: 200000, // 晶体矿
-    baseDeuterium: 5000 // 重氢
+    baseDeuterium: 5000, // 重氢
+    basePlanetSzie: 166
     // shipSpeed: 1, // 舰队速度
     // buildQueue: 5, // 建筑队列
     // maxPlanet: 9 // 最大星球
@@ -48,9 +51,9 @@ const UniverseMap = {
     buildSpeed: 5, // 建筑时间速度
     baseStorageSize: 200000, // 仓库上限
     maxOverflow: 1, // 最大溢出上限 1.1=110%
-    metalBasicIncome: 20,
-    crystalBasicIncome: 10,
-    deuteriumBasicIncome: 0,
+    baseMetalIncome: 20,
+    baseCrystalIncome: 10,
+    baseDeuteriumIncome: 0,
     baseMetal: 200000, // 金属矿
     baseCristal: 200000, // 晶体矿
     baseDeuterium: 5000 // 重氢
@@ -67,9 +70,9 @@ const UniverseMap = {
     buildSpeed: 5, // 建筑时间速度
     baseStorageSize: 200000, // 仓库上限
     maxOverflow: 1, // 最大溢出上限 1.1=110%
-    metalBasicIncome: 20,
-    crystalBasicIncome: 10,
-    deuteriumBasicIncome: 0,
+    baseMetalIncome: 20,
+    baseCrystalIncome: 10,
+    baseDeuteriumIncome: 0,
     baseMetal: 200000, // 金属矿
     baseCristal: 200000, // 晶体矿
     baseDeuterium: 5000 // 重氢
@@ -86,9 +89,9 @@ const UniverseMap = {
     buildSpeed: 5, // 建筑时间速度
     baseStorageSize: 200000, // 仓库上限
     maxOverflow: 1, // 最大溢出上限 1.1=110%
-    metalBasicIncome: 20,
-    crystalBasicIncome: 10,
-    deuteriumBasicIncome: 0,
+    baseMetalIncome: 20,
+    baseCrystalIncome: 10,
+    baseDeuteriumIncome: 0,
     baseMetal: 200000, // 金属矿
     baseCristal: 200000, // 晶体矿
     baseDeuterium: 5000 // 重氢
@@ -105,9 +108,9 @@ const UniverseMap = {
     buildSpeed: 5, // 建筑时间速度
     baseStorageSize: 200000, // 仓库上限
     maxOverflow: 1, // 最大溢出上限 1.1=110%
-    metalBasicIncome: 20,
-    crystalBasicIncome: 10,
-    deuteriumBasicIncome: 0,
+    baseMetalIncome: 20,
+    baseCrystalIncome: 10,
+    baseDeuteriumIncome: 0,
     baseMetal: 200000, // 金属矿
     baseCristal: 200000, // 晶体矿
     baseDeuterium: 5000 // 重氢
@@ -124,9 +127,9 @@ const UniverseMap = {
     buildSpeed: 5, // 建筑时间速度
     baseStorageSize: 200000, // 仓库上限
     maxOverflow: 1, // 最大溢出上限 1.1=110%
-    metalBasicIncome: 20,
-    crystalBasicIncome: 10,
-    deuteriumBasicIncome: 0,
+    baseMetalIncome: 20,
+    baseCrystalIncome: 10,
+    baseDeuteriumIncome: 0,
     baseMetal: 200000, // 金属矿
     baseCristal: 200000, // 晶体矿
     baseDeuterium: 5000 // 重氢
@@ -143,9 +146,9 @@ const UniverseMap = {
     buildSpeed: 5, // 建筑时间速度
     baseStorageSize: 200000, // 仓库上限
     maxOverflow: 1, // 最大溢出上限 1.1=110%
-    metalBasicIncome: 20,
-    crystalBasicIncome: 10,
-    deuteriumBasicIncome: 0,
+    baseMetalIncome: 20,
+    baseCrystalIncome: 10,
+    baseDeuteriumIncome: 0,
     baseMetal: 200000, // 金属矿
     baseCristal: 200000, // 晶体矿
     baseDeuterium: 5000 // 重氢
@@ -162,9 +165,9 @@ const UniverseMap = {
     buildSpeed: 5, // 建筑时间速度
     baseStorageSize: 200000, // 仓库上限
     maxOverflow: 1, // 最大溢出上限 1.1=110%
-    metalBasicIncome: 20,
-    crystalBasicIncome: 10,
-    deuteriumBasicIncome: 0,
+    baseMetalIncome: 20,
+    baseCrystalIncome: 10,
+    baseDeuteriumIncome: 0,
     baseMetal: 200000, // 金属矿
     baseCristal: 200000, // 晶体矿
     baseDeuterium: 5000 // 重氢
@@ -181,9 +184,9 @@ const UniverseMap = {
     buildSpeed: 5, // 建筑时间速度
     baseStorageSize: 200000, // 仓库上限
     maxOverflow: 1, // 最大溢出上限 1.1=110%
-    metalBasicIncome: 20,
-    crystalBasicIncome: 10,
-    deuteriumBasicIncome: 0,
+    baseMetalIncome: 20,
+    baseCrystalIncome: 10,
+    baseDeuteriumIncome: 0,
     baseMetal: 200000, // 金属矿
     baseCristal: 200000, // 晶体矿
     baseDeuterium: 5000 // 重氢

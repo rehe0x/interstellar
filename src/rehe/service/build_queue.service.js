@@ -1,9 +1,10 @@
 import dayjs from 'dayjs'
+import loadsh from 'lodash'
 import { BusinessError } from '../../lib/error.js'
 import { sequelize } from '../../lib/sequelize.js'
-import { BuildTypeEnum, QueueStatusEnum } from '../../enum/base.enum.js'
+import { BuildTypeEnum, QueueStatusEnum, PlanetTypeEnum } from '../../enum/base.enum.js'
 import { Formula } from '../../game/formula.js'
-import { BuildingMap, ResearchMap, FleetMap, DefenseMap } from '../../game/build/index.js'
+import { BuildingMap, BuildingMoonMap, ResearchMap, FleetMap, DefenseMap } from '../../game/build/index.js'
 import { BuildQueueDao } from '../dao/build_queue.dao.js'
 import { PlanetDao } from '../dao/planet.dao.js'
 import { PlanetSubDao } from '../dao/planet_sub.dao.js'
@@ -12,13 +13,18 @@ import { CommonService } from '../service/common.service.js'
 class BuildQueueService {
   static async addBuildingQueue (userId, planetId, buildCode) {
     return await sequelize.transaction(async (t1) => {
+      // 查询用户和星球信息
+      const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(userId, planetId)
       // 查询建筑信息
-      const building = BuildingMap[buildCode]
+      let building = {}
+      if (PlanetTypeEnum.STAR === planet.planetType) {
+        building = BuildingMap[buildCode]
+      } else if (PlanetTypeEnum.MOON === planet.planetType) {
+        building = BuildingMoonMap[buildCode]
+      }
       if (!building) {
         throw new BusinessError('建筑不存在')
       }
-      // 查询用户和星球信息
-      const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(userId, planetId)
       // 判断星球空间是否足够
       if (planet.sizeUsed >= planet.sizeMax) {
         throw new BusinessError('星球空间不足')

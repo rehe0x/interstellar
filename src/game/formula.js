@@ -1,7 +1,8 @@
 
 import { UniverseMap } from './universe.map.js'
 
-import { BuildingMap, ResearchMap } from './build/index.js'
+import { BuildingMap, BuildingMoonMap, ResearchMap } from './build/index.js'
+import { genRandom } from '../lib/utils.js'
 
 class Formula {
   //  造价
@@ -45,7 +46,7 @@ class Formula {
     const requerimentArr = []
     let b = true
     for (const key in obj.requeriments) {
-      const name = ResearchMap[key] ? ResearchMap[key].name : BuildingMap[key] ? BuildingMap[key].name : null
+      const name = ResearchMap[key] ? ResearchMap[key].name : BuildingMap[key] ? BuildingMap[key].name : BuildingMoonMap[key] ? BuildingMoonMap[key].name : null
       const mylevel = planetSub[key] ? planetSub[key] : userSub[key] ? userSub[key] : 0
       if (b) {
         b = !(obj.requeriments[key] > mylevel)
@@ -94,9 +95,9 @@ class Formula {
   static prodTheorical (obj, planet) {
     let productionLevel = 100
     if (obj.energyMax === 0) {
-      obj.metalPerhour = obj.metalPerhour !== 0 ? UniverseMap[planet.universeId].metalBasicIncome : 0
-      obj.crystalPerhour = obj.crystalPerhour !== 0 ? UniverseMap[planet.universeId].crystalBasicIncome : 0
-      obj.deuteriumPerhour = obj.deuteriumPerhour !== 0 ? UniverseMap[planet.universeId].deuteriumBasicIncome : 0
+      obj.metalPerhour = obj.metalPerhour !== 0 ? UniverseMap[planet.universeId].baseMetalIncome : 0
+      obj.crystalPerhour = obj.crystalPerhour !== 0 ? UniverseMap[planet.universeId].baseCrystalIncome : 0
+      obj.deuteriumPerhour = obj.deuteriumPerhour !== 0 ? UniverseMap[planet.universeId].baseDeuteriumIncome : 0
     } else if ((obj.energyMax - obj.energyUsed) < 0) {
       productionLevel = Math.floor((obj.energyMax / obj.energyUsed) * 100)
     }
@@ -128,6 +129,21 @@ class Formula {
       crystalTime: Number.parseFloat(crystalTime).toFixed(2),
       deuteriumTime: Number.parseFloat(deuteriumTime).toFixed(2)
     }
+  }
+
+  static planetSize (universeId, galaxyZ) {
+    const miniArray = [40, 50, 55, 100, 95, 80, 115, 120, 125, 75, 80, 85, 60, 40, 50]
+    const MaxArray = [90, 130, 150, 240, 240, 230, 180, 180, 190, 125, 120, 130, 180, 180, 150]
+    return UniverseMap[universeId].basePlanetSzie + genRandom(miniArray[galaxyZ - 1], MaxArray[galaxyZ - 1])
+  }
+
+  static planetTemp (galaxyZ) {
+    const tempMiniArray = [[0, 100], [-25, 75], [-50, 50], [-75, 25], [-100, 10]]
+    const groupIndex = ~~((galaxyZ - 1) / (15 / tempMiniArray.length))
+    const [tMini, tMax] = tempMiniArray[groupIndex]
+    const tempMini = genRandom(tMini, tMax)
+    const tempMax = tempMini + genRandom(10, 60)
+    return { tempMini, tempMax }
   }
 }
 

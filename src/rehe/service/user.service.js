@@ -11,7 +11,7 @@ class UserService {
       const uname = genRandom(1, 4) !== 1 ? getRandomChineseWord(2, 12) : getRandomString(5, 18)
       const newUser = await UserService.addUser({ universeId, phone, username: uname, allianceId: genRandom(1, 15) })
       UserSubDao.insert({ userId: newUser.id, universeId })
-      const newPlanet = await PlanetService.colony(newUser.id, universeId)
+      const newPlanet = await PlanetService.randomColony(newUser.id, universeId)
       await UserDao.updateUserPlanetId(newPlanet.id, newUser.id)
       newUser.planetId = newPlanet.id
       return newUser

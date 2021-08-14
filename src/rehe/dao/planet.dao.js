@@ -93,11 +93,10 @@ class PlanetDao extends Model {
     return await this.increment({ metal, crystal, deuterium }, { where: { id: planetId } })
   }
 
-  static async incrementSzie ({ metal, crystal, deuterium }, { planetId }) {
-    return await this.increment({ metal, crystal, deuterium }, { where: { id: planetId } })
-  }
-
-  static async incrementPlanet ({ sizeUsed }, { planetId }) {
+  static async incrementSzie ({ sizeUsed, sizeMax }, { planetId }) {
+    const whereClause = {}
+    sizeUsed || (whereClause.sizeUsed = sizeUsed)
+    sizeMax || (whereClause.sizeMax = sizeMax)
     return await this.increment({ sizeUsed }, { where: { id: planetId } })
   }
 }
@@ -140,6 +139,12 @@ PlanetDao.init({
     type: DataTypes.SMALLINT,
     allowNull: false,
     comment: '坐标z1-15'
+  },
+  tempMini: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+    comment: '星球最小温度'
   },
   tempMax: {
     type: DataTypes.INTEGER,

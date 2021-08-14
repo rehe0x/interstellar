@@ -39,10 +39,10 @@ class WorkerTaskService {
       if (item.status !== QueueStatusEnum.RUNNING) {
         // 查询用户和星球信息
         const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(item.userId, item.planetId)
-        if (item.metal > planet.metal || item.crystal > planet.crystal || item.deuterium > planet.deuterium) {
+        if ((item.sizeUsed >= item.sizeMax) || item.metal > planet.metal || item.crystal > planet.crystal || item.deuterium > planet.deuterium) {
           // 资源不足删除所有队列
           BuildQueueDao.deleteByPlanetId({ planetId: item.planetId, status: QueueStatusEnum.PENDING })
-          throw new BusinessError('资源不足')
+          throw new BusinessError('资源/空间不足')
         }
         // 扣减资源
         await PlanetDao.incrementResources({ metal: -item.metal, crystal: -item.crystal, deuterium: -item.deuterium }, { planetId: item.planetId })
@@ -73,7 +73,7 @@ class WorkerTaskService {
       }
     })
 
-    // 建筑队列
+    // 舰队队列
     const fleetArr = await BuildQueueDao.findByBuildTypeGroup(BuildTypeEnum.FLEET)
     fleetArr.forEach(async (item) => {
       console.log('fleetArr', item)
@@ -158,15 +158,13 @@ class WorkerTaskService {
 
   async finishQueueTask (task) {
     if (task.taskType === BuildTypeEnum.BUILDING) {
-      this.finishBuildingQueueTask(task.taskInfo).then(rest => {
-        rest && typeof rest.seconds !== 'undefined' && this.workerData.port.postMessage({ taskType: task.taskType, taskInfo: rest })
-      })
+      const rest = await this.finishBuildingQueueTask(task.taskInfo)
+      rest?.seconds && this.workerData.port.postMessage({ taskType: task.taskType, taskInfo: rest })
     } else if (task.taskType === BuildTypeEnum.RESEARCH) {
       this.finishResearchQueueTask(task.taskInfo)
     } else if (task.taskType === BuildTypeEnum.FLEET || task.taskType === BuildTypeEnum.DEFENSE) {
-      this.finishFDQueueTask(task.taskInfo).then(rest => {
-        rest && typeof rest.seconds !== 'undefined' && this.workerData.port.postMessage({ taskType: task.taskType, taskInfo: rest })
-      })
+      const rest = await this.finishFDQueueTask(task.taskInfo)
+      rest?.seconds && this.workerData.port.postMessage({ taskType: task.taskType, taskInfo: rest })
     }
   }
 
@@ -176,6 +174,12 @@ class WorkerTaskService {
       await ResourcesService.updatePlanetResources(taskInfo.userId, taskInfo.planetId)
       // 修改等级
       PlanetSubDao.updateLevel({ planetId: taskInfo.planetId, code: taskInfo.buildCode, level: taskInfo.level })
+      // 星球已用空间+1
+      PlanetDao.incrementSzie({ sizeUsed: 1 }, { id: taskInfo.planetId })
+      // 如果是月球基地和地形改造器 增加空间4
+      if (taskInfo.buildCode === 'buildingMondbasis' || taskInfo.buildCode === 'buildingTerraformer') {
+        PlanetDao.incrementSzie({ sizeMax: 4 }, { id: taskInfo.planetId })
+      }
       // 写入日志
       BuildQueueDao.insertLog({ title: 'finishBuildQueueTask', text: JSON.stringify(taskInfo), time: dayjs().valueOf() })
       // 删除队列
@@ -191,9 +195,8 @@ class WorkerTaskService {
       if (buildQueueOne) {
         // 查询用户和星球信息
         const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(taskInfo.userId, taskInfo.planetId)
-
-        if (buildQueueOne.metal > planet.metal || buildQueueOne.crystal > planet.crystal || buildQueueOne.deuterium > planet.deuterium) {
-          // 资源不足删除所有队列
+        if ((planet.sizeUsed >= planet.sizeMax) || buildQueueOne.metal > planet.metal || buildQueueOne.crystal > planet.crystal || buildQueueOne.deuterium > planet.deuterium) {
+          // 资源/空间不足删除所有队列
           return BuildQueueDao.deleteByPlanetId({ planetId: taskInfo.planetId, status: QueueStatusEnum.PENDING })
           // throw new BusinessError('资源不足' + planet)
         }
@@ -240,8 +243,6 @@ class WorkerTaskService {
       await ResourcesService.updatePlanetResources(taskInfo.userId, taskInfo.planetId)
       // 修改数量
       PlanetSubDao.updateIncrementLevel({ planetId: taskInfo.planetId, code: taskInfo.buildCode, level: rest.remainLevel })
-      // 星球已用空间+1
-      PlanetDao.incrementPlanet({ sizeUsed: 1 }, { id: taskInfo.planetId })
       // 写入日志
       BuildQueueDao.insertLog({ title: 'finishFDQueueTask', text: JSON.stringify(taskInfo), time: dayjs().valueOf() })
 

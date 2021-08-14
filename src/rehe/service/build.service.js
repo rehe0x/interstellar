@@ -2,13 +2,19 @@ import loadsh from 'lodash'
 import { BusinessError } from '../../lib/error.js'
 import { remainingTime } from '../../lib/utils.js'
 import { Formula } from '../../game/formula.js'
-import { BuildingMap, ResearchMap, FleetMap, DefenseMap } from '../../game/build/index.js'
+import { BuildingMap, BuildingMoonMap, ResearchMap, FleetMap, DefenseMap } from '../../game/build/index.js'
 import { CommonService } from '../service/common.service.js'
-
+import { PlanetTypeEnum } from '../../enum/base.enum.js'
 class BuildService {
   static async getBuilding (userId, planetId) {
-    const rest = loadsh.cloneDeep(BuildingMap)
-    const { userSub, planetSub } = await CommonService.getUserPlanetSub(userId, planetId)
+    const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(userId, planetId)
+    let rest = {}
+    if (PlanetTypeEnum.STAR === planet.planetType) {
+      rest = loadsh.cloneDeep(BuildingMap)
+    } else if (PlanetTypeEnum.MOON === planet.planetType) {
+      rest = loadsh.cloneDeep(BuildingMoonMap)
+    }
+
     for (const key in rest) {
       const obj = rest[key]
       const { metal, crystal, deuterium } = Formula.price(obj, planetSub[key])

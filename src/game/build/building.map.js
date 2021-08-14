@@ -212,56 +212,6 @@ const BuildingMap = {
       factor: 2
     }
   },
-  buildingMondbasis: {
-    name: '月球基地',
-    about: '',
-    description: `由于月球上没有大气，所以要移民月球必须先造一个月球基地。基地提供必要的空气，重力和温度。基地的等级越高，提供生存必需的面积也就越大。 月球基地每升一级，能覆盖的面积增加3方圆直到覆盖整个月球为止。 月球基地自己也占一个方圆的面积只要你建造了月球基地后它就不能被拆除。
-                  只要你建造了月球基地后它就不能被拆除。
-                  必须要等待月球出现之后才能够建造的建筑， 月球是你的任一颗行星受到其它玩家的攻击， 在防御方跟攻击方在战斗中所损失的资源总和达到一定数量， 就会有一定机率产生月球， 每100k的资源量，就有１％的机率产生月球， 无论战场废墟的资源有多少，最高也只能达到２０％`,
-    image: '',
-    requeriments: {},
-    pricelist: {
-      metal: 20000,
-      crystal: 40000,
-      deuterium: 20000,
-      energy: 0,
-      factor: 2
-    }
-  },
-  buildingPhalanx: {
-    name: '感应阵',
-    about: '',
-    description: `高解析度的感应阵列被用来扫瞄巨量的频谱。高性能电脑组合空间波动的微小变化，能感应到在遥远星系的舰队的运动情况。由于系统相当复杂，每次扫瞄都需要大量(5000)重氢以提供所需能量。
-                  扫描距离=等级*等级-1`,
-    image: '',
-    requeriments: {
-      buildingMondbasis: 1
-    },
-    pricelist: {
-      metal: 20000,
-      crystal: 40000,
-      deuterium: 20000,
-      energy: 0,
-      factor: 2
-    }
-  },
-  buildingSprungtor: {
-    name: '空间隧道',
-    about: '',
-    description: '空间传送点是巨大的传输工具，能够使庞大的舰队瞬间穿越星系。空间传送点因为运用了最尖端的科技，不需要任何能量即可完成工作。',
-    image: '',
-    requeriments: {
-      buildingMondbasis: 1,
-      researchHyperspace: 7
-    },
-    pricelist: {
-      metal: 2000000,
-      crystal: 4000000,
-      deuterium: 2000000,
-      energy: 0,
-      factor: 2
-    }
-  },
   buildingSilo: {
     name: '导弹发射井',
     about: '',
