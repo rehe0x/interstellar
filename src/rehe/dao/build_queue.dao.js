@@ -103,12 +103,17 @@ class BuildQueueDao extends Model {
     return await this.destroy({ where: { id: queueId } })
   }
 
-  static async deleteByPlanetId (planetId, status) {
+  static async deleteByPlanetId ({ planetId, status }) {
     return await this.destroy({ where: { planetId, status } })
   }
 
+  static async deleteLatterByType ({ planetId, buildType, time}) {
+    await sequelize.query('delete gbq from game_build_queue gbq where gbq.planetId = :planetId and gbq.buildType = :buildType and gbq.createTime >= :time ', {
+      replacements: { planetId, buildType, time }
+    })
+  }
+
   static async insertLog ({ title, text, time }) {
-    console.log(time)
     const rest = await sequelize.query('INSERT INTO game_build_log (title, text, createTime)VALUES(:title, :text, :time)', {
       replacements: { title, text, time }
     })

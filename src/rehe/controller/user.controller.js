@@ -10,6 +10,12 @@ class UserController {
     ctx.success(rest)
   }
 
+  static async updateUserPlanetId (ctx, next) {
+    let { planetId } = ctx.request.body
+    const rest = await UserService.updateUserPlanetId({ userId: ctx.loginInfo.userId, planetId })
+    ctx.success(rest)
+  }
+
   static async sendPhoneCode (ctx, next) {
     const param = ctx.request.query
     ctx.success(param)

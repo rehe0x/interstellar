@@ -39,14 +39,11 @@ class PlanetService {
       }
       const { tempMini, tempMax } = Formula.planetTemp(galaxyZ)
       let sizeMax = 1
-      let metal = 0
-      let crystal = 0
-      let deuterium = 0
+      let metal = UniverseMap[universeId].baseMetal
+      let crystal = UniverseMap[universeId].baseCristal
+      let deuterium = UniverseMap[universeId].baseDeuterium
       if (planetType === PlanetTypeEnum.STAR) {
         sizeMax = Formula.planetSize(universeId, galaxyZ)
-        metal = UniverseMap[universeId].baseMetal
-        crystal = UniverseMap[universeId].baseCristal
-        deuterium = UniverseMap[universeId].baseDeuterium
       }
       const newPlanet = await PlanetDao.insert({
         userId,

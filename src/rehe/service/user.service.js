@@ -12,7 +12,7 @@ class UserService {
       const newUser = await UserService.addUser({ universeId, phone, username: uname, allianceId: genRandom(1, 15) })
       UserSubDao.insert({ userId: newUser.id, universeId })
       const newPlanet = await PlanetService.randomColony(newUser.id, universeId)
-      await UserDao.updateUserPlanetId(newPlanet.id, newUser.id)
+      await UserDao.updateUserPlanetId({ userId: newUser.id, planetId: newPlanet.id })
       newUser.planetId = newPlanet.id
       return newUser
     })
@@ -27,6 +27,12 @@ class UserService {
     const rest = await UserDao.findOneByUPhone({ universeId, phone })
     return rest
   }
+
+  static async updateUserPlanetId ({ userId, planetId }) {
+    const rest = await UserDao.updateUserPlanetId({ userId, planetId })
+    return rest
+  }
+
 
   static async findItemPage ({ username, password, pageSzie = 10, pageNum = 0 }) {
     const whereClause = {}

@@ -16,10 +16,11 @@ const UniverseMap = {
     baseMetal: 200000, // 金属矿
     baseCristal: 200000, // 晶体矿
     baseDeuterium: 5000, // 重氢
-    basePlanetSzie: 166,
-    basePlanetName: '殖民地'
+    basePlanetSzie: 166,  //星球初始大小
+    basePlanetName: '殖民地', //默认名称
+    buildQueueMax: 5, // 建造最大队列
+
     // shipSpeed: 1, // 舰队速度
-    // buildQueue: 5, // 建筑队列
     // maxPlanet: 9 // 最大星球
   },
   2: {

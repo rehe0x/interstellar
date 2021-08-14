@@ -159,12 +159,12 @@ class WorkerTaskService {
   async finishQueueTask (task) {
     if (task.taskType === BuildTypeEnum.BUILDING) {
       const rest = await this.finishBuildingQueueTask(task.taskInfo)
-      rest?.seconds && this.workerData.port.postMessage({ taskType: task.taskType, taskInfo: rest })
+      typeof rest?.seconds !== 'undefined' && this.workerData.port.postMessage({ taskType: task.taskType, taskInfo: rest })
     } else if (task.taskType === BuildTypeEnum.RESEARCH) {
       this.finishResearchQueueTask(task.taskInfo)
     } else if (task.taskType === BuildTypeEnum.FLEET || task.taskType === BuildTypeEnum.DEFENSE) {
       const rest = await this.finishFDQueueTask(task.taskInfo)
-      rest?.seconds && this.workerData.port.postMessage({ taskType: task.taskType, taskInfo: rest })
+      typeof rest?.seconds !== 'undefined' && this.workerData.port.postMessage({ taskType: task.taskType, taskInfo: rest })
     }
   }
 
@@ -175,10 +175,10 @@ class WorkerTaskService {
       // 修改等级
       PlanetSubDao.updateLevel({ planetId: taskInfo.planetId, code: taskInfo.buildCode, level: taskInfo.level })
       // 星球已用空间+1
-      PlanetDao.incrementSzie({ sizeUsed: 1 }, { id: taskInfo.planetId })
+      PlanetDao.incrementSzie({ sizeUsed: 1 }, { planetId: taskInfo.planetId })
       // 如果是月球基地和地形改造器 增加空间4
       if (taskInfo.buildCode === 'buildingMondbasis' || taskInfo.buildCode === 'buildingTerraformer') {
-        PlanetDao.incrementSzie({ sizeMax: 4 }, { id: taskInfo.planetId })
+        PlanetDao.incrementSzie({ sizeMax: 4 }, { planetId: taskInfo.planetId })
       }
       // 写入日志
       BuildQueueDao.insertLog({ title: 'finishBuildQueueTask', text: JSON.stringify(taskInfo), time: dayjs().valueOf() })

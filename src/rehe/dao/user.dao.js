@@ -9,7 +9,7 @@ class UserDao extends Model {
     return await this.create({ universeId, phone, username, allianceId })
   }
 
-  static async updateUserPlanetId (planetId, userId) {
+  static async updateUserPlanetId ({ userId, planetId }) {
     return await this.update({ planetId: planetId }, { where: { id: userId } })
   }
 }

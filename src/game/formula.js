@@ -23,14 +23,14 @@ class Formula {
   static buildingTime (obj, planetSub, userSub) {
     let time = (obj.metal + obj.crystal) / UniverseMap[userSub.universeId].brBuildSpeed * (1 / (planetSub.buildingRobotFactory + 1)) * (0.5 ** planetSub.buildingNanoFactory)
     time = Math.floor(time * 60 * 60 * (1 - (userSub.rpgConstructeur * 0.1)) / UniverseMap[userSub.universeId].buildSpeed)
-    return time
+    return time === 0 ? 1:time
   }
 
   // 研究时间
   static researchTime (obj, userSub, lablevel) {
     let time = (obj.metal + obj.crystal) / UniverseMap[userSub.universeId].brBuildSpeed / ((lablevel + 1) * 2)
     time = Math.floor(time * 60 * 60 * (1 - (userSub.rpgConstructeur * 0.1)) / UniverseMap[userSub.universeId].buildSpeed)
-    return time
+    return time === 0 ? 1:time
   }
 
   // 舰队&&防御时间
@@ -38,7 +38,7 @@ class Formula {
     //   [(金属+晶体) / 5000] × [2 / (船厂等级+1)] × 0.5^纳米等级
     let time = (obj.metal + obj.crystal) / UniverseMap[userSub.universeId].fdBuildSpeed * (2 / (planetSub.buildingHangar + 1)) * (0.5 ** planetSub.buildingNanoFactory)
     time = Math.floor(time * 60 * 60 * (1 - (userSub.rpgTechnocrate * 0.05)) / UniverseMap[userSub.universeId].buildSpeed)
-    return time
+    return time === 0 ? 1:time
   }
 
   // 是否满足前置条件
