@@ -94,10 +94,10 @@ class PlanetDao extends Model {
   }
 
   static async incrementSzie ({ sizeUsed, sizeMax }, { planetId }) {
-    const whereClause = {}
-    sizeUsed && (whereClause.sizeUsed = sizeUsed)
-    sizeMax && (whereClause.sizeMax = sizeMax)
-    return await this.increment({ sizeUsed }, { where: { id: planetId } })
+    const fields = {}
+    sizeUsed && (fields.sizeUsed = sizeUsed)
+    sizeMax && (fields.sizeMax = sizeMax)
+    return await this.increment(fields, { where: { id: planetId } })
   }
 }
 PlanetDao.init({
