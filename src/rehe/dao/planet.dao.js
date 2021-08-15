@@ -2,20 +2,22 @@ import { sequelize, DataTypes, Model, QueryTypes } from '../../lib/sequelize.js'
 
 class PlanetDao extends Model {
   static async insert ({
-    userId, universeId, name, planetType, galaxyX, galaxyY, galaxyZ
-    , tempMini, tempMax, sizeMax, metal, crystal, deuterium, resourcesUpdateTime, createTime
+    userId, universeId, name, planetType, label, galaxyX, galaxyY, galaxyZ
+    , tempMini, tempMax, sizeMax, diameter, metal, crystal, deuterium, resourcesUpdateTime, createTime
   }) {
     return await this.create({
       userId,
       universeId,
       name,
       planetType,
+      label,
       galaxyX,
       galaxyY,
       galaxyZ,
       tempMini,
       tempMax,
       sizeMax,
+      diameter,
       metal,
       crystal,
       deuterium,
@@ -48,6 +50,7 @@ class PlanetDao extends Model {
                     gp.id planetId,
                     gp.name planetName,
                     gp.planetType,
+                    gp.label,
                     gp.galaxyX,
                     gp.galaxyY,
                     gp.galaxyZ,
@@ -125,6 +128,11 @@ PlanetDao.init({
     allowNull: false,
     comment: '类型 star moon'
   },
+  label: {
+    type: DataTypes.STRING(32),
+    allowNull: false,
+    comment: '母星or殖民'
+  },
   galaxyX: {
     type: DataTypes.SMALLINT,
     allowNull: false,
@@ -151,6 +159,21 @@ PlanetDao.init({
     allowNull: false,
     defaultValue: 0,
     comment: '星球最大温度'
+  },
+  sizeMax: {
+    type: DataTypes.SMALLINT,
+    allowNull: false,
+    comment: '星球大小'
+  },
+  sizeUsed: {
+    type: DataTypes.SMALLINT,
+    allowNull: true,
+    comment: '已使用大小'
+  },
+  diameter: {
+    type: DataTypes.SMALLINT,
+    allowNull: false,
+    comment: '星球直径'
   },
   metal: {
     type: DataTypes.BIGINT.UNSIGNED,
@@ -199,16 +222,6 @@ PlanetDao.init({
     allowNull: false,
     defaultValue: 0,
     comment: '能量1总'
-  },
-  sizeMax: {
-    type: DataTypes.SMALLINT,
-    allowNull: false,
-    comment: '星球大小'
-  },
-  sizeUsed: {
-    type: DataTypes.SMALLINT,
-    allowNull: true,
-    comment: '已使用大小'
   },
   ruins: {
     type: DataTypes.STRING(255),

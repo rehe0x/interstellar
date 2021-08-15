@@ -15,3 +15,8 @@ export const PlanetTypeEnum = Object.freeze({
   STAR: 'star',
   MOON: 'moon'
 })
+
+export const PlanetLabelEnum = Object.freeze({
+  STARBASE: 'starbase',
+  STARCOLONY: 'starcolony'
+})

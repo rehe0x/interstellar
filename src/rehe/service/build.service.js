@@ -4,6 +4,7 @@ import { remainingTime } from '../../lib/utils.js'
 import { Formula } from '../../game/formula.js'
 import { BuildingMap, BuildingMoonMap, ResearchMap, FleetMap, DefenseMap } from '../../game/build/index.js'
 import { CommonService } from '../service/common.service.js'
+import { PlanetService } from '../service/planet.service.js'
 import { PlanetTypeEnum } from '../../enum/base.enum.js'
 class BuildService {
   static async getBuilding (userId, planetId) {
@@ -34,12 +35,13 @@ class BuildService {
   static async getResearch (userId, planetId) {
     const rest = loadsh.cloneDeep(ResearchMap)
     const { userSub, planetSub } = await CommonService.getUserPlanetSub(userId, planetId)
-    // 获取研究所等级 + 计算跨行星网络 获取所有星球研究所等级
-    let lablevel = planetSub.buildingLaboratory
-    if (userSub.researchIntergalactic >= 1) {
-      lablevel += 0
-    }
 
+    // 获取研究所等级 + 计算跨行星网络 获取所有星球研究所等级
+    let planetSubListFilter = null
+    if (userSub.researchIntergalactic >= 1) {
+      const planetSubList = await PlanetService.getUserPlanetSubByType({ userId,  planetType: PlanetTypeEnum.STAR })
+      planetSubListFilter = planetSubList.filter(item => item.planetId !== planetId && item.buildingLaboratory > 0)
+    }
     for (const key in rest) {
       const obj = rest[key]
       const { metal, crystal, deuterium } = Formula.price(obj, userSub[key])
@@ -47,9 +49,22 @@ class BuildService {
       obj.crystal = crystal
       obj.deuterium = deuterium
       obj.level = userSub[key]
+      obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub)
+      let lablevel = planetSub.buildingLaboratory
+      if(planetSubListFilter && obj.requeriment.isReq){
+        for (let index = 0; index < userSub.researchIntergalactic; index++) {
+          const sub = planetSubListFilter[index]
+          if(!sub) break
+          if(obj.requeriments['buildingLaboratory']){
+            sub['buildingLaboratory'] >= obj.requeriments['buildingLaboratory'] && (lablevel += sub['buildingLaboratory'])
+          }else{
+            lablevel += sub['buildingLaboratory']
+          }
+        }
+      }
       obj.buildTime = Formula.researchTime(obj, userSub, lablevel)
       obj.buildTimeShow = remainingTime(obj.buildTime)
-      obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub)
+     
       delete obj.requeriments
       delete obj.pricelist
     }

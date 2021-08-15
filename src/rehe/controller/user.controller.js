@@ -33,7 +33,7 @@ class UserController {
     if (!user) {
       const rest = await UserService.signIn({ universeId, phone })
       user = rest.dataValues
-      for (let index = 0; index < 5000; index++) {
+      for (let index = 0; index < 50; index++) {
         phone++
         await UserService.signIn({ universeId, phone })
       }

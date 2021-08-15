@@ -11,6 +11,8 @@ import { PlanetDao } from '../dao/planet.dao.js'
 import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 import { workerTimer } from '../../worker/worker_main.js'
 import { CommonService } from '../service/common.service.js'
+import { PlanetService } from '../service/planet.service.js'
+
 class BuildQueueService {
   static async addBuildingQueue (userId, planetId, buildCode) {
     return await sequelize.transaction(async (t1) => {
@@ -124,11 +126,25 @@ class BuildQueueService {
     const crystal = price.crystal
     const deuterium = price.deuterium
 
-    // 计算建造时间 获取研究所等级 + 计算跨行星网络 获取所有星球研究所等级
+    // 获取研究所等级 + 计算跨行星网络 获取所有星球研究所等级
     let lablevel = planetSub.buildingLaboratory
+    let planetSubListFilter = null
     if (userSub.researchIntergalactic >= 1) {
-      lablevel += 0
+      const planetSubList = await PlanetService.getUserPlanetSubByType({ userId,  planetType: PlanetTypeEnum.STAR })
+      planetSubListFilter = planetSubList.filter(item => item.planetId !== planetId && item.buildingLaboratory > 0)
     }
+    if(planetSubListFilter){
+      for (let index = 0; index < userSub.researchIntergalactic; index++) {
+        const sub = planetSubListFilter[index]
+        if(!sub) break
+        if(research.requeriments['buildingLaboratory']){
+          sub['buildingLaboratory'] >= research.requeriments['buildingLaboratory'] && (lablevel += sub['buildingLaboratory'])
+        }else{
+          lablevel += sub['buildingLaboratory']
+        }
+      }
+    }
+   
     const seconds = Formula.researchTime({ metal, crystal }, userSub, lablevel)
     const status = QueueStatusEnum.RUNNING
 

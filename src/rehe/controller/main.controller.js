@@ -13,44 +13,44 @@ class MainController {
 
   static async getPlanetResources (ctx, next) {
     const { planetId } = ctx.request.query
-    const rest = await ResourcesService.getPlanetResources(ctx.loginInfo.userId, planetId)
+    const rest = await ResourcesService.getPlanetResources(ctx.loginInfo.userId, +planetId)
     ctx.success(rest)
   }
 
   static async getPlanetBuildQueue (ctx, next) {
     const { planetId, buildType } = ctx.request.query
-    const rest = await BuildQueueService.getPlanetBuildQueue(ctx.loginInfo.userId, planetId, buildType)
+    const rest = await BuildQueueService.getPlanetBuildQueue(ctx.loginInfo.userId, +planetId, buildType)
     ctx.success(rest)
   }
 
   static async getBuilding (ctx, next) {
     const { planetId } = ctx.request.query
-    const rest = await BuildService.getBuilding(ctx.loginInfo.userId, planetId)
+    const rest = await BuildService.getBuilding(ctx.loginInfo.userId, +planetId)
     ctx.success(rest)
   }
 
   static async getResearch (ctx, next) {
     const { planetId } = ctx.request.query
-    const rest = await BuildService.getResearch(ctx.loginInfo.userId, planetId)
+    const rest = await BuildService.getResearch(ctx.loginInfo.userId, +planetId)
     ctx.success(rest)
   }
 
   static async getFleet (ctx, next) {
     const { planetId } = ctx.request.query
-    const rest = await BuildService.getFleet(ctx.loginInfo.userId, planetId)
+    const rest = await BuildService.getFleet(ctx.loginInfo.userId, +planetId)
     ctx.success(rest)
   }
 
   static async getDefense (ctx, next) {
     const { planetId } = ctx.request.query
-    const rest = await BuildService.getDefense(ctx.loginInfo.userId, planetId)
+    const rest = await BuildService.getDefense(ctx.loginInfo.userId, +planetId)
     ctx.success(rest)
   }
 
   static async addBuildingQueue (ctx, next) {
     const { planetId, buildCode } = ctx.request.body
     const rest = await getLock(`addBuildingQueue_${ctx.loginInfo.userId}`, async () => {
-      return await BuildQueueService.addBuildingQueue(ctx.loginInfo.userId, planetId, buildCode)
+      return await BuildQueueService.addBuildingQueue(ctx.loginInfo.userId, +planetId, buildCode)
     })
     ctx.success(rest)
   }
@@ -58,7 +58,7 @@ class MainController {
   static async addResearchQueue (ctx, next) {
     const { planetId, buildCode } = ctx.request.body
     const rest = await getLock(`addResearchQueue_${ctx.loginInfo.userId}`, async () => {
-      return await BuildQueueService.addResearchQueue(ctx.loginInfo.userId, planetId, buildCode)
+      return await BuildQueueService.addResearchQueue(ctx.loginInfo.userId, +planetId, buildCode)
     })
     ctx.success(rest)
   }
@@ -66,7 +66,7 @@ class MainController {
   static async addFleetQueue (ctx, next) {
     const { planetId, buildCode, buildNum } = ctx.request.body
     const rest = await getLock(`addFleetQueue_${ctx.loginInfo.userId}`, async () => {
-      return await BuildQueueService.addFDQueue(ctx.loginInfo.userId, planetId, buildCode, buildNum, BuildTypeEnum.FLEET)
+      return await BuildQueueService.addFDQueue(ctx.loginInfo.userId, +planetId, buildCode, buildNum, BuildTypeEnum.FLEET)
     })
     ctx.success(rest)
   }
@@ -74,7 +74,7 @@ class MainController {
   static async addDefenseQueue (ctx, next) {
     const { planetId, buildCode, buildNum } = ctx.request.body
     const rest = await getLock(`addDefenseQueue_${ctx.loginInfo.userId}`, async () => {
-      return await BuildQueueService.addFDQueue(ctx.loginInfo.userId, planetId, buildCode, buildNum, BuildTypeEnum.DEFENSE)
+      return await BuildQueueService.addFDQueue(ctx.loginInfo.userId, +planetId, buildCode, buildNum, BuildTypeEnum.DEFENSE)
     })
     ctx.success(rest)
   }
@@ -82,7 +82,7 @@ class MainController {
   static async deleteBuildQueue (ctx, next) {
     const { queueId } = ctx.request.body
     const rest = await getLock(`deleteBuildQueue_${ctx.loginInfo.userId}`, async () => {
-      return await BuildQueueService.deleteBuildQueue(queueId)
+      return await BuildQueueService.deleteBuildQueue(+queueId)
     })
     ctx.success(rest)
   }

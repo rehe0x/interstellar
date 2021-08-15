@@ -1,8 +1,8 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class PlanetSubDao extends Model {
-  static async insert ({ planetId, userId, universeId }) {
-    return await this.create({ planetId, userId, universeId })
+  static async insert ({ planetId, userId, universeId, planetType }) {
+    return await this.create({ planetId, userId, universeId, planetType })
   }
 
   static async updateLevel ({ planetId, code, level }) {
@@ -24,6 +24,12 @@ class PlanetSubDao extends Model {
       where: { planetId }
     })
   }
+
+  static async findByUserId ({ userId, planetType }) {
+    return await this.findAll({
+      where: { userId, planetType }
+    })
+  }
 }
 PlanetSubDao.init({
   id: {
@@ -43,6 +49,11 @@ PlanetSubDao.init({
   universeId: {
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  planetType: {
+    type: DataTypes.STRING(32),
+    allowNull: false,
+    comment: '类型 star moon'
   },
   buildingMetalMine: {
     type: DataTypes.INTEGER.UNSIGNED,
