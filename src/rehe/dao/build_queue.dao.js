@@ -107,7 +107,7 @@ class BuildQueueDao extends Model {
     return await this.destroy({ where: { planetId, status } })
   }
 
-  static async deleteLatterByType ({ planetId, buildType, time}) {
+  static async deleteLatterByType ({ planetId, buildType, time }) {
     await sequelize.query('delete gbq from game_build_queue gbq where gbq.planetId = :planetId and gbq.buildType = :buildType and gbq.createTime >= :time ', {
       replacements: { planetId, buildType, time }
     })

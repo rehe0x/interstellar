@@ -12,16 +12,16 @@ class UserService {
       // 初始化账号
       const uname = genRandom(1, 4) !== 1 ? getRandomChineseWord(2, 12) : getRandomString(5, 18)
       const newUser = await UserService.addUser({ universeId, phone, username: uname, allianceId: genRandom(1, 15) })
-      UserSubDao.insert({ userId: newUser.id, universeId })
+      UserSubDao.insert({ userId: newUser.id, universeId, createTime: dayjs().valueOf() })
       const newPlanet = await PlanetService.generatePlanet({ userId: newUser.id, universeId })
-      await UserDao.updateUserPlanetId({ userId: newUser.id, planetId: newPlanet.id })
+      await UserDao.updateUserPlanetId({ userId: newUser.id, planetId: newPlanet.id, updateTime: dayjs().valueOf() })
       newUser.planetId = newPlanet.id
       PlanetService.randomColony({ userId: newUser.id, universeId })
       return newUser
     })
   }
 
-  static async addUser ({ universeId, allianceId, username, phone, status, enabled, createTime }) {
+  static async addUser ({ universeId, allianceId, username, phone }) {
     const rest = await UserDao.insert({ universeId, allianceId, username, phone, status: UserStatusEnum.PROTECTED, enabled: true, createTime: dayjs().valueOf() })
     return rest
   }
@@ -32,13 +32,13 @@ class UserService {
   }
 
   static async updateUserPlanetId ({ userId, planetId }) {
-    const rest = await UserDao.updateUserPlanetId({ userId, planetId })
+    const rest = await UserDao.updateUserPlanetId({ userId, planetId, updateTime: dayjs().valueOf() })
     return rest
   }
 
   static async updatePoints ({ metal, crystal, deuterium, userId }) {
     const points = ~~((metal + crystal + deuterium) / 1000)
-    const rest = await UserDao.updateIncrementPoints({ userId, points })
+    const rest = await UserDao.updateIncrementPoints({ userId, points, updateTime: dayjs().valueOf() })
     return rest
   }
 

@@ -116,12 +116,14 @@ class PlanetDao extends Model {
     })
   }
 
-  static async updateIncrementResources ({ metal, crystal, deuterium }, { planetId }) {
-    return await this.increment({ metal, crystal, deuterium }, { where: { id: planetId } })
+  static async updateIncrementResources ({ metal, crystal, deuterium, updateTime }, { planetId }) {
+    return await this.increment({ metal, crystal, deuterium, updateTime }, { where: { id: planetId } })
   }
 
-  static async updateIncrementSzie ({ sizeUsed, sizeMax }, { planetId }) {
-    const fields = {}
+  static async updateIncrementSzie ({ sizeUsed, sizeMax, updateTime }, { planetId }) {
+    const fields = {
+      updateTime
+    }
     sizeUsed && (fields.sizeUsed = sizeUsed)
     sizeMax && (fields.sizeMax = sizeMax)
     return await this.increment(fields, { where: { id: planetId } })

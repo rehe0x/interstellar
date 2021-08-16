@@ -63,6 +63,7 @@ class PlanetService {
         sizeMax = Formula.planetSize(universeId, galaxyZ)
         diameter = sizeMax * 75
       }
+      const nowTime = dayjs().valueOf()
       const newPlanet = await PlanetDao.insert({
         userId,
         universeId,
@@ -79,10 +80,10 @@ class PlanetService {
         metal,
         crystal,
         deuterium,
-        resourcesUpdateTime: dayjs().valueOf(),
-        createTime: dayjs().valueOf()
+        resourcesUpdateTime: nowTime,
+        createTime: nowTime
       })
-      await PlanetSubDao.insert({ planetId: newPlanet.id, userId: userId, universeId: universeId, planetType })
+      await PlanetSubDao.insert({ planetId: newPlanet.id, userId: userId, universeId: universeId, planetType, createTime: nowTime })
       return newPlanet
     })
   }

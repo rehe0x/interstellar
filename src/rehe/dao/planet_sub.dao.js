@@ -1,20 +1,20 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class PlanetSubDao extends Model {
-  static async insert ({ planetId, userId, universeId, planetType }) {
-    return await this.create({ planetId, userId, universeId, planetType })
+  static async insert ({ planetId, userId, universeId, planetType, createTime }) {
+    return await this.create({ planetId, userId, universeId, planetType, createTime })
   }
 
-  static async updateLevel ({ planetId, code, level }) {
-    const rest = await sequelize.query(`update game_planet_sub set ${code} = :level where planetId = :planetId`, {
-      replacements: { planetId, level }
+  static async updateLevel ({ planetId, code, level, updateTime }) {
+    const rest = await sequelize.query(`update game_planet_sub set ${code} = :level, updateTime = :updateTime where planetId = :planetId`, {
+      replacements: { planetId, level, updateTime }
     })
     return rest
   }
 
-  static async updateIncrementLevel ({ planetId, code, level }) {
-    const rest = await sequelize.query(`update game_planet_sub set ${code} = ${code} + :level where planetId = :planetId`, {
-      replacements: { planetId, level }
+  static async updateIncrementLevel ({ planetId, code, level, updateTime }) {
+    const rest = await sequelize.query(`update game_planet_sub set ${code} = ${code} + :level, updateTime = :updateTime where planetId = :planetId`, {
+      replacements: { planetId, level, updateTime }
     })
     return rest
   }
@@ -306,6 +306,16 @@ PlanetSubDao.init({
     allowNull: false,
     defaultValue: 0,
     comment: '星际导弹'
+  },
+  updateTime: {
+    type: DataTypes.BIGINT,
+    allowNull: true,
+    comment: '修改时间'
+  },
+  createTime: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    comment: '创建时间'
   }
 }, {
   sequelize,

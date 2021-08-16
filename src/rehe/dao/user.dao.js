@@ -9,12 +9,12 @@ class UserDao extends Model {
     return await this.create({ universeId, allianceId, username, phone, status, enabled, createTime })
   }
 
-  static async updateUserPlanetId ({ userId, planetId }) {
-    return await this.update({ planetId: planetId }, { where: { id: userId } })
+  static async updateUserPlanetId ({ userId, planetId, updateTime }) {
+    return await this.update({ planetId, updateTime }, { where: { id: userId } })
   }
 
-  static async updateIncrementPoints ({ userId, points }) {
-    return await this.increment({ points }, { where: { id: userId } })
+  static async updateIncrementPoints ({ userId, points, updateTime }) {
+    return await this.increment({ points, updateTime }, { where: { id: userId } })
   }
 }
 UserDao.init({

@@ -64,7 +64,7 @@ class BuildQueueService {
           throw new BusinessError('资源不足' + planet)
         }
         // 扣减资源
-        PlanetDao.updateIncrementResources({ metal: -metal, crystal: -crystal, deuterium: -deuterium }, { planetId })
+        PlanetDao.updateIncrementResources({ metal: -metal, crystal: -crystal, deuterium: -deuterium, updateTime: dayjs().valueOf() }, { planetId })
         status = QueueStatusEnum.RUNNING
         const day = dayjs()
         startTime = day.valueOf()
@@ -159,7 +159,7 @@ class BuildQueueService {
     }
     const newQueue = await sequelize.transaction(async (t1) => {
       // 扣减资源
-      PlanetDao.updateIncrementResources({ metal: -metal, crystal: -crystal, deuterium: -deuterium }, { planetId })
+      PlanetDao.updateIncrementResources({ metal: -metal, crystal: -crystal, deuterium: -deuterium, updateTime: dayjs().valueOf() }, { planetId })
       const buildingQueueData = {
         userId,
         planetId,
@@ -244,7 +244,7 @@ class BuildQueueService {
     }
     const newQueue = await sequelize.transaction(async (t1) => {
       // 扣减资源
-      PlanetDao.updateIncrementResources({ metal: -metal * buildNum, crystal: -crystal * buildNum, deuterium: -deuterium * buildNum }, { planetId })
+      PlanetDao.updateIncrementResources({ metal: -metal * buildNum, crystal: -crystal * buildNum, deuterium: -deuterium * buildNum, updateTime: dayjs().valueOf() }, { planetId })
       const buildQueueData = {
         userId,
         planetId,
@@ -304,7 +304,7 @@ class BuildQueueService {
         }, { queueId: buildQueue.id })
         if (rest[0] === 1) {
           // 修改数量
-          await PlanetSubDao.updateIncrementLevel({ planetId, code: buildQueue.buildCode, level: n })
+          await PlanetSubDao.updateIncrementLevel({ planetId, code: buildQueue.buildCode, level: n, updateTime: dayjs().valueOf() })
           // 更新积分
           await UserService.updatePoints({ metal: buildQueue.metal * n, crystal: buildQueue.crystal * n, deuterium: buildQueue.deuterium * n, userId: userId })
         }
@@ -325,14 +325,14 @@ class BuildQueueService {
         // 恢复资源
         if (rest.status === QueueStatusEnum.RUNNING) {
           workerTimer.postMessage({ taskType: BuildTypeEnum.DELETE, taskInfo: rest })
-          await PlanetDao.updateIncrementResources({ metal: rest.metal, crystal: rest.crystal, deuterium: rest.deuterium }, { planetId: rest.planetId })
+          await PlanetDao.updateIncrementResources({ metal: rest.metal, crystal: rest.crystal, deuterium: rest.deuterium, updateTime: dayjs().valueOf() }, { planetId: rest.planetId })
         }
       } else if (rest.buildType === BuildTypeEnum.FLEET || rest.buildType === BuildTypeEnum.DEFENSE) {
         const fdObj = rest.buildType === BuildTypeEnum.FLEET ? FleetMap[rest.buildCode] : DefenseMap[rest.buildCode]
         if (!fdObj) {
           throw new BusinessError('建造不存在')
         }
-        await PlanetDao.updateIncrementResources({ metal: fdObj.pricelist.metal * rest.remainLevel, crystal: fdObj.pricelist.crystal * rest.remainLevel, deuterium: fdObj.pricelist.deuterium * rest.remainLevel }, { planetId: rest.planetId })
+        await PlanetDao.updateIncrementResources({ metal: fdObj.pricelist.metal * rest.remainLevel, crystal: fdObj.pricelist.crystal * rest.remainLevel, deuterium: fdObj.pricelist.deuterium * rest.remainLevel, updateTime: dayjs().valueOf() }, { planetId: rest.planetId })
         workerTimer.postMessage({ taskType: BuildTypeEnum.DELETE, taskInfo: rest })
       }
       return deleteQueue

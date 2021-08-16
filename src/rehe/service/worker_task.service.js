@@ -45,7 +45,7 @@ class WorkerTaskService {
           throw new BusinessError('资源/空间不足')
         }
         // 扣减资源
-        await PlanetDao.updateIncrementResources({ metal: -item.metal, crystal: -item.crystal, deuterium: -item.deuterium }, { planetId: item.planetId })
+        await PlanetDao.updateIncrementResources({ metal: -item.metal, crystal: -item.crystal, deuterium: -item.deuterium, updateTime: dayjs().valueOf() }, { planetId: item.planetId })
         // 计算建造时间 s
         item.seconds = Formula.buildingTime({ metal: item.metal, crystal: item.crystal }, planetSub, userSub)
         // 修改为执行队列
@@ -163,12 +163,12 @@ class WorkerTaskService {
       // 先更新产量
       await ResourcesService.updatePlanetResources(taskInfo.userId, taskInfo.planetId)
       // 修改等级
-      PlanetSubDao.updateLevel({ planetId: taskInfo.planetId, code: taskInfo.buildCode, level: taskInfo.level })
+      PlanetSubDao.updateLevel({ planetId: taskInfo.planetId, code: taskInfo.buildCode, level: taskInfo.level, updateTime: dayjs().valueOf() })
       // 星球已用空间+1
-      PlanetDao.updateIncrementSzie({ sizeUsed: 1 }, { planetId: taskInfo.planetId })
+      PlanetDao.updateIncrementSzie({ sizeUsed: 1, updateTime: dayjs().valueOf() }, { planetId: taskInfo.planetId })
       // 如果是月球基地和地形改造器 增加空间4
       if (taskInfo.buildCode === 'buildingMondbasis' || taskInfo.buildCode === 'buildingTerraformer') {
-        PlanetDao.updateIncrementSzie({ sizeMax: 4 }, { planetId: taskInfo.planetId })
+        PlanetDao.updateIncrementSzie({ sizeMax: 4, updateTime: dayjs().valueOf() }, { planetId: taskInfo.planetId })
       }
       // 更新积分
       UserService.updatePoints({ metal: taskInfo.metal, crystal: taskInfo.crystal, deuterium: taskInfo.deuterium, userId: taskInfo.userId })
@@ -193,7 +193,7 @@ class WorkerTaskService {
           // throw new BusinessError('资源不足' + planet)
         }
         // 扣减资源
-        PlanetDao.updateIncrementResources({ metal: -buildQueueOne.metal, crystal: buildQueueOne.crystal, deuterium: -buildQueueOne.deuterium }, { planetId: buildQueueOne.planetId })
+        PlanetDao.updateIncrementResources({ metal: -buildQueueOne.metal, crystal: buildQueueOne.crystal, deuterium: -buildQueueOne.deuterium, updateTime: dayjs().valueOf() }, { planetId: buildQueueOne.planetId })
         // 计算建造时间 s
         buildQueueOne.seconds = Formula.buildingTime({ metal: buildQueueOne.metal, crystal: buildQueueOne.crystal }, planetSub, userSub)
         // 修改为执行队列
@@ -217,7 +217,7 @@ class WorkerTaskService {
   async finishResearchQueueTask (taskInfo) {
     return sequelize.transaction((t1) => {
       // 修改等级
-      UserSubDao.updateLevel({ userId: taskInfo.userId, code: taskInfo.buildCode, level: taskInfo.level })
+      UserSubDao.updateLevel({ userId: taskInfo.userId, code: taskInfo.buildCode, level: taskInfo.level, updateTime: dayjs().valueOf() })
       // 写入日志
       BuildQueueDao.insertLog({ title: 'finishBuildQueueTask', text: JSON.stringify(taskInfo), time: dayjs().valueOf() })
       // 更新积分
@@ -236,7 +236,7 @@ class WorkerTaskService {
       // 先更新产量
       await ResourcesService.updatePlanetResources(taskInfo.userId, taskInfo.planetId)
       // 修改数量
-      PlanetSubDao.updateIncrementLevel({ planetId: taskInfo.planetId, code: taskInfo.buildCode, level: rest.remainLevel })
+      PlanetSubDao.updateIncrementLevel({ planetId: taskInfo.planetId, code: taskInfo.buildCode, level: rest.remainLevel, updateTime: dayjs().valueOf() })
       // 更新积分
       UserService.updatePoints({ metal: rest.metal * rest.remainLevel, crystal: rest.crystal * rest.remainLevel, deuterium: rest.deuterium * rest.remainLevel, userId: taskInfo.userId })
       // 写入日志

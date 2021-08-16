@@ -1,13 +1,13 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class UserSubDao extends Model {
-  static async insert ({ userId, universeId }) {
-    return await this.create({ userId, universeId })
+  static async insert ({ userId, universeId, createTime }) {
+    return await this.create({ userId, universeId, createTime })
   }
 
-  static async updateLevel ({ userId, code, level }) {
-    const rest = await sequelize.query(`update game_user_sub set ${code} = :level where userId = :userId`, {
-      replacements: { userId, level }
+  static async updateLevel ({ userId, code, level, updateTime }) {
+    const rest = await sequelize.query(`update game_user_sub set ${code} = :level, updateTime = :updateTime where userId = :userId`, {
+      replacements: { userId, level, updateTime }
     })
     return rest
   }
@@ -209,6 +209,16 @@ UserSubDao.init({
     allowNull: false,
     defaultValue: 0,
     comment: '引力技术'
+  },
+  updateTime: {
+    type: DataTypes.BIGINT,
+    allowNull: true,
+    comment: '修改时间'
+  },
+  createTime: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    comment: '创建时间'
   }
 }, {
   sequelize,
