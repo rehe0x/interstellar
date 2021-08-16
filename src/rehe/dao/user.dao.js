@@ -5,12 +5,16 @@ class UserDao extends Model {
     return await UserDao.findOne({ where: { universeId, phone } })
   }
 
-  static async insert ({ universeId, phone, username, allianceId }) {
-    return await this.create({ universeId, phone, username, allianceId })
+  static async insert ({ universeId, allianceId, username, phone, status, enabled, createTime }) {
+    return await this.create({ universeId, allianceId, username, phone, status, enabled, createTime })
   }
 
   static async updateUserPlanetId ({ userId, planetId }) {
     return await this.update({ planetId: planetId }, { where: { id: userId } })
+  }
+
+  static async updateIncrementPoints ({ userId, points }) {
+    return await this.increment({ points }, { where: { id: userId } })
   }
 }
 UserDao.init({
@@ -52,13 +56,27 @@ UserDao.init({
     type: DataTypes.STRING(255),
     allowNull: false
   },
-  avatarPath: {
-    type: DataTypes.STRING(255),
-    allowNull: true
+  points: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  status: {
+    type: DataTypes.STRING(32),
+    allowNull: false
   },
   enabled: {
     type: DataTypes.BOOLEAN,
     allowNull: true
+  },
+  updateTime: {
+    type: DataTypes.BIGINT,
+    allowNull: true,
+    comment: '修改时间'
+  },
+  createTime: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    comment: '创建时间'
   }
 }, {
   sequelize,

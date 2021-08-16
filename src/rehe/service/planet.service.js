@@ -9,16 +9,20 @@ import { genRandom, getRandomChineseWord, getRandomString } from '../../lib/util
 import dayjs from 'dayjs'
 
 class PlanetService {
-  static async getUserPlanet (userId) {
+  static async getUserPlanetList (userId) {
     const rest = await PlanetDao.findByUserId({ userId })
-    let starArray = rest.filter(item => item.planetType === PlanetTypeEnum.STAR).sort((a, b) => a.createTime - b.createTime)
+    const starArray = rest.filter(item => item.planetType === PlanetTypeEnum.STAR).sort((a, b) => a.createTime - b.createTime)
     const moonArray = rest.filter(item => item.planetType === PlanetTypeEnum.MOON)
     for (let index = starArray.length - 1; index >= 0; index--) {
-      const star = starArray[index];
+      const star = starArray[index]
       const moon = moonArray.find((m) => (m.galaxyX === star.galaxyX && m.galaxyY === star.galaxyY && m.galaxyZ === star.galaxyZ))
-      moon && starArray.splice(index+1, 0, moon)
+      moon && starArray.splice(index + 1, 0, moon)
     }
     return starArray
+  }
+
+  static async getUserPlanetInfo ({ userId, planetId }) {
+    return await PlanetDao.findByUserPlanetId({ userId, planetId })
   }
 
   static async getUserPlanetSubByType ({ userId, planetType }) {
@@ -52,9 +56,9 @@ class PlanetService {
       const { tempMini, tempMax } = Formula.planetTemp(galaxyZ)
       let sizeMax = 1
       let diameter = genRandom(100, 200) * 75
-      let metal = UniverseMap[universeId].baseMetal
-      let crystal = UniverseMap[universeId].baseCristal
-      let deuterium = UniverseMap[universeId].baseDeuterium
+      const metal = UniverseMap[universeId].baseMetal
+      const crystal = UniverseMap[universeId].baseCristal
+      const deuterium = UniverseMap[universeId].baseDeuterium
       if (planetType === PlanetTypeEnum.STAR) {
         sizeMax = Formula.planetSize(universeId, galaxyZ)
         diameter = sizeMax * 75
@@ -96,9 +100,9 @@ class PlanetService {
       const galaxyY = genRandom(1, 499)
       const galaxyZ = genRandom(1, 15)
       rest = await this.createPlanet({ userId, universeId, planetName, planetType: PlanetTypeEnum.STAR, label: PlanetLabelEnum.STARBASE, galaxyX, galaxyY, galaxyZ })
-      if(rest) break
+      if (rest) break
     }
-    if(!rest){
+    if (!rest) {
       throw new BusinessError('初始化失败')
     }
     return rest

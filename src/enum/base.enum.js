@@ -20,3 +20,10 @@ export const PlanetLabelEnum = Object.freeze({
   STARBASE: 'starbase',
   STARCOLONY: 'starcolony'
 })
+
+export const UserStatusEnum = Object.freeze({
+  PROTECTED: 'protected',
+  NORMAL: 'normal',
+  HOLIDAY: 'holiday',
+  BANNED: 'banned'
+})

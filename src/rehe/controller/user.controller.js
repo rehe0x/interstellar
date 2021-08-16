@@ -5,13 +5,13 @@ import { UserService } from '../service/user.service.js'
 import { PlanetService } from '../service/planet.service.js'
 
 class UserController {
-  static async getUserPlanet (ctx, next) {
-    const rest = await PlanetService.getUserPlanet(ctx.loginInfo.userId)
+  static async getUserPlanetList (ctx, next) {
+    const rest = await PlanetService.getUserPlanetList(ctx.loginInfo.userId)
     ctx.success(rest)
   }
 
   static async updateUserPlanetId (ctx, next) {
-    let { planetId } = ctx.request.body
+    const { planetId } = ctx.request.body
     const rest = await UserService.updateUserPlanetId({ userId: ctx.loginInfo.userId, planetId })
     ctx.success(rest)
   }

@@ -17,6 +17,12 @@ class MainController {
     ctx.success(rest)
   }
 
+  static async getUserPlanetInfo (ctx, next) {
+    const { planetId } = ctx.request.query
+    const rest = await PlanetService.getUserPlanetInfo({ userId: ctx.loginInfo.userId, planetId })
+    ctx.success(rest)
+  }
+
   static async getPlanetBuildQueue (ctx, next) {
     const { planetId, buildType } = ctx.request.query
     const rest = await BuildQueueService.getPlanetBuildQueue(ctx.loginInfo.userId, +planetId, buildType)

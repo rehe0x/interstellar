@@ -8,8 +8,8 @@ import { PlanetDao } from '../dao/planet.dao.js'
 import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 import { UserSubDao } from '../dao/user_sub.dao.js'
 import { ResourcesService } from '../service/resources.service.js'
-import { FleetMap, DefenseMap } from '../../game/build/index.js'
 import { CommonService } from '../service/common.service.js'
+import { UserService } from '../service/user.service.js'
 
 class WorkerTaskService {
   constructor (workerData) {
@@ -45,7 +45,7 @@ class WorkerTaskService {
           throw new BusinessError('资源/空间不足')
         }
         // 扣减资源
-        await PlanetDao.incrementResources({ metal: -item.metal, crystal: -item.crystal, deuterium: -item.deuterium }, { planetId: item.planetId })
+        await PlanetDao.updateIncrementResources({ metal: -item.metal, crystal: -item.crystal, deuterium: -item.deuterium }, { planetId: item.planetId })
         // 计算建造时间 s
         item.seconds = Formula.buildingTime({ metal: item.metal, crystal: item.crystal }, planetSub, userSub)
         // 修改为执行队列
@@ -78,15 +78,10 @@ class WorkerTaskService {
     fleetArr.forEach(async (item) => {
       console.log('fleetArr', item)
       if (item.status !== QueueStatusEnum.RUNNING) {
-        // 查询建筑信息
-        const fleetObj = FleetMap[item.buildCode]
-        if (!fleetObj) {
-          throw new BusinessError('建造不存在')
-        }
         // 查询用户和星球信息
         const { userSub, planetSub } = await CommonService.getUserPlanetSub(item.userId, item.planetId)
 
-        const seconds = Formula.fleetDefenseTime({ metal: fleetObj.pricelist.metal, crystal: fleetObj.pricelist.crystal }, planetSub, userSub)
+        const seconds = Formula.fleetDefenseTime({ metal: item.metal, crystal: item.crystal }, planetSub, userSub)
         item.seconds = seconds * item.remainLevel
 
         // 修改为执行队列
@@ -119,15 +114,10 @@ class WorkerTaskService {
     defenseArr.forEach(async (item) => {
       console.log('defenseArr', item)
       if (item.status !== QueueStatusEnum.RUNNING) {
-        // 查询建筑信息
-        const defenseObj = DefenseMap[item.buildCode]
-        if (!defenseObj) {
-          throw new BusinessError('建造不存在')
-        }
         // 查询用户和星球信息
         const { userSub, planetSub } = await CommonService.getUserPlanetSub(item.userId, item.planetId)
 
-        const seconds = Formula.fleetDefenseTime({ metal: defenseObj.pricelist.metal, crystal: defenseObj.pricelist.crystal }, planetSub, userSub)
+        const seconds = Formula.fleetDefenseTime({ metal: item.metal, crystal: item.crystal }, planetSub, userSub)
         item.seconds = seconds * item.remainLevel
 
         // 修改为执行队列
@@ -175,11 +165,13 @@ class WorkerTaskService {
       // 修改等级
       PlanetSubDao.updateLevel({ planetId: taskInfo.planetId, code: taskInfo.buildCode, level: taskInfo.level })
       // 星球已用空间+1
-      PlanetDao.incrementSzie({ sizeUsed: 1 }, { planetId: taskInfo.planetId })
+      PlanetDao.updateIncrementSzie({ sizeUsed: 1 }, { planetId: taskInfo.planetId })
       // 如果是月球基地和地形改造器 增加空间4
       if (taskInfo.buildCode === 'buildingMondbasis' || taskInfo.buildCode === 'buildingTerraformer') {
-        PlanetDao.incrementSzie({ sizeMax: 4 }, { planetId: taskInfo.planetId })
+        PlanetDao.updateIncrementSzie({ sizeMax: 4 }, { planetId: taskInfo.planetId })
       }
+      // 更新积分
+      UserService.updatePoints({ metal: taskInfo.metal, crystal: taskInfo.crystal, deuterium: taskInfo.deuterium, userId: taskInfo.userId })
       // 写入日志
       BuildQueueDao.insertLog({ title: 'finishBuildQueueTask', text: JSON.stringify(taskInfo), time: dayjs().valueOf() })
       // 删除队列
@@ -201,7 +193,7 @@ class WorkerTaskService {
           // throw new BusinessError('资源不足' + planet)
         }
         // 扣减资源
-        PlanetDao.incrementResources({ metal: -buildQueueOne.metal, crystal: buildQueueOne.crystal, deuterium: -buildQueueOne.deuterium }, { planetId: buildQueueOne.planetId })
+        PlanetDao.updateIncrementResources({ metal: -buildQueueOne.metal, crystal: buildQueueOne.crystal, deuterium: -buildQueueOne.deuterium }, { planetId: buildQueueOne.planetId })
         // 计算建造时间 s
         buildQueueOne.seconds = Formula.buildingTime({ metal: buildQueueOne.metal, crystal: buildQueueOne.crystal }, planetSub, userSub)
         // 修改为执行队列
@@ -228,6 +220,8 @@ class WorkerTaskService {
       UserSubDao.updateLevel({ userId: taskInfo.userId, code: taskInfo.buildCode, level: taskInfo.level })
       // 写入日志
       BuildQueueDao.insertLog({ title: 'finishBuildQueueTask', text: JSON.stringify(taskInfo), time: dayjs().valueOf() })
+      // 更新积分
+      UserService.updatePoints({ metal: taskInfo.metal, crystal: taskInfo.crystal, deuterium: taskInfo.deuterium, userId: taskInfo.userId })
       // 删除队列
       return BuildQueueDao.deleteById(taskInfo.id)
     })
@@ -243,9 +237,10 @@ class WorkerTaskService {
       await ResourcesService.updatePlanetResources(taskInfo.userId, taskInfo.planetId)
       // 修改数量
       PlanetSubDao.updateIncrementLevel({ planetId: taskInfo.planetId, code: taskInfo.buildCode, level: rest.remainLevel })
+      // 更新积分
+      UserService.updatePoints({ metal: rest.metal * rest.remainLevel, crystal: rest.crystal * rest.remainLevel, deuterium: rest.deuterium * rest.remainLevel, userId: taskInfo.userId })
       // 写入日志
       BuildQueueDao.insertLog({ title: 'finishFDQueueTask', text: JSON.stringify(taskInfo), time: dayjs().valueOf() })
-
       // 删除队列
       await BuildQueueDao.deleteById(taskInfo.id)
     })
@@ -257,15 +252,10 @@ class WorkerTaskService {
     return sequelize.transaction(async (t2) => {
       const buildQueueOne = await BuildQueueDao.findOnePlanetByTypeIdAsc({ userId: taskInfo.userId, planetId: taskInfo.planetId, buildType: taskInfo.buildType })
       if (buildQueueOne) {
-        // 查询建筑信息
-        const fdObj = taskInfo.buildType === BuildTypeEnum.FLEET ? FleetMap[buildQueueOne.buildCode] : DefenseMap[buildQueueOne.buildCode]
-        if (!fdObj) {
-          throw new BusinessError('建造不存在')
-        }
         // 查询用户和星球信息
         const { userSub, planetSub } = await CommonService.getUserPlanetSub(taskInfo.userId, taskInfo.planetId)
 
-        const seconds = Formula.fleetDefenseTime({ metal: fdObj.pricelist.metal, crystal: fdObj.pricelist.crystal }, planetSub, userSub)
+        const seconds = Formula.fleetDefenseTime({ metal: buildQueueOne.metal, crystal: buildQueueOne.crystal }, planetSub, userSub)
         buildQueueOne.seconds = seconds * buildQueueOne.remainLevel
 
         // 修改为执行队列

@@ -31,6 +31,7 @@ const v = {
 }
 routers.get('/getNowTime', MainController.getNowTime)
 routers.get('/getPlanetResources', validation(v.base), MainController.getPlanetResources)
+routers.get('/getUserPlanetInfo', validation(v.base), MainController.getUserPlanetInfo)
 routers.get('/getPlanetBuildQueue', validation(v.base), MainController.getPlanetBuildQueue)
 routers.get('/getBuilding', validation(v.base), MainController.getBuilding)
 routers.get('/getResearch', validation(v.base), MainController.getResearch)

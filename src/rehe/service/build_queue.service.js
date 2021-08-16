@@ -12,6 +12,7 @@ import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 import { workerTimer } from '../../worker/worker_main.js'
 import { CommonService } from '../service/common.service.js'
 import { PlanetService } from '../service/planet.service.js'
+import { UserService } from '../service/user.service.js'
 
 class BuildQueueService {
   static async addBuildingQueue (userId, planetId, buildCode) {
@@ -63,7 +64,7 @@ class BuildQueueService {
           throw new BusinessError('资源不足' + planet)
         }
         // 扣减资源
-        PlanetDao.incrementResources({ metal: -metal, crystal: -crystal, deuterium: -deuterium }, { planetId })
+        PlanetDao.updateIncrementResources({ metal: -metal, crystal: -crystal, deuterium: -deuterium }, { planetId })
         status = QueueStatusEnum.RUNNING
         const day = dayjs()
         startTime = day.valueOf()
@@ -130,21 +131,21 @@ class BuildQueueService {
     let lablevel = planetSub.buildingLaboratory
     let planetSubListFilter = null
     if (userSub.researchIntergalactic >= 1) {
-      const planetSubList = await PlanetService.getUserPlanetSubByType({ userId,  planetType: PlanetTypeEnum.STAR })
+      const planetSubList = await PlanetService.getUserPlanetSubByType({ userId, planetType: PlanetTypeEnum.STAR })
       planetSubListFilter = planetSubList.filter(item => item.planetId !== planetId && item.buildingLaboratory > 0)
     }
-    if(planetSubListFilter){
+    if (planetSubListFilter) {
       for (let index = 0; index < userSub.researchIntergalactic; index++) {
         const sub = planetSubListFilter[index]
-        if(!sub) break
-        if(research.requeriments['buildingLaboratory']){
-          sub['buildingLaboratory'] >= research.requeriments['buildingLaboratory'] && (lablevel += sub['buildingLaboratory'])
-        }else{
-          lablevel += sub['buildingLaboratory']
+        if (!sub) break
+        if (research.requeriments.buildingLaboratory) {
+          sub.buildingLaboratory >= research.requeriments.buildingLaboratory && (lablevel += sub.buildingLaboratory)
+        } else {
+          lablevel += sub.buildingLaboratory
         }
       }
     }
-   
+
     const seconds = Formula.researchTime({ metal, crystal }, userSub, lablevel)
     const status = QueueStatusEnum.RUNNING
 
@@ -158,7 +159,7 @@ class BuildQueueService {
     }
     const newQueue = await sequelize.transaction(async (t1) => {
       // 扣减资源
-      PlanetDao.incrementResources({ metal: -metal, crystal: -crystal, deuterium: -deuterium }, { planetId })
+      PlanetDao.updateIncrementResources({ metal: -metal, crystal: -crystal, deuterium: -deuterium }, { planetId })
       const buildingQueueData = {
         userId,
         planetId,
@@ -221,9 +222,9 @@ class BuildQueueService {
     if (buildNum <= 0) {
       return
     }
-    const metal = fdObj.pricelist.metal * buildNum
-    const crystal = fdObj.pricelist.crystal * buildNum
-    const deuterium = fdObj.pricelist.deuterium * buildNum
+    const metal = fdObj.pricelist.metal
+    const crystal = fdObj.pricelist.crystal
+    const deuterium = fdObj.pricelist.deuterium
     const level = buildNum
     const remainLevel = buildNum
     let status = QueueStatusEnum.PENDING
@@ -231,7 +232,7 @@ class BuildQueueService {
     let endTime = null
     let remainUpdateTime = null
     // 计算建造时间 s
-    let seconds = Formula.fleetDefenseTime({ metal: fdObj.pricelist.metal, crystal: fdObj.pricelist.crystal }, planetSub, userSub)
+    let seconds = Formula.fleetDefenseTime({ metal, crystal }, planetSub, userSub)
     seconds = seconds * buildNum
     // 如果没有队列
     if (!isQueue) {
@@ -243,7 +244,7 @@ class BuildQueueService {
     }
     const newQueue = await sequelize.transaction(async (t1) => {
       // 扣减资源
-      PlanetDao.incrementResources({ metal: -metal, crystal: -crystal, deuterium: -deuterium }, { planetId })
+      PlanetDao.updateIncrementResources({ metal: -metal * buildNum, crystal: -crystal * buildNum, deuterium: -deuterium * buildNum }, { planetId })
       const buildQueueData = {
         userId,
         planetId,
@@ -295,7 +296,6 @@ class BuildQueueService {
       let n = Math.floor(prodTime / prodNum)
       if (!n || n === 0) continue
       await sequelize.transaction(async (t1) => {
-        // 修改为执行队列
         n > buildQueue.remainLevel && (n = buildQueue.remainLevel)
         const rest = await BuildQueueDao.updateRemain({
           remainLevel: buildQueue.remainLevel - n,
@@ -305,6 +305,8 @@ class BuildQueueService {
         if (rest[0] === 1) {
           // 修改数量
           await PlanetSubDao.updateIncrementLevel({ planetId, code: buildQueue.buildCode, level: n })
+          // 更新积分
+          await UserService.updatePoints({ metal: buildQueue.metal * n, crystal: buildQueue.crystal * n, deuterium: buildQueue.deuterium * n, userId: userId })
         }
       })
     }
@@ -318,19 +320,19 @@ class BuildQueueService {
     return await sequelize.transaction(async (t1) => {
       const deleteQueue = await BuildQueueDao.deleteById(queueId)
       // 删除后续队列
-      await BuildQueueDao.deleteLatterByType({ planetId: rest.planetId, buildType: rest.buildType, time: rest.createTime})
+      await BuildQueueDao.deleteLatterByType({ planetId: rest.planetId, buildType: rest.buildType, time: rest.createTime })
       if (rest.buildType === BuildTypeEnum.BUILDING || rest.buildType === BuildTypeEnum.RESEARCH) {
         // 恢复资源
         if (rest.status === QueueStatusEnum.RUNNING) {
           workerTimer.postMessage({ taskType: BuildTypeEnum.DELETE, taskInfo: rest })
-          await PlanetDao.incrementResources({ metal: rest.metal, crystal: rest.crystal, deuterium: rest.deuterium }, { planetId: rest.planetId })
+          await PlanetDao.updateIncrementResources({ metal: rest.metal, crystal: rest.crystal, deuterium: rest.deuterium }, { planetId: rest.planetId })
         }
       } else if (rest.buildType === BuildTypeEnum.FLEET || rest.buildType === BuildTypeEnum.DEFENSE) {
         const fdObj = rest.buildType === BuildTypeEnum.FLEET ? FleetMap[rest.buildCode] : DefenseMap[rest.buildCode]
         if (!fdObj) {
           throw new BusinessError('建造不存在')
         }
-        await PlanetDao.incrementResources({ metal: fdObj.pricelist.metal * rest.remainLevel, crystal: fdObj.pricelist.crystal * rest.remainLevel, deuterium: fdObj.pricelist.deuterium * rest.remainLevel }, { planetId: rest.planetId })
+        await PlanetDao.updateIncrementResources({ metal: fdObj.pricelist.metal * rest.remainLevel, crystal: fdObj.pricelist.crystal * rest.remainLevel, deuterium: fdObj.pricelist.deuterium * rest.remainLevel }, { planetId: rest.planetId })
         workerTimer.postMessage({ taskType: BuildTypeEnum.DELETE, taskInfo: rest })
       }
       return deleteQueue

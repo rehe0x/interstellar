@@ -31,7 +31,31 @@ class PlanetDao extends Model {
   }
 
   static async findByUserId ({ userId }) {
-    return await this.findAll({ where: { userId } })
+    return await this.findAll({
+      attributes: ['id', 'name', 'planetType', 'galaxyX', 'galaxyY', 'galaxyZ', 'galaxyZ', 'createTime'],
+      where: { userId }
+    })
+  }
+
+  static async findByUserPlanetId ({ userId, planetId }) {
+    const rest = await sequelize.query(
+      `select gp.id,
+        gp.name,
+        gp.galaxyX,
+        gp.galaxyY,
+        gp.galaxyZ,
+        gp.tempMini,
+        gp.tempMax,
+        gp.sizeUsed,
+        gp.sizeMax,
+        gp.diameter,
+        gp.energyMax,
+        gp.energyUsed,
+        gu.points
+      from game_planet gp inner join game_user gu on gp.userId = gu.id
+      where gu.id = :userId and gp.id = :planetId`,
+      { replacements: { userId, planetId }, plain: true, type: QueryTypes.SELECT })
+    return rest
   }
 
   static async findByGalaxy ({ universeId, planetType, galaxyX, galaxyY, galaxyZ }) {
@@ -92,11 +116,11 @@ class PlanetDao extends Model {
     })
   }
 
-  static async incrementResources ({ metal, crystal, deuterium }, { planetId }) {
+  static async updateIncrementResources ({ metal, crystal, deuterium }, { planetId }) {
     return await this.increment({ metal, crystal, deuterium }, { where: { id: planetId } })
   }
 
-  static async incrementSzie ({ sizeUsed, sizeMax }, { planetId }) {
+  static async updateIncrementSzie ({ sizeUsed, sizeMax }, { planetId }) {
     const fields = {}
     sizeUsed && (fields.sizeUsed = sizeUsed)
     sizeMax && (fields.sizeMax = sizeMax)

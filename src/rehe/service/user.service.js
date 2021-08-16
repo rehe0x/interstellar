@@ -3,6 +3,8 @@ import { UserDao } from '../dao/user.dao.js'
 import { PlanetService } from '../service/planet.service.js'
 import { UserSubDao } from '../dao/user_sub.dao.js'
 import { genRandom, getRandomChineseWord, getRandomString } from '../../lib/utils.js'
+import { UserStatusEnum } from '../../enum/base.enum.js'
+import dayjs from 'dayjs'
 
 class UserService {
   static async signIn ({ universeId, phone }) {
@@ -19,8 +21,8 @@ class UserService {
     })
   }
 
-  static async addUser ({ universeId, phone, username, allianceId }) {
-    const rest = await UserDao.insert({ universeId, phone, username, allianceId })
+  static async addUser ({ universeId, allianceId, username, phone, status, enabled, createTime }) {
+    const rest = await UserDao.insert({ universeId, allianceId, username, phone, status: UserStatusEnum.PROTECTED, enabled: true, createTime: dayjs().valueOf() })
     return rest
   }
 
@@ -34,6 +36,11 @@ class UserService {
     return rest
   }
 
+  static async updatePoints ({ metal, crystal, deuterium, userId }) {
+    const points = ~~((metal + crystal + deuterium) / 1000)
+    const rest = await UserDao.updateIncrementPoints({ userId, points })
+    return rest
+  }
 
   static async findItemPage ({ username, password, pageSzie = 10, pageNum = 0 }) {
     const whereClause = {}

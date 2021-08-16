@@ -7,8 +7,7 @@ import { CommonService } from '../service/common.service.js'
 class ResourcesService {
   static async getPlanetResources (userId, planetId) {
     const rest = await this.updatePlanetResources(userId, planetId)
-    const planet = await PlanetDao.findById(planetId)
-    return { ...planet, ...rest }
+    return rest
   }
 
   // 资源更新
@@ -51,7 +50,7 @@ class ResourcesService {
       resourcesUpdateTime: nowTime
     }
     await PlanetDao.updateTimeResources(updateDate, { planetId })
-    return { metalStorageMax, crystalStorageMax, deuteriumStorageMax, metalTime, crystalTime, deuteriumTime }
+    return { metal, crystal, deuterium, metalStorageMax, crystalStorageMax, deuteriumStorageMax, metalTime, crystalTime, deuteriumTime }
   }
 }
 
