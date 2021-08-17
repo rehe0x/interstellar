@@ -1,4 +1,5 @@
 import { sequelize, DataTypes, Model, QueryTypes } from '../../lib/sequelize.js'
+import { SQLUtil } from '../../lib/sql_util.js'
 
 class PlanetDao extends Model {
   static async insert ({
@@ -117,7 +118,10 @@ class PlanetDao extends Model {
   }
 
   static async updateIncrementResources ({ metal, crystal, deuterium, updateTime }, { planetId }) {
-    return await this.increment({ metal, crystal, deuterium, updateTime }, { where: { id: planetId } })
+    const rest = await sequelize.query(`update game_planet set ${SQLUtil.incrementJoin({ metal, crystal, deuterium })}, updateTime = :updateTime where id = :planetId`, {
+      replacements: { planetId, updateTime }
+    })
+    return rest
   }
 
   static async updateIncrementSzie ({ sizeUsed, sizeMax, updateTime }, { planetId }) {
@@ -126,7 +130,10 @@ class PlanetDao extends Model {
     }
     sizeUsed && (fields.sizeUsed = sizeUsed)
     sizeMax && (fields.sizeMax = sizeMax)
-    return await this.increment(fields, { where: { id: planetId } })
+    const rest = await sequelize.query(`update game_planet set ${SQLUtil.incrementJoin(fields)}, updateTime = :updateTime where id = :planetId`, {
+      replacements: { planetId, updateTime }
+    })
+    return rest
   }
 }
 PlanetDao.init({

@@ -61,3 +61,10 @@ export const getLock = async (key, func) => {
     return {}
   }
 }
+
+export const sqlStr = async (item) => {
+  let sqlStr = ''
+  for (const key in item) {
+    sqlStr += `${key} = ${key} + ${item[key]}`
+  }
+}

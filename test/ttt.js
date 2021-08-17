@@ -37,3 +37,13 @@ const buildQueueList = [
 // console.log(tempMiniArray[groupIndex])
 // const [tMini, tMax] = tempMiniArray[groupIndex]
 // console.log(tMini, tMax)
+
+export const sqlStr = async (item) => {
+  let sqlStr = ''
+  for (const key in item) {
+    sqlStr += `\`${key}\` = \`${key}\` + '${item[key]}',`
+  }
+  console.log(sqlStr.substring(0, sqlStr.length - 1))
+}
+
+sqlStr({ aaa: '1', bb: 22 })

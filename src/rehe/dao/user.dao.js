@@ -1,4 +1,5 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
+import { SQLUtil } from '../../lib/sql_util.js'
 
 class UserDao extends Model {
   static async findOneByUPhone ({ universeId, phone }) {
@@ -14,7 +15,10 @@ class UserDao extends Model {
   }
 
   static async updateIncrementPoints ({ userId, points, updateTime }) {
-    return await this.increment({ points, updateTime }, { where: { id: userId } })
+    const rest = await sequelize.query(`update game_user set ${SQLUtil.incrementJoin({ points })}, updateTime = :updateTime where id = :userId`, {
+      replacements: { userId, updateTime }
+    })
+    return rest
   }
 }
 UserDao.init({
