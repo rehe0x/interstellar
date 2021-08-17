@@ -1,14 +1,15 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
-class MissionQueue extends Model {
+class MissionQueueDao extends Model {
   static async insert ({
-    userId, missionType, missionCode, missionName, missionStatus, targetUserId, targetPlanetId,
+    universeId, userId, missionCode, missionType, missionName, missionStatus, targetUserId, targetPlanetId,
     targetGalaxy, seconds, staySeconds, startTime, createTime
   }) {
     this.create({
+      universeId,
       userId,
-      missionType,
       missionCode,
+      missionType,
       missionName,
       missionStatus,
       targetUserId,
@@ -21,27 +22,31 @@ class MissionQueue extends Model {
     })
   }
 }
-MissionQueue.init({
+MissionQueueDao.init({
   id: {
     autoIncrement: true,
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true
   },
+  universeId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
   userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     comment: '用户id'
   },
-  missionType: {
-    type: DataTypes.STRING(32),
-    allowNull: false,
-    comment: '殖民 colony\n探测 spy\n派遣 dispatch\n运输 transport\n攻击 attack 导弹攻击jdam \n协防 help\n回收 recycle\n探险 explore'
-  },
   missionCode: {
     type: DataTypes.STRING(64),
     allowNull: false,
     comment: '任务代码00001'
+  },
+  missionType: {
+    type: DataTypes.STRING(32),
+    allowNull: false,
+    comment: '殖民 colony\n探测 spy\n派遣 dispatch\n运输 transport\n攻击 attack 导弹攻击jdam \n协防 help\n回收 recycle\n探险 explore'
   },
   missionName: {
     type: DataTypes.STRING(64),
@@ -113,4 +118,4 @@ MissionQueue.init({
   ]
 })
 
-export { MissionQueue }
+export { MissionQueueDao }

@@ -38,7 +38,7 @@ class BuildService {
     // 获取研究所等级 + 计算跨行星网络 获取所有星球研究所等级
     let planetSubListFilter = null
     if (userSub.researchIntergalactic >= 1) {
-      const planetSubList = await PlanetService.getUserPlanetSubByType({ userId,  planetType: PlanetTypeEnum.STAR })
+      const planetSubList = await PlanetService.getUserPlanetSubByType({ userId, planetType: PlanetTypeEnum.STAR })
       planetSubListFilter = planetSubList.filter(item => item.planetId !== planetId && item.buildingLaboratory > 0)
     }
     for (const key in rest) {
@@ -50,20 +50,20 @@ class BuildService {
       obj.level = userSub[key]
       obj.requeriment = Formula.isRequeriment(obj, planetSub, userSub)
       let lablevel = planetSub.buildingLaboratory
-      if(planetSubListFilter && obj.requeriment.isReq){
+      if (planetSubListFilter && obj.requeriment.isReq) {
         for (let index = 0; index < userSub.researchIntergalactic; index++) {
           const sub = planetSubListFilter[index]
-          if(!sub) break
-          if(obj.requeriments['buildingLaboratory']){
-            sub['buildingLaboratory'] >= obj.requeriments['buildingLaboratory'] && (lablevel += sub['buildingLaboratory'])
-          }else{
-            lablevel += sub['buildingLaboratory']
+          if (!sub) break
+          if (obj.requeriments.buildingLaboratory) {
+            sub.buildingLaboratory >= obj.requeriments.buildingLaboratory && (lablevel += sub.buildingLaboratory)
+          } else {
+            lablevel += sub.buildingLaboratory
           }
         }
       }
       obj.buildTime = Formula.researchTime(obj, userSub, lablevel)
       obj.buildTimeShow = remainingTime(obj.buildTime)
-     
+
       delete obj.requeriments
       delete obj.pricelist
     }

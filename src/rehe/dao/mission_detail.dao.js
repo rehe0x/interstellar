@@ -1,20 +1,24 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
-class MissionDetail extends Model {
+class MissionDetailDao extends Model {
   static async insert ({
-    missionId, userId, planetId, galaxy, speed, fleetList, createTime
+    universeId, missionId, userId, planetId, galaxy, speed, fleetList, createTime
   }) {
     this.create({
-      missionId, userId, planetId, galaxy, speed, fleetList, createTime
+      universeId, missionId, userId, planetId, galaxy, speed, fleetList, createTime
     })
   }
 }
-MissionDetail.init({
+MissionDetailDao.init({
   id: {
     autoIncrement: true,
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true
+  },
+  universeId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   },
   missionId: {
     type: DataTypes.INTEGER,
@@ -68,4 +72,4 @@ MissionDetail.init({
   ]
 })
 
-export { MissionDetail }
+export { MissionDetailDao }
