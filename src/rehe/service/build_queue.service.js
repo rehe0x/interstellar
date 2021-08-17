@@ -322,7 +322,7 @@ class BuildQueueService {
       if (rest.buildType === BuildTypeEnum.BUILDING || rest.buildType === BuildTypeEnum.RESEARCH) {
         // 恢复资源
         if (rest.status === QueueStatusEnum.RUNNING) {
-          workerTimer.postMessage({ taskType: TaskTypeEnum.DELETE, taskInfo: rest })
+          workerTimer.postMessage({ delete: true, taskType: TaskTypeEnum.BUILD, taskInfo: rest })
           await PlanetDao.updateIncrementResources({ metal: rest.metal, crystal: rest.crystal, deuterium: rest.deuterium, updateTime: dayjs().valueOf() }, { planetId: rest.planetId })
         }
       } else if (rest.buildType === BuildTypeEnum.FLEET || rest.buildType === BuildTypeEnum.DEFENSE) {
@@ -331,7 +331,7 @@ class BuildQueueService {
           throw new BusinessError('建造不存在')
         }
         await PlanetDao.updateIncrementResources({ metal: fdObj.pricelist.metal * rest.remainLevel, crystal: fdObj.pricelist.crystal * rest.remainLevel, deuterium: fdObj.pricelist.deuterium * rest.remainLevel, updateTime: dayjs().valueOf() }, { planetId: rest.planetId })
-        workerTimer.postMessage({ taskType: TaskTypeEnum.DELETE, taskInfo: rest })
+        workerTimer.postMessage({ delete: true, taskType: TaskTypeEnum.BUILD, taskInfo: rest })
       }
       return deleteQueue
     })

@@ -1,6 +1,5 @@
 import assert from 'assert'
 import dayjs from 'dayjs'
-import { TaskTypeEnum } from '../enum/base.enum.js'
 import { parentPort, workerData, MessagePort } from 'worker_threads'
 
 const slot = [] // 环形队列
@@ -65,7 +64,7 @@ const deleteSlot = async (task) => {
 
 // 主线程加入定时任务
 parentPort.on('message', data => {
-  if (TaskTypeEnum.DELETE === data.taskType) {
+  if (data.delete) {
     deleteSlot(data)
   } else {
     pushSlot(data)

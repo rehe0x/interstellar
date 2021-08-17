@@ -1,7 +1,6 @@
 export const TaskTypeEnum = Object.freeze({
   BUILD: 'build',
-  MISSION: 'mission',
-  DELETE: 'delete'
+  MISSION: 'mission'
 })
 
 export const BuildTypeEnum = Object.freeze({
