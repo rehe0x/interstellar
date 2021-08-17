@@ -101,7 +101,6 @@ class Formula {
     } else if ((obj.energyMax - obj.energyUsed) < 0) {
       productionLevel = Math.floor((obj.energyMax / obj.energyUsed) * 100)
     }
-    console.log(productionLevel)
     // 计算间隔时间
     const nowTime = obj.nowTime
     const prodTime = Math.floor((nowTime - planet.resourcesUpdateTime) / 1000)

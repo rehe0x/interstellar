@@ -15,15 +15,12 @@ class ResourcesService {
     const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(userId, planetId)
     // 计算仓库最大容量
     const { metalStorageMax, crystalStorageMax, deuteriumStorageMax } = Formula.storageMax(planetSub, userSub)
-    console.log(metalStorageMax, crystalStorageMax, deuteriumStorageMax)
     // 计算小时产量 && 能量消耗
     const prodPerhour = Formula.prodPerhour(planetSub, planet, userSub)
-    console.log(prodPerhour)
     // 期间生产资源计算
     const nowTime = dayjs().valueOf()
     let metal = planet.metal; let crystal = planet.crystal; let deuterium = planet.deuterium
     let { metalTheorical, crystalTheorical, deuteriumTheorical, metalTime, crystalTime, deuteriumTime } = Formula.prodTheorical({ ...prodPerhour, nowTime }, planet)
-    console.log(metalTheorical, crystalTheorical, deuteriumTheorical)
     if (planet.metal < metalStorageMax) {
       metalTheorical += planet.metal
       metal = (metalTheorical <= metalStorageMax) ? metalTheorical : metalStorageMax

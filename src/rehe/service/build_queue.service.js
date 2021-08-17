@@ -58,7 +58,6 @@ class BuildQueueService {
       const seconds = Formula.buildingTime({ metal, crystal }, planetSub, userSub)
       // 如果没有队列
       if (!isQueue) {
-        console.log(planet)
         if (metal > planet.metal || crystal > planet.crystal || deuterium > planet.deuterium) {
           throw new BusinessError('资源不足' + planet)
         }

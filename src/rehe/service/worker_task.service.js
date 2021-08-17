@@ -20,7 +20,6 @@ class WorkerTaskService {
     // 先执行研究单队列
     const researchArr = await BuildQueueDao.findByBuildType(BuildTypeEnum.RESEARCH)
     researchArr.forEach(item => {
-      console.log('researchArr', item)
       const nowTime = dayjs().valueOf()
       const endTime = item.endTime
       if (endTime <= nowTime) {
@@ -35,7 +34,6 @@ class WorkerTaskService {
     // 建筑队列
     const buildingArr = await BuildQueueDao.findByBuildTypeGroup(BuildTypeEnum.BUILDING)
     buildingArr.forEach(async (item) => {
-      console.log('buildingArr', item)
       if (item.status !== QueueStatusEnum.RUNNING) {
         // 查询用户和星球信息
         const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(item.userId, item.planetId)
@@ -76,7 +74,6 @@ class WorkerTaskService {
     // 舰队队列
     const fleetArr = await BuildQueueDao.findByBuildTypeGroup(BuildTypeEnum.FLEET)
     fleetArr.forEach(async (item) => {
-      console.log('fleetArr', item)
       if (item.status !== QueueStatusEnum.RUNNING) {
         // 查询用户和星球信息
         const { userSub, planetSub } = await CommonService.getUserPlanetSub(item.userId, item.planetId)
@@ -112,7 +109,6 @@ class WorkerTaskService {
     // 建筑队列
     const defenseArr = await BuildQueueDao.findByBuildTypeGroup(BuildTypeEnum.DEFENSE)
     defenseArr.forEach(async (item) => {
-      console.log('defenseArr', item)
       if (item.status !== QueueStatusEnum.RUNNING) {
         // 查询用户和星球信息
         const { userSub, planetSub } = await CommonService.getUserPlanetSub(item.userId, item.planetId)
