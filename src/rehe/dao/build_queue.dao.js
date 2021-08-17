@@ -76,9 +76,9 @@ class BuildQueueDao extends Model {
   }
 
   static async findByBuildTypeGroup (buildType) {
-    const rest = await sequelize.query(`select mm.* from game_build_queue mm, (
-      select min(gbq.id) gid from game_build_queue gbq where gbq.buildType = :buildType group by gbq.planetId) gg
-      where mm.id = gg.gid`, {
+    const rest = await sequelize.query(`select mm.* from game_build_queue mm inner join(
+      select min(gbq.id) gid from game_build_queue gbq where gbq.buildType = :buildType group by gbq.planetId) gg 
+      on mm.id = gg.gid`, {
       replacements: { buildType },
       model: BuildQueueDao
     })

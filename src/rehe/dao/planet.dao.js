@@ -193,7 +193,8 @@ PlanetDao.init({
   },
   sizeUsed: {
     type: DataTypes.SMALLINT,
-    allowNull: true,
+    allowNull: false,
+    defaultValue: 0,
     comment: '已使用大小'
   },
   diameter: {

@@ -1,6 +1,5 @@
 import Jwt from 'jsonwebtoken'
 import { Config } from '../../../config/index.js'
-import { BusinessError } from '../../lib/error.js'
 import { UserService } from '../service/user.service.js'
 import { PlanetService } from '../service/planet.service.js'
 

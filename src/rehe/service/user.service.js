@@ -1,10 +1,10 @@
 import { sequelize } from '../../lib/sequelize.js'
-import { UserDao } from '../dao/user.dao.js'
-import { PlanetService } from '../service/planet.service.js'
-import { UserSubDao } from '../dao/user_sub.dao.js'
+import dayjs from 'dayjs'
 import { genRandom, getRandomChineseWord, getRandomString } from '../../lib/utils.js'
 import { UserStatusEnum } from '../../enum/base.enum.js'
-import dayjs from 'dayjs'
+import { UserDao } from '../dao/user.dao.js'
+import { UserSubDao } from '../dao/user_sub.dao.js'
+import { PlanetService } from '../service/planet.service.js'
 
 class UserService {
   static async signIn ({ universeId, phone }) {
