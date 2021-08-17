@@ -36,7 +36,7 @@ MissionQueue.init({
   missionType: {
     type: DataTypes.STRING(32),
     allowNull: false,
-    comment: '殖民 colony\n探测 spy\n派遣 dispatch\n运输 transport\n攻击 attack\n协防 help\n回收 recycle\n探险 explore'
+    comment: '殖民 colony\n探测 spy\n派遣 dispatch\n运输 transport\n攻击 attack 导弹攻击jdam \n协防 help\n回收 recycle\n探险 explore'
   },
   missionCode: {
     type: DataTypes.STRING(64),
@@ -46,7 +46,7 @@ MissionQueue.init({
   missionName: {
     type: DataTypes.STRING(64),
     allowNull: false,
-    comment: '殖民 colony\n探测 spy\n派遣 dispatch\n运输 transport\n攻击 attack\n协防 help\n回收 recycle\n探险 explore'
+    comment: '殖民 colony\n探测 spy\n派遣 dispatch\n运输 transport\n攻击 导弹攻击jdam attack\n协防 help\n回收 recycle\n探险 explore'
   },
   missionStatus: {
     type: DataTypes.STRING(32),
