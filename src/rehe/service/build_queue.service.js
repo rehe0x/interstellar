@@ -2,7 +2,7 @@ import { sequelize } from '../../lib/sequelize.js'
 import dayjs from 'dayjs'
 import { BusinessError } from '../../lib/error.js'
 import { Formula } from '../../game/formula.js'
-import { BuildTypeEnum, QueueStatusEnum, PlanetTypeEnum } from '../../enum/base.enum.js'
+import { TaskTypeEnum, BuildTypeEnum, QueueStatusEnum, PlanetTypeEnum } from '../../enum/base.enum.js'
 import { UniverseMap } from '../../game/universe.map.js'
 import { BuildingMap, BuildingMoonMap, ResearchMap, FleetMap, DefenseMap } from '../../game/build/index.js'
 import { workerTimer } from '../../worker/worker_main.js'
@@ -93,7 +93,7 @@ class BuildQueueService {
       // 加入数据库
       const rest = await BuildQueueDao.insert(buildingQueueData)
       // 加入定时任务
-      rest.status === QueueStatusEnum.RUNNING && workerTimer.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: rest.dataValues })
+      rest.status === QueueStatusEnum.RUNNING && workerTimer.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: rest.dataValues })
       return rest
     })
   }
@@ -181,7 +181,7 @@ class BuildQueueService {
       return rest
     })
     // 加入定时任务
-    newQueue.status === QueueStatusEnum.RUNNING && workerTimer.postMessage({ taskType: BuildTypeEnum.RESEARCH, taskInfo: newQueue.dataValues })
+    newQueue.status === QueueStatusEnum.RUNNING && workerTimer.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: newQueue.dataValues })
     return newQueue
   }
 
@@ -268,7 +268,7 @@ class BuildQueueService {
       return rest
     })
     // 加入定时任务
-    newQueue.status === QueueStatusEnum.RUNNING && workerTimer.postMessage({ taskType: buildType, taskInfo: newQueue.dataValues })
+    newQueue.status === QueueStatusEnum.RUNNING && workerTimer.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: newQueue.dataValues })
     return newQueue
   }
 
@@ -322,7 +322,7 @@ class BuildQueueService {
       if (rest.buildType === BuildTypeEnum.BUILDING || rest.buildType === BuildTypeEnum.RESEARCH) {
         // 恢复资源
         if (rest.status === QueueStatusEnum.RUNNING) {
-          workerTimer.postMessage({ taskType: BuildTypeEnum.DELETE, taskInfo: rest })
+          workerTimer.postMessage({ taskType: TaskTypeEnum.DELETE, taskInfo: rest })
           await PlanetDao.updateIncrementResources({ metal: rest.metal, crystal: rest.crystal, deuterium: rest.deuterium, updateTime: dayjs().valueOf() }, { planetId: rest.planetId })
         }
       } else if (rest.buildType === BuildTypeEnum.FLEET || rest.buildType === BuildTypeEnum.DEFENSE) {
@@ -331,7 +331,7 @@ class BuildQueueService {
           throw new BusinessError('建造不存在')
         }
         await PlanetDao.updateIncrementResources({ metal: fdObj.pricelist.metal * rest.remainLevel, crystal: fdObj.pricelist.crystal * rest.remainLevel, deuterium: fdObj.pricelist.deuterium * rest.remainLevel, updateTime: dayjs().valueOf() }, { planetId: rest.planetId })
-        workerTimer.postMessage({ taskType: BuildTypeEnum.DELETE, taskInfo: rest })
+        workerTimer.postMessage({ taskType: TaskTypeEnum.DELETE, taskInfo: rest })
       }
       return deleteQueue
     })

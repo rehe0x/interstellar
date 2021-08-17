@@ -1,9 +1,14 @@
+export const TaskTypeEnum = Object.freeze({
+  BUILD: 'build',
+  MISSION: 'mission',
+  DELETE: 'delete'
+})
+
 export const BuildTypeEnum = Object.freeze({
   BUILDING: 'building',
   RESEARCH: 'research',
   FLEET: 'fleet',
-  DEFENSE: 'defense',
-  DELETE: 'delete'
+  DEFENSE: 'defense'
 })
 
 export const QueueStatusEnum = Object.freeze({

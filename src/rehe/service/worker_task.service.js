@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { BusinessError } from '../../lib/error.js'
-import { BuildTypeEnum, QueueStatusEnum } from '../../enum/base.enum.js'
+import { TaskTypeEnum, BuildTypeEnum, QueueStatusEnum } from '../../enum/base.enum.js'
 import { Formula } from '../../game/formula.js'
 import { sequelize } from '../../lib/sequelize.js'
 import { BuildQueueDao } from '../dao/build_queue.dao.js'
@@ -28,7 +28,7 @@ class WorkerTaskService {
       } else {
         item.seconds = Math.floor((endTime - nowTime) / 1000)
       }
-      this.workerData.port.postMessage({ taskType: BuildTypeEnum.RESEARCH, taskInfo: item })
+      this.workerData.port.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: item })
     })
 
     // 建筑队列
@@ -56,7 +56,7 @@ class WorkerTaskService {
           updateTime: dayjs().valueOf()
         }, { queueId: item.id })
         if (rest[0] === 1) {
-          this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: item })
+          this.workerData.port.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: item })
         }
       } else {
         const nowTime = dayjs().valueOf()
@@ -67,7 +67,7 @@ class WorkerTaskService {
         } else {
           item.seconds = Math.floor((endTime - nowTime) / 1000)
         }
-        this.workerData.port.postMessage({ taskType: BuildTypeEnum.BUILDING, taskInfo: item })
+        this.workerData.port.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: item })
       }
     })
 
@@ -91,7 +91,7 @@ class WorkerTaskService {
           updateTime: dayjs().valueOf()
         }, { queueId: item.id })
         if (rest[0] === 1) {
-          this.workerData.port.postMessage({ taskType: BuildTypeEnum.FLEET, taskInfo: item })
+          this.workerData.port.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: item })
         }
       } else {
         const nowTime = dayjs().valueOf()
@@ -102,7 +102,7 @@ class WorkerTaskService {
         } else {
           item.seconds = Math.floor((endTime - nowTime) / 1000)
         }
-        this.workerData.port.postMessage({ taskType: BuildTypeEnum.FLEET, taskInfo: item })
+        this.workerData.port.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: item })
       }
     })
 
@@ -126,7 +126,7 @@ class WorkerTaskService {
           updateTime: dayjs().valueOf()
         }, { queueId: item.id })
         if (rest[0] === 1) {
-          this.workerData.port.postMessage({ taskType: BuildTypeEnum.DEFENSE, taskInfo: item })
+          this.workerData.port.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: item })
         }
       } else {
         const nowTime = dayjs().valueOf()
@@ -137,20 +137,24 @@ class WorkerTaskService {
         } else {
           item.seconds = Math.floor((endTime - nowTime) / 1000)
         }
-        this.workerData.port.postMessage({ taskType: BuildTypeEnum.DEFENSE, taskInfo: item })
+        this.workerData.port.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: item })
       }
     })
   }
 
   async finishQueueTask (task) {
-    if (task.taskType === BuildTypeEnum.BUILDING) {
-      const rest = await this.finishBuildingQueueTask(task.taskInfo)
-      typeof rest?.seconds !== 'undefined' && this.workerData.port.postMessage({ taskType: task.taskType, taskInfo: rest })
-    } else if (task.taskType === BuildTypeEnum.RESEARCH) {
-      this.finishResearchQueueTask(task.taskInfo)
-    } else if (task.taskType === BuildTypeEnum.FLEET || task.taskType === BuildTypeEnum.DEFENSE) {
-      const rest = await this.finishFDQueueTask(task.taskInfo)
-      typeof rest?.seconds !== 'undefined' && this.workerData.port.postMessage({ taskType: task.taskType, taskInfo: rest })
+    if (task.taskType === TaskTypeEnum.BUILD) {
+      if (task.taskInfo.buildType === BuildTypeEnum.BUILDING) {
+        const rest = await this.finishBuildingQueueTask(task.taskInfo)
+        typeof rest?.seconds !== 'undefined' && this.workerData.port.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: rest })
+      } else if (task.taskInfo.buildType === BuildTypeEnum.RESEARCH) {
+        this.finishResearchQueueTask(task.taskInfo)
+      } else if (task.taskInfo.buildType === BuildTypeEnum.FLEET || task.taskInfo.buildType === BuildTypeEnum.DEFENSE) {
+        const rest = await this.finishFDQueueTask(task.taskInfo)
+        typeof rest?.seconds !== 'undefined' && this.workerData.port.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: rest })
+      }
+    } else if (task.taskType === TaskTypeEnum.MISSION) {
+      console.log('...')
     }
   }
 
