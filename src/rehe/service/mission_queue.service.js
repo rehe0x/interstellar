@@ -79,10 +79,11 @@ class MissionQueueService {
     const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(userId, planetId)
     // 发起坐标
     const { galaxyX, galaxyY, galaxyZ } = planet
-    // 目标坐标值
-    const targetGalaxy = `${targetGalaxyX}:${targetGalaxyY}:${targetGalaxyZ}`
+    // 坐标值
+    const galaxy = `${galaxyX}:${galaxyY}:${galaxyZ}`
+    let targetGalaxy = `${targetGalaxyX}:${targetGalaxyY}:${targetGalaxyZ}`
 
-    // 验证舰队数据
+    // 舰队数据初步验证
     MissionQueueService.missionHandleFleetVerify({ missionTypeEnum, planetSub, fleets })
 
     // 查询目标星球
@@ -94,13 +95,12 @@ class MissionQueueService {
         throw new BusinessError('该位置已被殖民')
       }
     } else if (missionTypeEnum.CODE === MissionTypeEnum.EXPLORE) {
-      if (!`${galaxyX}:${galaxyY}:16` === targetGalaxy) {
-        throw new BusinessError('探险坐标错误')
-      }
+      targetGalaxy = `${galaxyX}:${galaxyY}:16`
     } else {
       if (targetPlanet?.length === 0) {
         throw new BusinessError('目标不存在')
       }
+      // 验证目标数据
     }
 
     // 计算时间
