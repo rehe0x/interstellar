@@ -10,7 +10,7 @@ export const BuildTypeEnum = Object.freeze({
   DEFENSE: 'defense'
 })
 
-export const QueueStatusEnum = Object.freeze({
+export const BuildQueueStatusEnum = Object.freeze({
   RUNNING: 'running',
   PENDING: 'pending'
 })

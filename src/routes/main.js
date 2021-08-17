@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import joi from 'joi'
-import { BuildTypeEnum, QueueStatusEnum } from '../enum/base.enum.js'
+import { BuildTypeEnum, BuildQueueStatusEnum } from '../enum/base.enum.js'
 import { validation } from '../handler/validation.js'
 import { MainController } from '../rehe/controller/main.controller.js'
 import Router from 'koa-router'

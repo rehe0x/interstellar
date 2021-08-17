@@ -2,7 +2,7 @@ import { sequelize } from '../../lib/sequelize.js'
 import dayjs from 'dayjs'
 import { BusinessError } from '../../lib/error.js'
 import { Formula } from '../../game/formula.js'
-import { TaskTypeEnum, BuildTypeEnum, QueueStatusEnum, PlanetTypeEnum } from '../../enum/base.enum.js'
+import { TaskTypeEnum, BuildTypeEnum, BuildQueueStatusEnum, PlanetTypeEnum } from '../../enum/base.enum.js'
 import { UniverseMap } from '../../game/universe.map.js'
 import { BuildingMap, BuildingMoonMap, ResearchMap, FleetMap, DefenseMap } from '../../game/build/index.js'
 import { workerTimer } from '../../worker/worker_main.js'
@@ -46,7 +46,7 @@ class BuildQueueService {
       const buildQueueOne = buildQueueList.filter(item => item.buildCode === buildCode).sort((a, b) => b.level - a.level)[0]
 
       let level = !buildQueueOne ? planetSub[buildCode] : buildQueueOne.level
-      let status = QueueStatusEnum.PENDING
+      let status = BuildQueueStatusEnum.PENDING
       let startTime = null
       let endTime = null
       // 查询造价
@@ -63,7 +63,7 @@ class BuildQueueService {
         }
         // 扣减资源
         PlanetDao.updateIncrementResources({ metal: -metal, crystal: -crystal, deuterium: -deuterium, updateTime: dayjs().valueOf() }, { planetId })
-        status = QueueStatusEnum.RUNNING
+        status = BuildQueueStatusEnum.RUNNING
         const day = dayjs()
         startTime = day.valueOf()
         endTime = day.add(seconds, 'seconds').valueOf()
@@ -93,7 +93,7 @@ class BuildQueueService {
       // 加入数据库
       const rest = await BuildQueueDao.insert(buildingQueueData)
       // 加入定时任务
-      rest.status === QueueStatusEnum.RUNNING && workerTimer.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: rest.dataValues })
+      rest.status === BuildQueueStatusEnum.RUNNING && workerTimer.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: rest.dataValues })
       return rest
     })
   }
@@ -145,7 +145,7 @@ class BuildQueueService {
     }
 
     const seconds = Formula.researchTime({ metal, crystal }, userSub, lablevel)
-    const status = QueueStatusEnum.RUNNING
+    const status = BuildQueueStatusEnum.RUNNING
 
     const day = dayjs()
     const startTime = day.valueOf()
@@ -181,7 +181,7 @@ class BuildQueueService {
       return rest
     })
     // 加入定时任务
-    newQueue.status === QueueStatusEnum.RUNNING && workerTimer.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: newQueue.dataValues })
+    newQueue.status === BuildQueueStatusEnum.RUNNING && workerTimer.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: newQueue.dataValues })
     return newQueue
   }
 
@@ -225,7 +225,7 @@ class BuildQueueService {
     const deuterium = fdObj.pricelist.deuterium
     const level = buildNum
     const remainLevel = buildNum
-    let status = QueueStatusEnum.PENDING
+    let status = BuildQueueStatusEnum.PENDING
     let startTime = null
     let endTime = null
     let remainUpdateTime = null
@@ -234,7 +234,7 @@ class BuildQueueService {
     seconds = seconds * buildNum
     // 如果没有队列
     if (!isQueue) {
-      status = QueueStatusEnum.RUNNING
+      status = BuildQueueStatusEnum.RUNNING
       const day = dayjs()
       startTime = day.valueOf()
       endTime = day.add(seconds, 'seconds').valueOf()
@@ -268,7 +268,7 @@ class BuildQueueService {
       return rest
     })
     // 加入定时任务
-    newQueue.status === QueueStatusEnum.RUNNING && workerTimer.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: newQueue.dataValues })
+    newQueue.status === BuildQueueStatusEnum.RUNNING && workerTimer.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: newQueue.dataValues })
     return newQueue
   }
 
@@ -285,7 +285,7 @@ class BuildQueueService {
       buildType = [BuildTypeEnum.FLEET, BuildTypeEnum.DEFENSE]
     }
     // 查询星球队列信息
-    const buildQueueList = await BuildQueueDao.findPlanetByTypeStatus({ userId, planetId, buildType: buildType, status: QueueStatusEnum.RUNNING })
+    const buildQueueList = await BuildQueueDao.findPlanetByTypeStatus({ userId, planetId, buildType: buildType, status: BuildQueueStatusEnum.RUNNING })
     for (const buildQueue of buildQueueList) {
       // 计算间隔时间
       const nowTime = dayjs().valueOf()
@@ -321,7 +321,7 @@ class BuildQueueService {
       await BuildQueueDao.deleteLatterByType({ planetId: rest.planetId, buildType: rest.buildType, time: rest.createTime })
       if (rest.buildType === BuildTypeEnum.BUILDING || rest.buildType === BuildTypeEnum.RESEARCH) {
         // 恢复资源
-        if (rest.status === QueueStatusEnum.RUNNING) {
+        if (rest.status === BuildQueueStatusEnum.RUNNING) {
           workerTimer.postMessage({ delete: true, taskType: TaskTypeEnum.BUILD, taskInfo: rest })
           await PlanetDao.updateIncrementResources({ metal: rest.metal, crystal: rest.crystal, deuterium: rest.deuterium, updateTime: dayjs().valueOf() }, { planetId: rest.planetId })
         }

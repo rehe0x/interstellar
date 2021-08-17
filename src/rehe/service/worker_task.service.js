@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { BusinessError } from '../../lib/error.js'
-import { TaskTypeEnum, BuildTypeEnum, QueueStatusEnum } from '../../enum/base.enum.js'
+import { TaskTypeEnum, BuildTypeEnum, BuildQueueStatusEnum } from '../../enum/base.enum.js'
 import { Formula } from '../../game/formula.js'
 import { sequelize } from '../../lib/sequelize.js'
 import { BuildQueueDao } from '../dao/build_queue.dao.js'
@@ -34,12 +34,12 @@ class WorkerTaskService {
     // 建筑队列
     const buildingArr = await BuildQueueDao.findByBuildTypeGroup(BuildTypeEnum.BUILDING)
     buildingArr.forEach(async (item) => {
-      if (item.status !== QueueStatusEnum.RUNNING) {
+      if (item.status !== BuildQueueStatusEnum.RUNNING) {
         // 查询用户和星球信息
         const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(item.userId, item.planetId)
         if ((item.sizeUsed >= item.sizeMax) || item.metal > planet.metal || item.crystal > planet.crystal || item.deuterium > planet.deuterium) {
           // 资源不足删除所有队列
-          BuildQueueDao.deleteByPlanetId({ planetId: item.planetId, status: QueueStatusEnum.PENDING })
+          BuildQueueDao.deleteByPlanetId({ planetId: item.planetId, status: BuildQueueStatusEnum.PENDING })
           throw new BusinessError('资源/空间不足')
         }
         // 扣减资源
@@ -48,7 +48,7 @@ class WorkerTaskService {
         item.seconds = Formula.buildingTime({ metal: item.metal, crystal: item.crystal }, planetSub, userSub)
         // 修改为执行队列
         const rest = await BuildQueueDao.updateBuildQueueRun({
-          status: QueueStatusEnum.RUNNING,
+          status: BuildQueueStatusEnum.RUNNING,
           seconds: item.seconds,
           startTime: dayjs().valueOf(),
           endTime: dayjs().add(item.seconds, 'seconds').valueOf(),
@@ -74,7 +74,7 @@ class WorkerTaskService {
     // 舰队队列
     const fleetArr = await BuildQueueDao.findByBuildTypeGroup(BuildTypeEnum.FLEET)
     fleetArr.forEach(async (item) => {
-      if (item.status !== QueueStatusEnum.RUNNING) {
+      if (item.status !== BuildQueueStatusEnum.RUNNING) {
         // 查询用户和星球信息
         const { userSub, planetSub } = await CommonService.getUserPlanetSub(item.userId, item.planetId)
 
@@ -83,7 +83,7 @@ class WorkerTaskService {
 
         // 修改为执行队列
         const rest = await BuildQueueDao.updateBuildQueueRun({
-          status: QueueStatusEnum.RUNNING,
+          status: BuildQueueStatusEnum.RUNNING,
           seconds: item.seconds,
           startTime: dayjs().valueOf(),
           endTime: dayjs().add(item.seconds, 'seconds').valueOf(),
@@ -109,7 +109,7 @@ class WorkerTaskService {
     // 建筑队列
     const defenseArr = await BuildQueueDao.findByBuildTypeGroup(BuildTypeEnum.DEFENSE)
     defenseArr.forEach(async (item) => {
-      if (item.status !== QueueStatusEnum.RUNNING) {
+      if (item.status !== BuildQueueStatusEnum.RUNNING) {
         // 查询用户和星球信息
         const { userSub, planetSub } = await CommonService.getUserPlanetSub(item.userId, item.planetId)
 
@@ -118,7 +118,7 @@ class WorkerTaskService {
 
         // 修改为执行队列
         const rest = await BuildQueueDao.updateBuildQueueRun({
-          status: QueueStatusEnum.RUNNING,
+          status: BuildQueueStatusEnum.RUNNING,
           seconds: item.seconds,
           startTime: dayjs().valueOf(),
           endTime: dayjs().add(item.seconds, 'seconds').valueOf(),
@@ -189,7 +189,7 @@ class WorkerTaskService {
         const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(taskInfo.userId, taskInfo.planetId)
         if ((planet.sizeUsed >= planet.sizeMax) || buildQueueOne.metal > planet.metal || buildQueueOne.crystal > planet.crystal || buildQueueOne.deuterium > planet.deuterium) {
           // 资源/空间不足删除所有队列
-          return BuildQueueDao.deleteByPlanetId({ planetId: taskInfo.planetId, status: QueueStatusEnum.PENDING })
+          return BuildQueueDao.deleteByPlanetId({ planetId: taskInfo.planetId, status: BuildQueueStatusEnum.PENDING })
           // throw new BusinessError('资源不足' + planet)
         }
         // 扣减资源
@@ -198,7 +198,7 @@ class WorkerTaskService {
         buildQueueOne.seconds = Formula.buildingTime({ metal: buildQueueOne.metal, crystal: buildQueueOne.crystal }, planetSub, userSub)
         // 修改为执行队列
         const rest = await BuildQueueDao.updateBuildQueueRun({
-          status: QueueStatusEnum.RUNNING,
+          status: BuildQueueStatusEnum.RUNNING,
           seconds: buildQueueOne.seconds,
           startTime: dayjs().valueOf(),
           endTime: dayjs().add(buildQueueOne.seconds, 'seconds').valueOf(),
@@ -260,7 +260,7 @@ class WorkerTaskService {
 
         // 修改为执行队列
         const rest = await BuildQueueDao.updateBuildQueueRun({
-          status: QueueStatusEnum.RUNNING,
+          status: BuildQueueStatusEnum.RUNNING,
           seconds: buildQueueOne.seconds,
           startTime: dayjs().valueOf(),
           endTime: dayjs().add(buildQueueOne.seconds, 'seconds').valueOf(),
