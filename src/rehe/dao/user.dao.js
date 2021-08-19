@@ -2,6 +2,10 @@ import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 import { SQLUtil } from '../../lib/sql_util.js'
 
 class UserDao extends Model {
+  static async findById (userId) {
+    return await UserDao.findOne({ where: { id: userId } })
+  }
+
   static async findOneByUPhone ({ universeId, phone }) {
     return await UserDao.findOne({ where: { universeId, phone } })
   }

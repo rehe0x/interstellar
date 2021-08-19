@@ -1,7 +1,7 @@
 
 import { UniverseMap } from './universe.map.js'
 
-import { BuildingMap, BuildingMoonMap, ResearchMap } from './build/index.js'
+import { BuildingMap, BuildingMoonMap, ResearchMap, FleetMap, DefenseMap } from './build/index.js'
 import { genRandom } from '../lib/utils.js'
 
 class Formula {
@@ -23,14 +23,14 @@ class Formula {
   static buildingTime (obj, planetSub, userSub) {
     let time = (obj.metal + obj.crystal) / UniverseMap[userSub.universeId].brBuildSpeed * (1 / (planetSub.buildingRobotFactory + 1)) * (0.5 ** planetSub.buildingNanoFactory)
     time = Math.floor(time * 60 * 60 * (1 - (userSub.rpgConstructeur * 0.1)) / UniverseMap[userSub.universeId].buildSpeed)
-    return time === 0 ? 1:time
+    return time === 0 ? 1 : time
   }
 
   // 研究时间
   static researchTime (obj, userSub, lablevel) {
     let time = (obj.metal + obj.crystal) / UniverseMap[userSub.universeId].brBuildSpeed / ((lablevel + 1) * 2)
     time = Math.floor(time * 60 * 60 * (1 - (userSub.rpgConstructeur * 0.1)) / UniverseMap[userSub.universeId].buildSpeed)
-    return time === 0 ? 1:time
+    return time === 0 ? 1 : time
   }
 
   // 舰队&&防御时间
@@ -38,7 +38,7 @@ class Formula {
     //   [(金属+晶体) / 5000] × [2 / (船厂等级+1)] × 0.5^纳米等级
     let time = (obj.metal + obj.crystal) / UniverseMap[userSub.universeId].fdBuildSpeed * (2 / (planetSub.buildingHangar + 1)) * (0.5 ** planetSub.buildingNanoFactory)
     time = Math.floor(time * 60 * 60 * (1 - (userSub.rpgTechnocrate * 0.05)) / UniverseMap[userSub.universeId].buildSpeed)
-    return time === 0 ? 1:time
+    return time === 0 ? 1 : time
   }
 
   // 是否满足前置条件
@@ -130,12 +130,14 @@ class Formula {
     }
   }
 
+  // 计算星球大小
   static planetSize (universeId, galaxyZ) {
     const miniArray = [40, 50, 55, 100, 95, 80, 115, 120, 125, 75, 80, 85, 60, 40, 50]
     const MaxArray = [90, 130, 150, 240, 240, 230, 180, 180, 190, 125, 120, 130, 180, 180, 150]
     return UniverseMap[universeId].basePlanetSzie + genRandom(miniArray[galaxyZ - 1], MaxArray[galaxyZ - 1])
   }
 
+  // 计算星球温度
   static planetTemp (galaxyZ) {
     const tempMiniArray = [[0, 100], [-25, 75], [-50, 50], [-75, 25], [-100, 10]]
     const groupIndex = ~~((galaxyZ - 1) / (15 / tempMiniArray.length))
@@ -143,6 +145,88 @@ class Formula {
     const tempMini = genRandom(tMini, tMax)
     const tempMax = tempMini + genRandom(10, 60)
     return { tempMini, tempMax }
+  }
+
+  // 获取目标距离
+  static getTargetDistance ({ galaxyX, galaxyY, galaxyZ, targetGalaxyX, targetGalaxyY, targetGalaxyZ }) {
+    let distance = 5
+    if (galaxyX - targetGalaxyX !== 0) {
+      distance = Math.abs(galaxyX - targetGalaxyX) * 20000
+    } else if (galaxyY - targetGalaxyY !== 0) {
+      distance = Math.abs(galaxyY - targetGalaxyY) * 5 * 19 + 2700
+    } else if (galaxyZ - targetGalaxyZ !== 0) {
+      distance = Math.abs(galaxyZ - targetGalaxyZ) * 5 + 1000
+    }
+    return distance
+  }
+
+  // 获取任务抵达时间
+  static getMissionSeconds ({ speed, maxSpeed, distance }) {
+    const seconds = 35000 / (speed / 10) * Math.sqrt(distance * 10 / maxSpeed) + 10
+    return seconds.toFixed(0)
+  }
+
+  // 计算航行任务 最大速度 距离 时间 油耗 承载量
+  static missionCompute ({ userSub, galaxyX, galaxyY, galaxyZ, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, fleets }) {
+    // 最块速度
+    let maxSpeed = 0
+    let distance = Formula.getTargetDistance({ galaxyX, galaxyY, galaxyZ, targetGalaxyX, targetGalaxyY, targetGalaxyZ })
+    let seconds = 0
+    let consumption = 0
+    let capacity = 0
+    let maxDistance = null
+    if (fleets && Object.keys(fleets).length) {
+      const fleetDetail = {}
+      let fleetIS = true
+      for (const key in fleets) {
+        if (!Object.hasOwnProperty.call(FleetMap, key)) {
+          fleetIS = false
+        }
+        const combatcaps = FleetMap[key].combatcaps
+        let fleetSpeed = 0
+        let fleetConsumption = 0
+        if (combatcaps.speed !== combatcaps.speed2 && userSub[combatcaps.engine2] >= combatcaps.speed2Condition) {
+          fleetSpeed = combatcaps.speed2 * (1 + ResearchMap[combatcaps.engine2].speed * userSub[combatcaps.engine2])
+          fleetConsumption = combatcaps.consumption2
+        } else {
+          fleetSpeed = combatcaps.speed * (1 + ResearchMap[combatcaps.engine].speed * userSub[combatcaps.engine])
+          fleetConsumption = combatcaps.consumption
+        }
+        fleetSpeed = fleetSpeed * (1 + 0.25 * userSub.rpgGeneral)
+        if (maxSpeed === 0) {
+          maxSpeed = fleetSpeed
+        } else if (fleetSpeed < maxSpeed) {
+          maxSpeed = fleetSpeed
+        }
+        fleetDetail[key] = { count: fleets[key], fleetSpeed, fleetConsumption, capacity: combatcaps.capacity }
+      }
+
+      // 如果是导弹 只获取x距离 计算时间
+      if (!fleetIS && fleets.length === 1) {
+        const combatcaps = DefenseMap[Object.keys()[0]].combatcaps
+        maxDistance = userSub[combatcaps.engine] * 2 - 1
+        seconds = 30
+        if (galaxyX - targetGalaxyX !== 0) {
+          distance = -1
+        } else if (galaxyY - targetGalaxyY !== 0) {
+          distance = Math.abs(galaxyY - targetGalaxyY)
+          seconds += distance * 60
+        }
+      } else {
+        // 获取时间
+        seconds = Formula.getMissionSeconds({ speed, maxSpeed: maxSpeed, distance })
+        // 计算油耗 承载能力
+        for (const key in fleetDetail) {
+          const speedPercent = Math.sqrt(maxSpeed / fleetDetail[key].fleetSpeed).toFixed(2)
+          const basicConsumption = fleetDetail[key].fleetConsumption * fleetDetail[key].count
+          consumption += basicConsumption * distance / 35000 * ((speedPercent + 1) ** 2)
+          capacity += fleetDetail[key].capacity * fleetDetail[key].count
+        }
+      }
+    }
+
+    console.log(maxSpeed, distance, seconds, consumption.toFixed(0), capacity)
+    return { maxSpeed, distance, maxDistance, seconds, consumption: consumption.toFixed(0), capacity }
   }
 }
 

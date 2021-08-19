@@ -27,6 +27,14 @@ const v = {
   galaxy: {
     galaxyX: joi.number().integer().required().error(new Error('星球参数错误')),
     galaxyY: joi.number().integer().required().error(new Error('星球参数错误'))
+  },
+  executeMission: {
+    planetId: joi.number().integer().required().error(new Error('星球参数错误')),
+    missionTypeCode: joi.string().required().error(new Error('任务代码参数错误')),
+    targetGalaxyX: joi.number().min(1).max(9999).required().error(new Error('目标坐标错误')),
+    targetGalaxyY: joi.number().min(1).max(9999).required().error(new Error('目标坐标错误')),
+    targetGalaxyZ: joi.number().min(1).max(9999).required().error(new Error('目标坐标错误')),
+    fleets: joi.object().required().error(new Error('舰队错误'))
   }
 }
 routers.get('/getNowTime', MainController.getNowTime)
@@ -43,5 +51,7 @@ routers.post('/addFleetQueue', validation({ ...v.base, ...v.buildCode, ...v.buil
 routers.post('/addDefenseQueue', validation({ ...v.base, ...v.buildCode, ...v.buildNum }), MainController.addDefenseQueue)
 routers.post('/deleteBuildQueue', validation(v.queueId), MainController.deleteBuildQueue)
 routers.get('/getStaratlas', validation({ ...v.base, ...v.galaxy }), MainController.getStaratlas)
+routers.post('/getMissionCompute', validation(v.executeMission), MainController.getMissionCompute)
+routers.post('/executeMission', validation(v.executeMission), MainController.executeMission)
 
 export { routers as mainRouter }

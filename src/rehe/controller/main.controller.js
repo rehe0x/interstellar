@@ -5,7 +5,7 @@ import { BuildService } from '../service/build.service.js'
 import { BuildQueueService } from '../service/build_queue.service.js'
 import { ResourcesService } from '../service/resources.service.js'
 import { PlanetService } from '../service/planet.service.js'
-
+import { MissionQueueService } from '../service/mission_queue.service.js'
 class MainController {
   static async getNowTime (ctx, next) {
     ctx.success({ nowTime: dayjs().valueOf() })
@@ -97,6 +97,37 @@ class MainController {
     const { planetId, galaxyX, galaxyY } = ctx.request.query
     const rest = await PlanetService.getStaratlas({
       userId: ctx.loginInfo.userId, planetId, galaxyX, galaxyY
+    })
+    ctx.success(rest)
+  }
+
+  static async getMissionCompute (ctx, next) {
+    const { planetId, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed = 100, fleets } = ctx.request.query
+    const rest = await MissionQueueService.getMissionCompute({ userId: ctx.loginInfo.userId, planetId, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, fleets })
+    ctx.success(rest)
+  }
+
+  static async executeMission (ctx, next) {
+    const {
+      planetId, planetType, missionTypeCode, targetGalaxyX,
+      targetGalaxyY, targetGalaxyZ, speed = 100, stayTime = 0, fleets, metal = 0, crystal = 0, deuterium = 0
+    } = ctx.request.body
+    const rest = await getLock(`executeMission_${ctx.loginInfo.userId}`, async () => {
+      return await MissionQueueService.executeMissionHandle({
+        userId: ctx.loginInfo.userId,
+        planetId,
+        planetType,
+        missionTypeCode,
+        targetGalaxyX,
+        targetGalaxyY,
+        targetGalaxyZ,
+        speed,
+        stayTime,
+        fleets,
+        metal,
+        crystal,
+        deuterium
+      })
     })
     ctx.success(rest)
   }

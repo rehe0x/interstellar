@@ -1,4 +1,5 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
+import { SQLUtil } from '../../lib/sql_util.js'
 
 class PlanetSubDao extends Model {
   static async insert ({ planetId, userId, universeId, planetType, createTime }) {
@@ -15,6 +16,15 @@ class PlanetSubDao extends Model {
   static async updateIncrementLevel ({ planetId, code, level, updateTime }) {
     const rest = await sequelize.query(`update game_planet_sub set ${code} = ${code} + :level, updateTime = :updateTime where planetId = :planetId`, {
       replacements: { planetId, level, updateTime }
+    })
+    return rest
+  }
+
+  static async updateDecrementLevels ({ planetId, fleets, updateTime }) {
+    const sq = SQLUtil.decrementJoin(fleets)
+    if (!sq) return
+    const rest = await sequelize.query(`update game_planet_sub set ${sq}, updateTime = :updateTime where planetId = :planetId`, {
+      replacements: { planetId, updateTime }
     })
     return rest
   }

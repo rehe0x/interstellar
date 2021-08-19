@@ -2,10 +2,11 @@ import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class MissionDetailDao extends Model {
   static async insert ({
-    universeId, missionId, userId, planetId, galaxy, speed, fleetList, createTime
+    universeId, missionId, userId, planetId, galaxy, speed, fleets, fleetSpeed
+    , consumption, capacity, resources, createTime
   }) {
-    this.create({
-      universeId, missionId, userId, planetId, galaxy, speed, fleetList, createTime
+    return await this.create({
+      universeId, missionId, userId, planetId, galaxy, speed, fleets, fleetSpeed, consumption, capacity, resources, createTime
     })
   }
 }
@@ -43,10 +44,30 @@ MissionDetailDao.init({
     allowNull: false,
     comment: '速度'
   },
-  fleetList: {
+  fleets: {
     type: DataTypes.JSON,
     allowNull: false,
     comment: '舰队清单'
+  },
+  fleetSpeed: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    comment: '舰队速度'
+  },
+  consumption: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    comment: '消耗'
+  },
+  capacity: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    comment: '承载量'
+  },
+  resources: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    comment: '装了多少资源'
   },
   updateTime: {
     type: DataTypes.BIGINT.UNSIGNED,

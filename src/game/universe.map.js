@@ -4,6 +4,9 @@ const UniverseMap = {
   1: {
     name: '第一宇宙',
     description: '文明状体：2030.15.2',
+    maxGalaxyX: 9,
+    maxGalaxyY: 499,
+    maxGalaxyZ: 15,
     brBuildSpeed: 2500, // 基础速度
     fdBuildSpeed: 5000, // 舰队防御速度
     resourceSpeed: 5, // 资源倍数

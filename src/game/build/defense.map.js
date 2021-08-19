@@ -282,6 +282,7 @@ const DefenseMap = {
     combatcaps: {
       shield: 1,
       attack: 12000,
+      engine: 'researchImpulseMotor',
       sd: {}
     }
   }

@@ -141,7 +141,8 @@ const ResearchMap = {
       deuterium: 600,
       energy: 0,
       factor: 2
-    }
+    },
+    speed: 0.1
   },
   researchImpulseMotor: {
     name: '脉冲引擎',
@@ -160,7 +161,8 @@ const ResearchMap = {
       deuterium: 6000,
       energy: 0,
       factor: 2
-    }
+    },
+    speed: 0.2
   },
   researchHyperspaceMotor: {
     name: '超空间引擎',
@@ -178,7 +180,8 @@ const ResearchMap = {
       deuterium: 6000,
       energy: 0,
       factor: 2
-    }
+    },
+    speed: 0.3
   },
   researchLaser: {
     name: '激光技术',

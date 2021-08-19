@@ -8,6 +8,10 @@ gameMissionDetail.init({
       allowNull: false,
       primaryKey: true
     },
+    universeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     missionId: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -31,10 +35,25 @@ gameMissionDetail.init({
       allowNull: false,
       comment: "速度"
     },
-    fleetList: {
+    fleets: {
       type: DataTypes.JSON,
       allowNull: false,
       comment: "舰队清单"
+    },
+    fleetSpeed: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      comment: "舰队速度"
+    },
+    consumption: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      comment: "消耗"
+    },
+    capacity: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      comment: "承载"
     },
     updateTime: {
       type: DataTypes.BIGINT.UNSIGNED,
