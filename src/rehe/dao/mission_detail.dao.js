@@ -26,7 +26,7 @@ class MissionDetailDao extends Model {
         gmq.backTime 
         from game_mission_detail gmd 
         inner join game_mission_queue gmq on gmd.missionId = gmq.id
-        where gmd.userId = :userId`
+        where gmd.userId = :userId order by gmd.createTime desc`
     const rest = await sequelize.query(sqlStr, {
       replacements: { userId },
       type: QueryTypes.SELECT
