@@ -1,13 +1,37 @@
-import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
+import { sequelize, DataTypes, Model, QueryTypes } from '../../lib/sequelize.js'
 
 class MissionDetailDao extends Model {
   static async insert ({
-    universeId, missionId, userId, planetId, galaxy, speed, fleets, fleetSpeed
+    universeId, missionId, userId, planetId, planetType, galaxy, speed, fleets, fleetSpeed
     , consumption, capacity, resources, createTime
   }) {
     return await this.create({
-      universeId, missionId, userId, planetId, galaxy, speed, fleets, fleetSpeed, consumption, capacity, resources, createTime
+      universeId, missionId, userId, planetId, planetType, galaxy, speed, fleets, fleetSpeed, consumption, capacity, resources, createTime
     })
+  }
+
+  static async findByUserId (userId) {
+    const sqlStr = `select 
+        gmd.*,
+        gmq.missionType,
+        gmq.missionName,
+        gmq.missionStatus,
+        gmq.targetUserId,
+        gmq.targetPlanetId,
+        gmq.targetPlanetType,
+        gmq.targetGalaxy,
+        gmq.seconds,
+        gmq.staySeconds,
+        gmq.startTime,
+        gmq.backTime 
+        from game_mission_detail gmd 
+        inner join game_mission_queue gmq on gmd.missionId = gmq.id
+        where gmd.userId = :userId`
+    const rest = await sequelize.query(sqlStr, {
+      replacements: { userId },
+      type: QueryTypes.SELECT
+    })
+    return rest
   }
 }
 MissionDetailDao.init({
@@ -33,6 +57,11 @@ MissionDetailDao.init({
     type: DataTypes.INTEGER,
     allowNull: false,
     comment: '星球id'
+  },
+  planetType: {
+    type: DataTypes.STRING(32),
+    allowNull: false,
+    comment: '类型'
   },
   galaxy: {
     type: DataTypes.STRING(32),

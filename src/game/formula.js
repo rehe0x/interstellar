@@ -202,7 +202,7 @@ class Formula {
       }
 
       // 如果是导弹 只获取x距离 计算时间
-      if (!fleetIS && fleets.length === 1) {
+      if (!fleetIS && Object.keys(fleets).length === 1) {
         const combatcaps = DefenseMap[Object.keys()[0]].combatcaps
         maxDistance = userSub[combatcaps.engine] * 2 - 1
         seconds = 30
@@ -226,7 +226,7 @@ class Formula {
     }
 
     console.log(maxSpeed, distance, seconds, consumption.toFixed(0), capacity)
-    return { maxSpeed, distance, maxDistance, seconds, consumption: consumption.toFixed(0), capacity }
+    return { maxSpeed, distance, maxDistance, seconds, consumption: +consumption.toFixed(0), capacity }
   }
 }
 

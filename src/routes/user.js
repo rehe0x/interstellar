@@ -18,6 +18,7 @@ const v = {
 }
 routers.get('/sendPhoneCode', UserController.sendPhoneCode)
 routers.get('/verifyPhoneCode', UserController.verifyPhoneCode)
+routers.get('/getUserMissionList', UserController.getUserMissionList)
 routers.get('/getUserPlanetList', UserController.getUserPlanetList)
 routers.post('/login', validation(v.login), UserController.login)
 routers.post('/updateUserPlanetId', validation(v.base), UserController.updateUserPlanetId)

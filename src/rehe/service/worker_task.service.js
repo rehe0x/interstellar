@@ -154,7 +154,7 @@ class WorkerTaskService {
         typeof rest?.seconds !== 'undefined' && this.workerData.port.postMessage({ taskType: TaskTypeEnum.BUILD, taskInfo: rest })
       }
     } else if (task.taskType === TaskTypeEnum.MISSION) {
-      console.log('...')
+      console.log('...', task)
     }
   }
 

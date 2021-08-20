@@ -2,8 +2,14 @@ import Jwt from 'jsonwebtoken'
 import { Config } from '../../../config/index.js'
 import { UserService } from '../service/user.service.js'
 import { PlanetService } from '../service/planet.service.js'
+import { MissionQueueService } from '../service/mission_queue.service.js'
 
 class UserController {
+  static async getUserMissionList (ctx, next) {
+    const rest = await MissionQueueService.getUserMissionList({ userId: ctx.loginInfo.userId })
+    ctx.success(rest)
+  }
+
   static async getUserPlanetList (ctx, next) {
     const rest = await PlanetService.getUserPlanetList(ctx.loginInfo.userId)
     ctx.success(rest)

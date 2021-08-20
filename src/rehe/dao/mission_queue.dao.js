@@ -3,7 +3,7 @@ import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 class MissionQueueDao extends Model {
   static async insert ({
     universeId, userId, missionCode, missionType, missionName, missionStatus, targetUserId, targetPlanetId,
-    targetGalaxy, distance, maxSpeed, seconds, staySeconds, startTime, createTime
+    targetPlanetType, targetGalaxy, distance, maxSpeed, seconds, staySeconds, startTime, createTime
   }) {
     return await this.create({
       universeId,
@@ -14,6 +14,7 @@ class MissionQueueDao extends Model {
       missionStatus,
       targetUserId,
       targetPlanetId,
+      targetPlanetType,
       targetGalaxy,
       distance,
       maxSpeed,
@@ -69,6 +70,11 @@ MissionQueueDao.init({
     type: DataTypes.INTEGER,
     allowNull: false,
     comment: '目标球ID'
+  },
+  targetPlanetType: {
+    type: DataTypes.STRING(32),
+    allowNull: false,
+    comment: '目标类型'
   },
   targetGalaxy: {
     type: DataTypes.STRING(32),

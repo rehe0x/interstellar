@@ -3,7 +3,7 @@ import loadsh from 'lodash'
 import dayjs from 'dayjs'
 import { BusinessError } from '../../lib/error.js'
 import { Formula } from '../../game/formula.js'
-import { UserStatusEnum, MissionTypeEnum, MissionStatusEnum, PlanetTypeEnum } from '../../enum/base.enum.js'
+import { TaskTypeEnum, UserStatusEnum, MissionTypeEnum, MissionStatusEnum, PlanetTypeEnum } from '../../enum/base.enum.js'
 import { UniverseMap } from '../../game/universe.map.js'
 import { BuildingMap, BuildingMoonMap, ResearchMap, FleetMap, DefenseMap } from '../../game/build/index.js'
 import { workerTimer } from '../../worker/worker_main.js'
@@ -32,7 +32,7 @@ class MissionQueueService {
       throw new BusinessError('舰队参数错误')
     }
     if (missionTypeEnum.CODE === MissionTypeEnum.SPY.CODE) {
-      if (!Object.hasOwnProperty.call(fleets, 'fleetSpySonde') || fleets.length > 1) {
+      if (!Object.hasOwnProperty.call(fleets, 'fleetSpySonde') || Object.keys(fleets).length > 1) {
         throw new BusinessError('探测器数据错误')
       }
     } else if (missionTypeEnum.CODE === MissionTypeEnum.RECYCLE.CODE) {
@@ -40,11 +40,11 @@ class MissionQueueService {
         throw new BusinessError('回收船数据错误')
       }
     } else if (missionTypeEnum.CODE === MissionTypeEnum.COLONY.CODE) {
-      if (!Object.hasOwnProperty.call(fleets, 'fleetColonizer') || fleets.length > 1) {
+      if (!Object.hasOwnProperty.call(fleets, 'fleetColonizer') || Object.keys(fleets).length > 1) {
         throw new BusinessError('殖民船数据错误')
       }
     } else if (missionTypeEnum.CODE === MissionTypeEnum.JDAM.CODE) {
-      if (!Object.hasOwnProperty.call(fleets, 'defenseInterplanetaryMisil') || fleets.length > 1) {
+      if (!Object.hasOwnProperty.call(fleets, 'defenseInterplanetaryMisil') || Object.keys(fleets).length > 1) {
         throw new BusinessError('导弹数据错误')
       }
       fleetInfo.defenseInterplanetaryMisil = {}
@@ -67,6 +67,7 @@ class MissionQueueService {
     // 区别参数
     let targetUserId = 0
     let targetPlanetId = 0
+    let targetPlanetType = PlanetTypeEnum.STAR
     if (missionTypeEnum.CODE === MissionTypeEnum.COLONY) {
       const targetPlanetList = await PlanetService.getPlanetByGalaxy({ universeId, galaxyX: targetGalaxyX, galaxyY: targetGalaxyY, galaxyZ: targetGalaxyZ })
       if (targetPlanetList?.length !== 0) {
@@ -97,11 +98,12 @@ class MissionQueueService {
 
       targetUserId = targetPlanet.userId
       targetPlanetId = targetPlanet.id
+      targetPlanetType = targetPlanet.planetType
     }
-    return { targetUserId, targetPlanetId }
+    return { targetUserId, targetPlanetId, targetPlanetType }
   }
 
-  static async missionComputeVerify ({ planet, distance, maxDistance, seconds, consumption, capacity, resources }) {
+  static missionComputeVerify ({ planet, distance, maxDistance, seconds, consumption, capacity, resources }) {
     if (!seconds) {
       throw new BusinessError('任务时间异常')
     }
@@ -147,7 +149,7 @@ class MissionQueueService {
     // 舰队数据验证
     MissionQueueService.missionFleetVerify({ missionTypeEnum, planetSub, fleets })
     // 目标验证
-    const { targetUserId, targetPlanetId } = await MissionQueueService.missionTargetVerify({ universeId: planet.universeId, planetId, planetType, missionTypeEnum, targetGalaxyX, targetGalaxyY, targetGalaxyZ })
+    const { targetUserId, targetPlanetId, targetPlanetType } = await MissionQueueService.missionTargetVerify({ universeId: planet.universeId, planetId, planetType, missionTypeEnum, targetGalaxyX, targetGalaxyY, targetGalaxyZ })
     // 计算 距离 速度 时间 油耗 承载
     const { maxSpeed, distance, maxDistance, seconds, consumption, capacity } = Formula.missionCompute({ userSub, galaxyX, galaxyY, galaxyZ, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, fleets })
     // 验证油耗承载 || 导弹发射范围
@@ -169,6 +171,7 @@ class MissionQueueService {
         missionStatus: MissionStatusEnum.START,
         targetUserId,
         targetPlanetId,
+        targetPlanetType,
         targetGalaxy: `${targetGalaxyX}:${targetGalaxyY}:${targetGalaxyZ}`,
         distance,
         maxSpeed,
@@ -182,6 +185,7 @@ class MissionQueueService {
         missionId: newMission.id,
         userId,
         planetId,
+        planetType,
         galaxy: `${galaxyX}:${galaxyY}:${galaxyZ}`,
         speed,
         fleets,
@@ -191,6 +195,7 @@ class MissionQueueService {
         resources,
         createTime: nowTime
       })
+      newMission && workerTimer.postMessage({ taskType: TaskTypeEnum.MISSION, taskInfo: newMission.dataValues })
       return newMission
     })
     return rest
@@ -299,6 +304,11 @@ class MissionQueueService {
       fleets,
       resources: { metal, crystal, deuterium }
     })
+  }
+
+  static async getUserMissionList ({ userId }) {
+    const rest = await MissionDetailDao.findByUserId(userId)
+    return rest
   }
 }
 

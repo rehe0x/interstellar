@@ -1,5 +1,5 @@
 import Router from 'koa-router'
-import { userRouter } from './users.js'
+import { userRouter } from './user.js'
 import { mainRouter } from './main.js'
 import { homeRouter } from './home.js'
 
