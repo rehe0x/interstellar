@@ -2,11 +2,11 @@ import { sequelize, DataTypes, Model, QueryTypes } from '../../lib/sequelize.js'
 
 class MissionDetailDao extends Model {
   static async insert ({
-    universeId, missionId, userId, planetId, planetType, galaxy, speed, fleets, fleetSpeed
+    universeId, missionId, userId, planetId, planetName, planetType, galaxy, speed, fleets, fleetSpeed
     , consumption, capacity, resources, createTime
   }) {
     return await this.create({
-      universeId, missionId, userId, planetId, planetType, galaxy, speed, fleets, fleetSpeed, consumption, capacity, resources, createTime
+      universeId, missionId, userId, planetId, planetName, planetType, galaxy, speed, fleets, fleetSpeed, consumption, capacity, resources, createTime
     })
   }
 
@@ -18,6 +18,7 @@ class MissionDetailDao extends Model {
         gmq.missionStatus,
         gmq.targetUserId,
         gmq.targetPlanetId,
+        gmq.targetPlanetName,
         gmq.targetPlanetType,
         gmq.targetGalaxy,
         gmq.seconds,
@@ -57,6 +58,11 @@ MissionDetailDao.init({
     type: DataTypes.INTEGER,
     allowNull: false,
     comment: '星球id'
+  },
+  planetName: {
+    type: DataTypes.STRING(32),
+    allowNull: false,
+    comment: '名称'
   },
   planetType: {
     type: DataTypes.STRING(32),

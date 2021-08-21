@@ -67,6 +67,7 @@ class MissionQueueService {
     // 区别参数
     let targetUserId = 0
     let targetPlanetId = 0
+    let targetPlanetName = ''
     let targetPlanetType = PlanetTypeEnum.STAR
     if (missionTypeEnum.CODE === MissionTypeEnum.COLONY) {
       const targetPlanetList = await PlanetService.getPlanetByGalaxy({ universeId, galaxyX: targetGalaxyX, galaxyY: targetGalaxyY, galaxyZ: targetGalaxyZ })
@@ -98,9 +99,10 @@ class MissionQueueService {
 
       targetUserId = targetPlanet.userId
       targetPlanetId = targetPlanet.id
+      targetPlanetName = targetPlanet.name
       targetPlanetType = targetPlanet.planetType
     }
-    return { targetUserId, targetPlanetId, targetPlanetType }
+    return { targetUserId, targetPlanetId, targetPlanetName, targetPlanetType }
   }
 
   static missionComputeVerify ({ planet, distance, maxDistance, seconds, consumption, capacity, resources }) {
@@ -143,13 +145,13 @@ class MissionQueueService {
     // 查询用户和星球信息
     const { userSub, planetSub, planet } = await CommonService.getUserPlanetSub(userId, planetId)
     // 发起坐标
-    const { galaxyX, galaxyY, galaxyZ } = planet
+    const { galaxyX, galaxyY, galaxyZ, name: planetName } = planet
     // 静态参数参数
     MissionQueueService.missionStaticVerify({ universeId: planet.universeId, planetType, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, stayTime })
     // 舰队数据验证
     MissionQueueService.missionFleetVerify({ missionTypeEnum, planetSub, fleets })
     // 目标验证
-    const { targetUserId, targetPlanetId, targetPlanetType } = await MissionQueueService.missionTargetVerify({ universeId: planet.universeId, planetId, planetType, missionTypeEnum, targetGalaxyX, targetGalaxyY, targetGalaxyZ })
+    const { targetUserId, targetPlanetId, targetPlanetName, targetPlanetType } = await MissionQueueService.missionTargetVerify({ universeId: planet.universeId, planetId, planetType, missionTypeEnum, targetGalaxyX, targetGalaxyY, targetGalaxyZ })
     // 计算 距离 速度 时间 油耗 承载
     const { maxSpeed, distance, maxDistance, seconds, consumption, capacity } = Formula.missionCompute({ userSub, galaxyX, galaxyY, galaxyZ, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, fleets })
     // 验证油耗承载 || 导弹发射范围
@@ -171,6 +173,7 @@ class MissionQueueService {
         missionStatus: MissionStatusEnum.START,
         targetUserId,
         targetPlanetId,
+        targetPlanetName,
         targetPlanetType,
         targetGalaxy: `${targetGalaxyX},${targetGalaxyY},${targetGalaxyZ}`,
         distance,
@@ -185,6 +188,7 @@ class MissionQueueService {
         missionId: newMission.id,
         userId,
         planetId,
+        planetName,
         planetType,
         galaxy: `${galaxyX},${galaxyY},${galaxyZ}`,
         speed,
