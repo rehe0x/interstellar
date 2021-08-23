@@ -102,8 +102,8 @@ class MainController {
   }
 
   static async getMissionCompute (ctx, next) {
-    const { planetId, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed = 100, fleets } = ctx.request.query
-    const rest = await MissionQueueService.getMissionCompute({ userId: ctx.loginInfo.userId, planetId, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, fleets })
+    const { planetId, missionTypeCode, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed = 100, fleets } = ctx.request.body
+    const rest = await MissionQueueService.getMissionCompute({ userId: ctx.loginInfo.userId, planetId, missionTypeCode, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, fleets })
     ctx.success(rest)
   }
 

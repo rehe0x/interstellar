@@ -34,7 +34,7 @@ const v = {
     targetGalaxyX: joi.number().min(1).max(9999).required().error(new Error('目标坐标错误')),
     targetGalaxyY: joi.number().min(1).max(9999).required().error(new Error('目标坐标错误')),
     targetGalaxyZ: joi.number().min(1).max(9999).required().error(new Error('目标坐标错误')),
-    fleets: joi.object().required().error(new Error('舰队错误'))
+    // fleets: joi.object({}).required().error(new Error('舰队错误'))
   }
 }
 routers.get('/getNowTime', MainController.getNowTime)

@@ -128,13 +128,17 @@ class MissionQueueService {
     }
   }
 
-  static async getMissionCompute ({ userId, planetId, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, fleets }) {
+  static async getMissionCompute ({ userId, planetId, missionTypeCode, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, fleets }) {
     // 查询用户和星球信息
-    const { userSub, planet } = await CommonService.getUserPlanetSub(userId, planetId)
+    const { userSub, planet, planetSub } = await CommonService.getUserPlanetSub(userId, planetId)
     // 发起坐标
     const { galaxyX, galaxyY, galaxyZ } = planet
+    // 舰队数据验证
+    const missionTypeEnum = Object.values(MissionTypeEnum).find(item => item.CODE === missionTypeCode)
+    MissionQueueService.missionFleetVerify({ missionTypeEnum, planetSub, fleets })
     const { maxSpeed, distance, seconds, consumption, capacity } = Formula.missionCompute({ userSub, galaxyX, galaxyY, galaxyZ, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, fleets })
-    return { maxSpeed, distance, seconds, consumption, capacity }
+    const estimatedTime = dayjs().add(seconds, 'seconds').format('YYYY-MM-DD HH:mm:ss')
+    return { maxSpeed, distance, seconds, consumption, capacity, estimatedTime }
   }
 
   static async addMissionQueue ({

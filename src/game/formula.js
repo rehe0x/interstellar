@@ -226,7 +226,7 @@ class Formula {
     }
 
     console.log(maxSpeed, distance, seconds, consumption.toFixed(0), capacity)
-    return { maxSpeed, distance, maxDistance, seconds, consumption: +consumption.toFixed(0), capacity }
+    return { maxSpeed, distance, maxDistance, seconds: +seconds, consumption: +consumption.toFixed(0), capacity }
   }
 }
 
