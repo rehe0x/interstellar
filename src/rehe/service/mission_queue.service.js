@@ -191,7 +191,7 @@ class MissionQueueService {
         startTime: nowTime,
         createTime: nowTime
       })
-      await MissionDetailDao.insert({
+      const detail = await MissionDetailDao.insert({
         universeId: planet.universeId,
         missionId: newMission.id,
         userId,
@@ -207,8 +207,11 @@ class MissionQueueService {
         resources,
         createTime: nowTime
       })
-      newMission && workerTimer.postMessage({ taskType: TaskTypeEnum.MISSION, taskInfo: newMission.dataValues })
-      return newMission
+      if (newMission) {
+        workerTimer.postMessage({ taskType: TaskTypeEnum.MISSION, taskInfo: newMission.dataValues })
+        newMission.dataValues.detail = detail
+        return newMission
+      }
     })
     return rest
   }
