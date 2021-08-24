@@ -27,7 +27,14 @@ class MissionQueueService {
 
   static missionFleetVerify ({ missionTypeEnum, planetSub, fleets }) {
     const fleetInfo = loadsh.cloneDeep(FleetMap)
-
+    // 排除
+    for (const key in fleets) {
+      if (!fleets[key] || fleets[key] <= 0) {
+        delete fleets[key]
+      } else if (fleets[key] > planetSub[key]) {
+        throw new BusinessError('舰队不可用')
+      }
+    }
     if (!fleets || Object.keys(fleets).length === 0) {
       throw new BusinessError('舰队参数错误')
     }
@@ -49,16 +56,12 @@ class MissionQueueService {
       }
       fleetInfo.defenseInterplanetaryMisil = {}
     }
+    // 排除
     for (const key in fleets) {
       if (!Object.hasOwnProperty.call(fleetInfo, key) ||
       !Object.hasOwnProperty.call(planetSub, key) ||
       key === 'fleetSolarSatelit') {
         throw new BusinessError('舰队错误')
-      }
-      if (!fleets[key] || fleets[key] <= 0) {
-        delete fleets[key]
-      } else if (fleets[key] > planetSub[key]) {
-        throw new BusinessError('舰队不可用')
       }
     }
   }
@@ -121,6 +124,7 @@ class MissionQueueService {
     }
     let totalRes = 0
     for (const key in resources) {
+      if (resources[key] < 0) throw new BusinessError('携带资源异常')
       totalRes += resources[key]
     }
     if (totalRes > (capacity - consumption)) {
@@ -132,13 +136,13 @@ class MissionQueueService {
     // 查询用户和星球信息
     const { userSub, planet, planetSub } = await CommonService.getUserPlanetSub(userId, planetId)
     // 发起坐标
-    const { galaxyX, galaxyY, galaxyZ } = planet
+    const { galaxyX, galaxyY, galaxyZ, metal, crystal, deuterium } = planet
     // 舰队数据验证
     const missionTypeEnum = Object.values(MissionTypeEnum).find(item => item.CODE === missionTypeCode)
     MissionQueueService.missionFleetVerify({ missionTypeEnum, planetSub, fleets })
     const { maxSpeed, distance, seconds, consumption, capacity } = Formula.missionCompute({ userSub, galaxyX, galaxyY, galaxyZ, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, fleets })
     const estimatedTime = dayjs().add(seconds, 'seconds').format('YYYY-MM-DD HH:mm:ss')
-    return { maxSpeed, distance, seconds, consumption, capacity, estimatedTime }
+    return { maxSpeed, distance, seconds, consumption, capacity, estimatedTime, metal, crystal, deuterium }
   }
 
   static async addMissionQueue ({
@@ -281,7 +285,7 @@ class MissionQueueService {
       case MissionTypeEnum.RECYCLE.CODE: {
         console.log('回收')
         planetType = PlanetTypeEnum.STAR
-        missionTypeEnum = MissionTypeEnum.DISRECYCLEPATCH
+        missionTypeEnum = MissionTypeEnum.RECYCLE
         stayTime = 0
         break
       }

@@ -48,7 +48,7 @@ const buildQueueList = [
 
 // sqlStr({ aaa: '1', bb: 22 })
 
-let ff =  
+// let ff =
 
 // for (const key in ff) {
 //   if(ff[key] === 9){
@@ -60,6 +60,18 @@ let ff =
 //   console.log(11)
 // }
 
-if(ff?.length){
-  console.log(11)
+// if(ff?.length){
+//   console.log(11)
+// }
+
+const rr = {
+  a: { a: 1, b: 2 },
+  b: { a: 2, b: 2 },
+  c: { a: 3, b: 2 },
+  d: { a: 4, b: 2 }
 }
+console.log(Object.values(rr))
+const res = Object.values(rr).reduce((acc, cur) => {
+  return acc + cur.a
+}, 0)
+console.log(res) // => 12

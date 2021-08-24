@@ -80,6 +80,7 @@ class BuildService {
       obj.deuterium = obj.pricelist.deuterium
 
       obj.level = planetSub[key]
+      obj.originLevel = planetSub[key]
       const seconds = Formula.fleetDefenseTime({ metal: obj.pricelist.metal, crystal: obj.pricelist.crystal }, planetSub, userSub)
       obj.buildTime = seconds
       obj.buildTimeShow = remainingTime(seconds)
