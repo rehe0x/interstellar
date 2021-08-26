@@ -32,7 +32,7 @@ class MissionQueueService {
       if (!fleets[key] || fleets[key] <= 0) {
         delete fleets[key]
       } else if (fleets[key] > planetSub[key]) {
-        throw new BusinessError('舰队不可用')
+        throw new BusinessError('没有舰队可用')
       }
     }
     if (!fleets || Object.keys(fleets).length === 0) {
@@ -72,12 +72,13 @@ class MissionQueueService {
     let targetPlanetId = 0
     let targetPlanetName = ''
     let targetPlanetType = PlanetTypeEnum.STAR
-    if (missionTypeEnum.CODE === MissionTypeEnum.COLONY) {
+    if (missionTypeEnum.CODE === MissionTypeEnum.COLONY.CODE) {
       const targetPlanetList = await PlanetService.getPlanetByGalaxy({ universeId, galaxyX: targetGalaxyX, galaxyY: targetGalaxyY, galaxyZ: targetGalaxyZ })
+      console.log(targetPlanetList)
       if (targetPlanetList?.length !== 0) {
         throw new BusinessError('该位置已被殖民')
       }
-    } else if (missionTypeEnum.CODE === MissionTypeEnum.EXPLORE) {
+    } else if (missionTypeEnum.CODE === MissionTypeEnum.EXPLORE.CODE) {
       // targetGalaxyX = galaxyX; targetGalaxyY = galaxyY; targetGalaxyZ = 16
     } else {
       const targetPlanetList = await PlanetService.getPlanetByGalaxy({ universeId, planetType, galaxyX: targetGalaxyX, galaxyY: targetGalaxyY, galaxyZ: targetGalaxyZ })
@@ -92,7 +93,7 @@ class MissionQueueService {
       }
 
       // 回收任务验证 目标是否有废墟
-      if (missionTypeEnum.CODE === MissionTypeEnum.RECYCLE && !targetPlanet.ruins) {
+      if (missionTypeEnum.CODE === MissionTypeEnum.RECYCLE.CODE && !targetPlanet.ruins) {
         throw new BusinessError('没有废墟可回收')
       } else {
         if (targetPlanet.id === planetId) {
@@ -143,6 +144,14 @@ class MissionQueueService {
     const { maxSpeed, distance, seconds, consumption, capacity } = Formula.missionCompute({ userSub, galaxyX, galaxyY, galaxyZ, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, fleets })
     const estimatedTime = dayjs().add(seconds, 'seconds').format('YYYY-MM-DD HH:mm:ss')
     return { maxSpeed, distance, seconds, consumption, capacity, estimatedTime, metal, crystal, deuterium }
+  }
+
+  static fleetFormat (fleets) {
+    const fleetFormat = {}
+    for (const key in fleets) {
+      fleetFormat[key] = { name: FleetMap[key].name, count: fleets[key] }
+    }
+    return fleetFormat
   }
 
   static async addMissionQueue ({
@@ -200,7 +209,7 @@ class MissionQueueService {
         planetType,
         galaxy: `${galaxyX},${galaxyY},${galaxyZ}`,
         speed,
-        fleets,
+        fleets: this.fleetFormat(fleets),
         fleetSpeed: maxSpeed,
         consumption,
         capacity,
@@ -244,7 +253,7 @@ class MissionQueueService {
         console.log('殖民')
         planetType = PlanetTypeEnum.STAR
         missionTypeEnum = MissionTypeEnum.COLONY
-        stayTime = 0
+        speed = 100; stayTime = 0
         metal = 0; crystal = 0; deuterium = 0
         break
       }
@@ -297,7 +306,7 @@ class MissionQueueService {
         planetType = PlanetTypeEnum.STAR
         missionTypeEnum = MissionTypeEnum.EXPLORE
         targetGalaxyZ = 16
-        stayTime = stayTime > 1 ? 1 : stayTime
+        stayTime = stayTime > 1 ? stayTime : 1
         break
       }
       default: {

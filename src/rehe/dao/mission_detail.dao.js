@@ -21,6 +21,7 @@ class MissionDetailDao extends Model {
         gmq.targetPlanetName,
         gmq.targetPlanetType,
         gmq.targetGalaxy,
+        gmq.distance,
         gmq.seconds,
         gmq.staySeconds,
         gmq.startTime,

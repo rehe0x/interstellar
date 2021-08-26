@@ -124,9 +124,9 @@ class Formula {
       metalTheorical,
       crystalTheorical,
       deuteriumTheorical,
-      metalTime: Number.parseFloat(metalTime).toFixed(2),
-      crystalTime: Number.parseFloat(crystalTime).toFixed(2),
-      deuteriumTime: Number.parseFloat(deuteriumTime).toFixed(2)
+      metalTime: +Number.parseFloat(metalTime).toFixed(2),
+      crystalTime: +Number.parseFloat(crystalTime).toFixed(2),
+      deuteriumTime: +Number.parseFloat(deuteriumTime).toFixed(2)
     }
   }
 
@@ -163,7 +163,7 @@ class Formula {
   // 获取任务抵达时间
   static getMissionSeconds ({ speed, maxSpeed, distance }) {
     const seconds = 35000 / (speed / 10) * Math.sqrt(distance * 10 / maxSpeed) + 10
-    return seconds.toFixed(0)
+    return Math.round(seconds)
   }
 
   // 计算航行任务 最大速度 距离 时间 油耗 承载量
@@ -217,15 +217,15 @@ class Formula {
         seconds = Formula.getMissionSeconds({ speed, maxSpeed: maxSpeed, distance })
         // 计算油耗 承载能力
         for (const key in fleetDetail) {
-          const speedPercent = Math.sqrt(maxSpeed / fleetDetail[key].fleetSpeed).toFixed(2)
+          // const speedPercent = Math.sqrt(maxSpeed / fleetDetail[key].fleetSpeed).toFixed(2)
+          let speedPercent = 35000 / (seconds - 10) * Math.sqrt(distance * 10 / fleetDetail[key].fleetSpeed)
+          speedPercent = +(speedPercent / 10).toFixed(2)
           const basicConsumption = fleetDetail[key].fleetConsumption * fleetDetail[key].count
           consumption += basicConsumption * distance / 35000 * ((speedPercent + 1) ** 2)
           capacity += fleetDetail[key].capacity * fleetDetail[key].count
         }
       }
     }
-
-    console.log(maxSpeed, distance, seconds, consumption.toFixed(0), capacity)
     return { maxSpeed, distance, maxDistance, seconds: +seconds, consumption: +consumption.toFixed(0), capacity }
   }
 }
