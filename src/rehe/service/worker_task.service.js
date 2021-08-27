@@ -1,16 +1,18 @@
 import dayjs from 'dayjs'
 import { BusinessError } from '../../lib/error.js'
-import { TaskTypeEnum, BuildTypeEnum, BuildQueueStatusEnum } from '../../enum/base.enum.js'
+import { TaskTypeEnum, BuildTypeEnum, MissionTypeEnum, BuildQueueStatusEnum } from '../../enum/base.enum.js'
 import { Formula } from '../../game/formula.js'
 import { sequelize } from '../../lib/sequelize.js'
 import { BuildQueueDao } from '../dao/build_queue.dao.js'
 import { PlanetDao } from '../dao/planet.dao.js'
 import { PlanetSubDao } from '../dao/planet_sub.dao.js'
 import { UserSubDao } from '../dao/user_sub.dao.js'
+import { MissionDetailDao } from '../dao/mission_detail.dao.js'
+import { MissionQueueDao } from '../dao/mission_queue.dao.js'
 import { ResourcesService } from '../service/resources.service.js'
 import { CommonService } from '../service/common.service.js'
 import { UserService } from '../service/user.service.js'
-
+import { MissionFinishService } from '../service/mission_finish.service.js'
 class WorkerTaskService {
   constructor (workerData) {
     this.workerData = workerData
@@ -155,6 +157,7 @@ class WorkerTaskService {
       }
     } else if (task.taskType === TaskTypeEnum.MISSION) {
       console.log('...', task)
+      await this.finishMissionTask(task)
     }
   }
 
@@ -273,6 +276,88 @@ class WorkerTaskService {
           throw new BusinessError('错误')
         }
       }
+    })
+  }
+
+  fleetFormat (fleets) {
+    const fleetFormat = {}
+    for (const key in fleets) {
+      fleetFormat[key] = fleets[key].count
+    }
+    return fleetFormat
+  }
+
+  async finishMissionTask (missionTask) {
+    console.log('finishMissionTask', missionTask)
+    const taskInfo = missionTask.taskInfo
+    const missionTypeCode = taskInfo.missionType
+    const { id: missionId, userId, universeId, missionStatus, targetPlanetId, targetGalaxy } = taskInfo
+    const [targetGalaxyX, targetGalaxyY, targetGalaxyZ] = targetGalaxy.split(',')
+    const missionDetailList = await MissionDetailDao.findByMissionId(missionId)
+    const { planetId, fleets: fleetArr, resources } = missionDetailList[0]
+    const fleets = this.fleetFormat(fleetArr)
+    let missionResult = {}
+    await sequelize.transaction(async (t1) => {
+      switch (missionTypeCode) {
+        case MissionTypeEnum.COLONY.CODE: {
+          console.log('殖民')
+          missionResult = await MissionFinishService.colony({ userId, universeId, galaxyX: targetGalaxyX, galaxyY: targetGalaxyY, galaxyZ: targetGalaxyZ })
+          break
+        }
+        case MissionTypeEnum.SPY.CODE: {
+          console.log('探测')
+          break
+        }
+        case MissionTypeEnum.DISPATCH.CODE: {
+          console.log('派遣')
+          missionResult = await MissionFinishService.dispatch({ targetPlanetId, fleets, resources })
+          break
+        }
+        case MissionTypeEnum.TRANSPORT.CODE: {
+          console.log('运输')
+          missionResult = await MissionFinishService.transport({ planetId, targetPlanetId, missionId, missionStatus, fleets, resources })
+          break
+        }
+        case MissionTypeEnum.HELP.CODE: {
+          console.log('协防')
+          break
+        }
+        case MissionTypeEnum.ATTACK.CODE: {
+          console.log('攻击')
+          break
+        }
+        case MissionTypeEnum.JDAM.CODE: {
+          console.log('导弹攻击')
+          break
+        }
+        case MissionTypeEnum.RECYCLE.CODE: {
+          console.log('回收')
+          break
+        }
+        case MissionTypeEnum.EXPLORE.CODE: {
+          console.log('探险')
+          break
+        }
+        default: {
+          console.log('Invalid code')
+          break
+        }
+      }
+      console.log('ok===', missionResult)
+      const { del, task, message } = missionResult
+      if (del) {
+        // 删除队列
+        await MissionQueueDao.deleteById(missionId)
+        await MissionDetailDao.deleteByMissionId(missionId)
+      }
+      if (task) {
+        // 加入队列
+        this.workerData.port.postMessage({ taskType: TaskTypeEnum.MISSION, taskInfo: task })
+      }
+      if (message) {
+        // 写入消息
+      }
+      //  写入日志
     })
   }
 }

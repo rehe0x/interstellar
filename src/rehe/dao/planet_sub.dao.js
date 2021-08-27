@@ -20,6 +20,15 @@ class PlanetSubDao extends Model {
     return rest
   }
 
+  static async updateIncrementLevels ({ planetId, fleets, updateTime }) {
+    const sq = SQLUtil.incrementJoin(fleets)
+    if (!sq) return
+    const rest = await sequelize.query(`update game_planet_sub set ${sq}, updateTime = :updateTime where planetId = :planetId`, {
+      replacements: { planetId, updateTime }
+    })
+    return rest
+  }
+
   static async updateDecrementLevels ({ planetId, fleets, updateTime }) {
     const sq = SQLUtil.decrementJoin(fleets)
     if (!sq) return

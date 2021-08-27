@@ -129,7 +129,7 @@ class PlanetDao extends Model {
   static async updateDecrementResources ({ metal, crystal, deuterium, updateTime }, { planetId }) {
     const sq = SQLUtil.decrementJoin({ metal, crystal, deuterium })
     if (!sq) return
-    const rest = await sequelize.query(`update game_planet set ${SQLUtil.decrementJoin({ metal, crystal, deuterium })}, updateTime = :updateTime where id = :planetId`, {
+    const rest = await sequelize.query(`update game_planet set ${sq}, updateTime = :updateTime where id = :planetId`, {
       replacements: { planetId, updateTime }
     })
     return rest

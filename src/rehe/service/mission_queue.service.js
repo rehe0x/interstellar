@@ -18,9 +18,9 @@ import { PlanetDao } from '../dao/planet.dao.js'
 class MissionQueueService {
   static missionStaticVerify ({ universeId, planetType, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, stayTime }) {
     if (planetType !== PlanetTypeEnum.STAR && planetType !== PlanetTypeEnum.MOON) throw new BusinessError('星球类型错误')
-    if (targetGalaxyX > UniverseMap[universeId].maxGalaxyX) throw new BusinessError('坐标错误X')
-    if (targetGalaxyY > UniverseMap[universeId].maxGalaxyY) throw new BusinessError('坐标错误Y')
-    if (targetGalaxyZ > UniverseMap[universeId].maxGalaxyZ) throw new BusinessError('坐标错误Z')
+    // if (targetGalaxyX > UniverseMap[universeId].maxGalaxyX) throw new BusinessError('坐标错误X')
+    // if (targetGalaxyY > UniverseMap[universeId].maxGalaxyY) throw new BusinessError('坐标错误Y')
+    // if (targetGalaxyZ > UniverseMap[universeId].maxGalaxyZ) throw new BusinessError('坐标错误Z')
     if (speed > 100 || speed < 10 || speed % 10 !== 0) throw new BusinessError('速速错误')
     if (stayTime > 8) throw new BusinessError('停留时间错误')
   }
@@ -66,7 +66,7 @@ class MissionQueueService {
     }
   }
 
-  static async missionTargetVerify ({ universeId, planetId, planetType, missionTypeEnum, targetGalaxyX, targetGalaxyY, targetGalaxyZ }) {
+  static async missionTargetVerify ({ userId, universeId, planetId, planetType, missionTypeEnum, targetGalaxyX, targetGalaxyY, targetGalaxyZ }) {
     // 区别参数
     let targetUserId = 0
     let targetPlanetId = 0
@@ -97,7 +97,18 @@ class MissionQueueService {
         throw new BusinessError('没有废墟可回收')
       } else {
         if (targetPlanet.id === planetId) {
-          throw new BusinessError('目标不能为自己')
+          throw new BusinessError('目标不正确')
+        }
+        if (missionTypeEnum.CODE === MissionTypeEnum.DISPATCH.CODE) {
+          if (userId !== targetPlanet.userId) {
+            if (missionTypeEnum.CODE === MissionTypeEnum.DISPATCH.CODE) throw new BusinessError('派遣目标不正确')
+          }
+        } else {
+          if (missionTypeEnum.CODE !== MissionTypeEnum.TRANSPORT.CODE) {
+            if (userId === targetPlanet.userId) {
+              throw new BusinessError('目标不能为自己')
+            }
+          }
         }
       }
 
@@ -168,7 +179,7 @@ class MissionQueueService {
     // 舰队数据验证
     MissionQueueService.missionFleetVerify({ missionTypeEnum, planetSub, fleets })
     // 目标验证
-    const { targetUserId, targetPlanetId, targetPlanetName, targetPlanetType } = await MissionQueueService.missionTargetVerify({ universeId: planet.universeId, planetId, planetType, missionTypeEnum, targetGalaxyX, targetGalaxyY, targetGalaxyZ })
+    const { targetUserId, targetPlanetId, targetPlanetName, targetPlanetType } = await MissionQueueService.missionTargetVerify({ userId, universeId: planet.universeId, planetId, planetType, missionTypeEnum, targetGalaxyX, targetGalaxyY, targetGalaxyZ })
     // 计算 距离 速度 时间 油耗 承载
     const { maxSpeed, distance, maxDistance, seconds, consumption, capacity } = Formula.missionCompute({ userSub, galaxyX, galaxyY, galaxyZ, targetGalaxyX, targetGalaxyY, targetGalaxyZ, speed, fleets })
     // 验证油耗承载 || 导弹发射范围
@@ -195,7 +206,7 @@ class MissionQueueService {
         targetGalaxy: `${targetGalaxyX},${targetGalaxyY},${targetGalaxyZ}`,
         distance,
         maxSpeed,
-        seconds,
+        seconds: ~~(seconds / 10),
         staySeconds: stayTime * 3600,
         startTime: nowTime,
         createTime: nowTime
@@ -216,6 +227,7 @@ class MissionQueueService {
         resources,
         createTime: nowTime
       })
+      // newMission.dataValues.detail = detail.dataValues
       if (newMission) {
         workerTimer.postMessage({ taskType: TaskTypeEnum.MISSION, taskInfo: newMission.dataValues })
         newMission.dataValues.detail = detail

@@ -88,11 +88,6 @@ class PlanetService {
     })
   }
 
-  static async colony ({ userId, universeId, galaxyX, galaxyY, galaxyZ }) {
-    const planetName = UniverseMap[universeId].basePlanetName
-    return await this.createPlanet({ userId, universeId, planetName, planetType: PlanetTypeEnum.STAR, label: PlanetLabelEnum.STARCOLONY, galaxyX, galaxyY, galaxyZ })
-  }
-
   static async generatePlanet ({ userId, universeId }) {
     let rest = null
     for (let index = 0; index < 100; index++) {

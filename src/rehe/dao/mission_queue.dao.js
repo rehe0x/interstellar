@@ -1,6 +1,10 @@
 import { sequelize, DataTypes, Model } from '../../lib/sequelize.js'
 
 class MissionQueueDao extends Model {
+  static async findById (missionId) {
+    return await this.findByPk(missionId)
+  }
+
   static async insert ({
     universeId, userId, missionCode, missionType, missionName, missionStatus, targetUserId, targetPlanetId,
     targetPlanetName, targetPlanetType, targetGalaxy, distance, maxSpeed, seconds, staySeconds, startTime, createTime
@@ -24,6 +28,16 @@ class MissionQueueDao extends Model {
       startTime,
       createTime
     })
+  }
+
+  static async updateMissionStatus ({ missionId, missionStatus, backTime, updateTime }) {
+    return await this.update({ missionStatus, backTime, updateTime }, {
+      where: { id: missionId }
+    })
+  }
+
+  static async deleteById (missionId) {
+    return await this.destroy({ where: { id: missionId } })
   }
 }
 MissionQueueDao.init({

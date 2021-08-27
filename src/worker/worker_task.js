@@ -6,7 +6,7 @@ import domain from 'domain'
 // 创建域
 const d = domain.create()
 d.on('error', function (err) {
-  console.log('worker_task处理这个错误 (' + err.message + ')')
+  console.log('worker_task处理这个错误 (' + err + ')')
 })
 
 assert(workerData.port instanceof MessagePort)

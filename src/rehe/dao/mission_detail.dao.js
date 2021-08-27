@@ -35,6 +35,14 @@ class MissionDetailDao extends Model {
     })
     return rest
   }
+
+  static async findByMissionId (missionId) {
+    return await this.findAll({ where: { missionId } })
+  }
+
+  static async deleteByMissionId (missionId) {
+    return await this.destroy({ where: { missionId } })
+  }
 }
 MissionDetailDao.init({
   id: {
