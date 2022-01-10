@@ -635,7 +635,7 @@ const FleetMap = {
       speed2: 10000,
       capacity: 750,
       shield: 400,
-      attack: 7000,
+      attack: 700,
       sd: {
         ...BaseSD,
         fleetSpySonde: 5,
