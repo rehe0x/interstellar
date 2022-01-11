@@ -1,5 +1,5 @@
 export const pord = {
-  env: 'dev',
+  env: 'pord',
   port: 3000,
   mysqlConfig: {
     host: 'mysql',
